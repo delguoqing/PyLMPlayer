@@ -28,6 +28,20 @@ DATA = {
 		),
 	),
 	
+	# Matrix:
+	# [scale_x,     rotateskew_x]
+	# [rotateskew_y,     scale_y]
+	# [trans_x,          trans_y]
+	#
+	# In flash:
+	# x' = x * scale_x + y * rotateskew_y + trans_x
+	# y' = y * rotateskew_x + y * scale_y + trans_y
+	# 
+	# Which equals to:
+	# [x']   [scale_x,      rotateskew_y, trans_x]   [x]
+	# [y'] = [rotateskew_x, scale_y,      trans_y] * [y]
+	# [1 ]   [0,            0,                  1]   [1]
+	# 	 		
 	0xF003: (
 		("tag_type", 0x4, ">I"),
 		("tag_size", 0x4, ">I"),
