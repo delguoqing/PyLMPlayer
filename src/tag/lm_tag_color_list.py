@@ -1,14 +1,13 @@
-import lm_tag_reader
 import lm_consts
 import lm_type_color
+import lm_tag_base
 
-class CTag(object):
+class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
-		fmt = ctx.format[self.get_id()]
-		d = lm_tag_reader.read_tag(fmt, tag)
-		
-		self.ctx = ctx
+		super(CTag, self).__init__(ctx, tag)
+		d = CTag.parse_tag(ctx, tag)
+
 		self._data = []
 		for c in d["color_list"]:
 			c = lm_type_color.CType(c["R"], c["G"], c["B"], c["A"])
@@ -17,6 +16,7 @@ class CTag(object):
 		
 	def get_val(self, idx):
 		return self._data[idx]
-		
-	def get_id():
+	
+	@classmethod
+	def get_id(cls):
 		return lm_consts.TAG_COLOR_LIST
