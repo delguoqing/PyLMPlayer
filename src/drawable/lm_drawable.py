@@ -1,28 +1,33 @@
+
 class CDrawable(object):
 
-	def __init__(self, tag):
-		pass
+	def __init__(self, parent=None):
+		self.color_add = None
+		self.color_mul = None
+		self.matrix = None
+		self.blend_mode = None
+		self.depth = depth
+		self.parent = parent
 		
 	def draw(self):
 		raise NotImplementedError
 	
-	def set_color_add(self, color):
-		pass
+	def set_cxform(self, cadd, cmul):
+		self.color_add = cadd
+		self.color_mul = cmul
 		
-	def set_color_mul(self, color):
-		pass
-		
-	def set_pos(self, pos):
-		pass
-		
-	def set_matrix(self, mat):
-		pass	
-
-	def set_visible(self, b):
-		pass
+	def set_matrix(self, matrix):
+		self.matrix = matrix
 			
 	def set_blend_mode(self, mode):
-		pass
+		self.blend_mode = blend_mode
+		
+	def set_depth(self, depth):
+		self.depth = depth
 		
 	def destroy(self):
-		pass
+		self.color_add = None
+		self.color_mul = None
+		self.matrix = None
+		self.blend_mode = None
+		self.parent = None
