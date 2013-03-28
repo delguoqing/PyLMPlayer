@@ -1,9 +1,10 @@
+import lm_type_color
 
 class CDrawable(object):
 
 	def __init__(self, parent=None):
-		self.color_add = None
-		self.color_mul = None
+		self.color_add = lm_type_color.null_cadd
+		self.color_mul = lm_type_color.null_cmul
 		self.matrix = None
 		self.blend_mode = None
 		self.depth = depth
@@ -13,9 +14,9 @@ class CDrawable(object):
 		raise NotImplementedError
 	
 	def set_cxform(self, cadd, cmul):
-		self.color_add = cadd
-		self.color_mul = cmul
-		
+		self.color_add = cadd or lm_type_color.null_cadd
+		self.color_mul = cmul or lm_type_color.null_cmul
+	
 	def set_matrix(self, matrix):
 		self.matrix = matrix
 			
