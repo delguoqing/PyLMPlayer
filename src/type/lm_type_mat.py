@@ -8,7 +8,7 @@ class CType(object):
 		self.rotateskew = rotateskew
 		
 	def get_ctype(self):
-		return (c_float * 16)(
+		return (ctypes.c_float * 16)(
 			self.scale[0], self.rotateskew[0], 0, 0,
 			self.rotateskew[1], self.scale[1], 0, 0,
 			0, 0, 1, 0,

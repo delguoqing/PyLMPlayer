@@ -1,9 +1,10 @@
 import pyglet
 import lm_drawable
+import util.lm_shader as lm_shader
 
 from pyglet.gl import *
 
-class CDrawable(lm_drawable.Drawable):
+class CDrawable(lm_drawable.CDrawable):
 	
 	def __init__(self, texture, coords, parent=None):
 		super(CDrawable, self).__init__(parent)
@@ -28,10 +29,10 @@ class CDrawable(lm_drawable.Drawable):
 		
 		self.shader.bind()
 		c = self._tot_cadd
-		shader.uniformf("color_add", c.r, c.g, c.b, c.a)
+		self.shader.uniformf("color_add", c.r, c.g, c.b, c.a)
 		c = self._tot_cmul		
-		shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
-		shader.uniformf("sampler", texture.id)
+		self.shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
+		self.shader.uniformi("sampler", 0)
 		
 		self._vertex_list.draw(GL_QUADS)
 		

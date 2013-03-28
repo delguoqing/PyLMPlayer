@@ -19,7 +19,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self._drawables[depth] = None
 		
 	def __iter__(self):
-		return itertools.ifilter(self._drawables)
+		return itertools.ifilter(None, self._drawables)
 		
 	def destroy(self):
 		for drawable in self:

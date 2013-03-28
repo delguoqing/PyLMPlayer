@@ -26,7 +26,7 @@ uniform vec4 color_mul;
 
 void main(void)
 {
-	gl_FragColor = gl_FrontColor * color_mul  + color_add;
+	gl_FragColor = gl_Color * color_mul  + color_add;
 }
 """
 ]

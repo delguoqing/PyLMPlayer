@@ -1,25 +1,27 @@
 import pyglet
 import lm_drawable
+import util.lm_shader
+import type.lm_type_color
 
 from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, color, rect, parent=None):
-		super(CDrawable, self).__init__(parent, depth)
+	def __init__(self, color, coords, parent=None):
+		super(CDrawable, self).__init__(parent)
 		self._vertex_list = pyglet.graphics.vertex_list(4,
-			("v2f/static", (rect.left, rect.top, rect.right, rect.top, 
-				rect.right, rect.bottom, rect.left, rect.bottom)),
-			("c4B/static", (color.r, color.g, color.b, color.a) * 4),
+			("v2f/static", (coords[0], coords[1], coords[4], 
+				coords[5], coords[8], coords[9], coords[12], coords[13])),
+			("c4B/static", (color.rB, color.gB, color.bB, color.aB) * 4),
 			)
-		self.shader = lm_shader.cxform_shader_no_texture
+		self.shader = util.lm_shader.cxform_shader_no_texture
 		
 	def draw(self):
 		self.shader.bind()
 		c = self._tot_cadd
-		shader.uniformf("color_add", c.r, c.g, c.b, c.a)
+		self.shader.uniformf("color_add", c.r, c.g, c.b, c.a)
 		c = self._tot_cmul		
-		shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
+		self.shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
 	
 		self._vertex_list.draw(GL_QUADS)
 		self.shader.unbind()
