@@ -2,10 +2,10 @@ import ctypes
 
 class CType(object):
 	
-	def __init__(self, translate, scale, rotateskew):
-		self.translate = translate
-		self.scale = scale
-		self.rotateskew = rotateskew
+	def __init__(self, translate, scale=None, rotateskew=None):
+		self.translate = translate or (0.0, 0.0)
+		self.scale = scale or (1.0, 1.0)
+		self.rotateskew = rotateskew or (0.0, 0.0)
 		
 	def get_ctype(self):
 		return (ctypes.c_float * 16)(

@@ -1,6 +1,7 @@
-import lm_tag_reader
-import lm_consts
-import lm_type_pos
+from lm.util import lm_tag_reader
+from lm import lm_consts
+
+from lm.type import lm_type_pos
 
 class CTag(object):
 
@@ -17,10 +18,6 @@ class CTag(object):
 		
 	def get_val(self, idx):
 		return self._data[idx]
-		
-	def get_as_mat(self, idx):
-		# TODO
-		raise NotImplementedError
 		
 	def get_id(self):
 		return lm_consts.TAG_POS_LIST

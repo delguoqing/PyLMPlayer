@@ -1,5 +1,5 @@
-import lm_tag_reader
-import lm_consts
+from lm.util import lm_tag_reader
+from lm import lm_consts
 
 class CTag(object):
 

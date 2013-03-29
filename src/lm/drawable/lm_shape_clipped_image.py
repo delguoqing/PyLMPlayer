@@ -18,8 +18,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self.shader = lm_shader.cxform_shader
 					
 	def draw(self):
-		glEnable(GL_BLEND)
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		self.blend_mode.setup()
 		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
@@ -38,4 +37,3 @@ class CDrawable(lm_drawable.CDrawable):
 		self._vertex_list.draw(GL_QUADS)
 		
 		self.shader.unbind()
-		glDisable(GL_BLEND)

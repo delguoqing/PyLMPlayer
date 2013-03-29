@@ -17,6 +17,8 @@ class CDrawable(lm_drawable.CDrawable):
 		self.shader = util.lm_shader.cxform_shader_no_texture
 		
 	def draw(self):
+		self.blend_mode.setup()
+		
 		self.shader.bind()
 		c = self._tot_cadd
 		self.shader.uniformf("color_add", c.r, c.g, c.b, c.a)

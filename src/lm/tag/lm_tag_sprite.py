@@ -1,5 +1,5 @@
-import lm_tag_reader
-import lm_consts
+from lm.util import lm_tag_reader
+from lm import lm_consts
 
 class CTag(object):
 
@@ -18,3 +18,5 @@ class CTag(object):
 		
 	def add_shape_tag(self, tag):
 		self._shape_tags.append(tag)
+		
+	def instantiate(self, name, inst_id, matrix, cadd, cmul, )

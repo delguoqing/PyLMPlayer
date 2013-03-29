@@ -1,5 +1,5 @@
-import lm_tag_reader
-import lm_consts
+from lm.util import lm_tag_reader
+from lm import lm_consts
 import lm_type_img
 
 class CTag(object):
@@ -11,7 +11,7 @@ class CTag(object):
 		_data = []
 		for info in d["img_list"]:
 			fname = ctx.str_list.get_value(info["name_idx"])
-			img = lm_type_img.CType(info["img_idx"], fname, info["width"], info["height"])
+			img = lm_type_img.CType(fname, info["img_idx"], info["width"], info["height"])
 			_data.append(img)
 		self.ctx = ctx
 		self._data = tuple(_data)

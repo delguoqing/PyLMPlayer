@@ -1,5 +1,5 @@
 import lm_tag_base
-import lm_consts
+from lm import lm_consts
 import lm_type_pos
 
 class CTag(lm_tag_base.CTag):

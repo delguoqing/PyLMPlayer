@@ -1,4 +1,5 @@
 from lm.type import lm_type_color
+from lm.type import lm_type_blend_mode
 
 class CDrawable(object):
 
@@ -6,7 +7,7 @@ class CDrawable(object):
 		self.color_add = lm_type_color.null_cadd
 		self.color_mul = lm_type_color.null_cmul
 		self.matrix = None
-		self.blend_mode = None
+		self.blend_mode = lm_type_blend_mode.null_blend
 		self.depth = None
 		self.parent = parent
 

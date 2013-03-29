@@ -55,7 +55,7 @@ def create_shape2(texture, coords):
 def create_sprite():
 	
 	asprite = lm_sprite.CDrawable(10)
-	matrix = lm_type_mat.CType((-360, 0), (1.0, 1.0), (0.0, 0.0))
+	matrix = lm_type_mat.CType((-360, 0))
 	asprite.set_matrix(matrix)
 	
 	for i in xrange(10):

@@ -19,11 +19,10 @@ class CDrawable(lm_drawable.CDrawable):
 		self.shader = lm_shader.cxform_shader		
 
 	def draw(self):
+		self.blend_mode.setup()
+		
 		glEnable(self._texture.target)
 		glBindTexture(self._texture.target, self._texture.id)
-		
-		glEnable(GL_BLEND)
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
@@ -38,4 +37,3 @@ class CDrawable(lm_drawable.CDrawable):
 		self._vertex_list.draw(GL_QUADS)
 		
 		self.shader.unbind()
-		glDisable(GL_BLEND)
