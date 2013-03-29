@@ -1,7 +1,7 @@
 import pyglet
 import lm_drawable
-import util.lm_shader
-import type.lm_type_color
+from lm.util import lm_shader
+from lm.type import lm_type_color
 
 from pyglet.gl import *
 

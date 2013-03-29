@@ -1,4 +1,4 @@
-import type.lm_type_color as lm_type_color
+from lm.type import lm_type_color
 
 class CDrawable(object):
 

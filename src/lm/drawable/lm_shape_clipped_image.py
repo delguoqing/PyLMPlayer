@@ -1,6 +1,6 @@
 import pyglet
 import lm_drawable
-import util.lm_shader as lm_shader
+from lm.util import lm_shader
 
 from pyglet.gl import *
 
