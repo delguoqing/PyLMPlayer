@@ -1,12 +1,13 @@
 from lm.util import lm_tag_reader
 from lm import lm_consts
 
-class CTag(object):
+import lm_tag_base
+
+class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
-		
-		fmt = ctx.format[self.get_id()]
-		d = lm_tag_reader.read_tag(fmt, tag)
+		super(CTag, self).__init__(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 		
 		self.max_character_id = d["max_character_id"]
 		self.start_character_id = d["start_character_id"]
@@ -16,6 +17,7 @@ class CTag(object):
 		self.x = d["x"]
 		self.y = d["y"]
 		self.ctx = ctx
-		
+	
+	@classmethod		
 	def get_id(self):
 		return lm_consts.TAG_STAGE_INFO

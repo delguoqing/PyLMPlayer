@@ -1,14 +1,14 @@
 from lm.util import lm_tag_reader
 from lm import lm_consts
-import lm_type_mat
+from lm.type import lm_type_mat
+import lm_tag_base
 
-class CTag(object):
+class CTag(lm_tag_base.CTag):
 
 	def __init__(self, ctx, tag):
-		fmt = ctx.format[self.get_id()]
-		d = lm_tag_reader.read_tag(fmt, tag)
-		
-		self.ctx = ctx
+		super(CTag, self).__init__(ctx, tag)
+		d = self.parse_tag(ctx, tag)
+
 		self._data = []
 		for info in d["mat_list"]:
 			mat = lm_type_mat.CType((info["trans_x"], info["trans_y"]), (info["scale_x"], info["scale_y"]), (info["rotateskew_x"], info["rotateskew_y"]))
@@ -17,6 +17,7 @@ class CTag(object):
 		
 	def get_val(self, idx):
 		return self._data[idx]
-		
-	def get_id(self):
+	
+	@classmethod
+	def get_id(cls):
 		return lm_consts.TAG_MAT_LIST

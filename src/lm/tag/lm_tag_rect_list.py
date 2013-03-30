@@ -1,22 +1,24 @@
-from lm.util import lm_tag_reader
 from lm import lm_consts
-import lm_type_rect
+from lm.util import lm_tag_reader
+from lm.type import lm_type_rect
 
-class CTag(object):
+import lm_tag_base
+
+class CTag(lm_tag_base.CTag):
 
 	def __init__(self, ctx, tag):
-		fmt = ctx.format[self.get_id()]
-		d = lm_tag_reader.read_tag(fmt, tag)
+		super(CTag, self).__init__(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 		
-		self.ctx = ctx
 		self._data = []
 		for info in d["box_list"]:
 			rect = lm_type_rect.CType(info["xmin"], info["ymin"], info["xmax"], info["ymax"])
 			self._data.append(rect)
 			
-	def get_value(self, idx):
+	def get_val(self, idx):
 		return self._data[idx]
 	
+	@classmethod
 	def get_id(self):
 		return lm_consts.TAG_RECT_LIST
 			

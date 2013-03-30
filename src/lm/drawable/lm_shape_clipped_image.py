@@ -1,6 +1,7 @@
 import pyglet
 import lm_drawable
 from lm.util import lm_shader
+from lm.type import lm_type_rect
 
 from pyglet.gl import *
 
@@ -16,8 +17,12 @@ class CDrawable(lm_drawable.CDrawable):
 				coords[10], coords[7], coords[14], coords[3])),
 		)
 		self.shader = lm_shader.cxform_shader
-					
+		self._rect = lm_type_rect.CType(coords[0], coords[1], coords[8], coords[9])
+		
 	def draw(self):
+#		center = self._rect.get_center()
+#		glTranslatef(-center[0], -center[1], 0)
+		
 		self.blend_mode.setup()
 		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)

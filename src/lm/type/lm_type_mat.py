@@ -14,3 +14,5 @@ class CType(object):
 			0, 0, 1, 0,
 			self.translate[0], self.translate[1], 0, 1,
 		)
+		
+null_mat = CType((0.0, 0.0))

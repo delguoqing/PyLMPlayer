@@ -1,12 +1,13 @@
 from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
+from lm.type import lm_type_mat
 
 class CDrawable(object):
 
 	def __init__(self, parent=None):
 		self.color_add = lm_type_color.null_cadd
 		self.color_mul = lm_type_color.null_cmul
-		self.matrix = None
+		self.matrix = lm_type_mat.null_mat
 		self.blend_mode = lm_type_blend_mode.null_blend
 		self.depth = None
 		self.parent = parent

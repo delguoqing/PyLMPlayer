@@ -14,7 +14,7 @@ class CDrawable(lm_drawable.CDrawable):
 				coords[5], coords[8], coords[9], coords[12], coords[13])),
 			("c4B/static", (color.rB, color.gB, color.bB, color.aB) * 4),
 			)
-		self.shader = util.lm_shader.cxform_shader_no_texture
+		self.shader = lm_shader.cxform_shader_no_texture
 		
 	def draw(self):
 		self.blend_mode.setup()

@@ -338,6 +338,7 @@ DATA = {
 		("tag_size", 0x4, ">I"),
 		("as_idx", 0x4, ">I"),
 		("clip_event_flags", 0x4, ">I"),
+		("unk0", 0x0, ">I"),
 	),
 
 	# Define Button2

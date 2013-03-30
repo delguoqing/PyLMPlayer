@@ -1,5 +1,5 @@
 from lm import lm_consts
-import lm_type_color
+from lm.type import lm_type_color
 import lm_tag_base
 
 class CTag(lm_tag_base.CTag):
@@ -10,7 +10,7 @@ class CTag(lm_tag_base.CTag):
 
 		self._data = []
 		for c in d["color_list"]:
-			c = lm_type_color.CType(c["R"], c["G"], c["B"], c["A"])
+			c = lm_type_color.CType(c["R"]/256.0, c["G"]/256.0, c["B"]/256.0, c["A"]/256.0)
 			self._data.append(c)
 		self._data = tuple(self._data)
 		

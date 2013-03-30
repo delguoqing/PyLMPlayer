@@ -18,8 +18,9 @@ class CType(object):
 			else:
 				break
 		
-		# fall back to a empty file
-		self._texture = CheckerImagePattern().create_image(width, height)
+		if self._texture is None:
+			# fall back to a empty file
+			self._texture = CheckerImagePattern().create_image(int(width), int(height))
 
 	def get_texture(self):
 		return self._texture.get_texture()

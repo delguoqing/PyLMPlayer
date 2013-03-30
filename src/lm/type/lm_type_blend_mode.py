@@ -1,21 +1,19 @@
 from pyglet.gl import *
-import lm import lm_consts
+from lm import lm_consts
 
 class CType(object):
 	
-	BLEND_ARG = {
-		lm_consts.BLEND_ALPHA: (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA),
+	BLEND_FUNC = {
+		lm_consts.BLEND_NORMAL: (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA),
+		lm_consts.BLEND_NORMAL1: (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA),
 	}
 	
 	def __init__(self, blend_mode_idx):
-		self.idx = blend_mode_idx
+		self._idx = blend_mode_idx
 		
 	def setup(self):
-		if self._idx == lm_consts.BLEND_NONE or self._idx not in self.BLEND_FUNC:
-			glDisable(GL_BLEND)
-			return
-		src, dst = self.BLEND_FUNC[self.idx]
+		src, dst = self.BLEND_FUNC[self._idx]
 		glEnable(GL_BLEND)
 		glBlendFunc(src, dst)
 
-null_blend = CType(lm_consts.BLEND_ALPHA)
+null_blend = CType(lm_consts.BLEND_NORMAL)
