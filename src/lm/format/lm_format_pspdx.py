@@ -284,25 +284,29 @@ DATA = {
 	0x000A: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
-		("unk_cnt", 0x4, "<I"),
-		("unk_list", "g['unk_cnt']", "list",
+		("font_cnt", 0x4, "<I"),
+		("font_list", "g['font_cnt']", "list",
 			(
-				("unk0", 0x4, "<I"),
-				("unk1", 0x4, "<I"),
-				("unk2", 0x4, "<I"),
-				("unk3", 0x4, "<I"),
+				("idx", 0x2, "<H"),
+				("unk1", 0x2, "<H"),
+				("name_idx", 0x2, "<H"),
+				("unk3", 0x2, "<H"),
 				("unk4", 0x4, "<I"),
 			)
 		),
 	),
 	
+	# Do Action
+	# `unk0` is unknown value.
 	0x000C: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
 		("as_idx", 0x2, "<H"),
 		("unk0", 0x2, "<H"),
 	),
-					
+		
+	# Frame Label Tag
+	# `unk0` is unknown value.	
 	0x002B: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
@@ -311,19 +315,26 @@ DATA = {
 		("unk0", 0x4, "<I"),
 	),
 
+	# Remove Object Tag
+	# `unk0`, `unk1` are unknown values
 	0x0005: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
 		("unk0", 0x0, "<I"),
+		("unk1", 0x2, "<H"),		
 		("depth", 0x2, "<H"),
-		("unk1", 0x2, "<H"),
 	),
 
+	# Clip Action
+	# TODO:
+	#  1.verify if `clip_event_flags` corresponds to only one event
+	#  2.verify if `key_code` evers evaluates to non-zero.
 	0xF014: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
 		("as_idx", 0x2, "<H"),
 		("clip_event_flags", 0x2, "<H"),
+		("key_code", 0x4, "<I"),
 	),
 
 	# Define Button2
@@ -364,17 +375,19 @@ DATA = {
 	),
 
 	# Define Edit Text?
+	# TODO: need to fix this. Used in DOJO_MENU.LM just copied from wii format 
+	# and fix the total size.
 	0x0025: (
 		("tag_type", 0x2, "<H"),
 		("tag_size", 0x2, "<H"),
-		("character_id", 0x4, "<I"),
-		("font_id", 0x4, "<I"),		
-		("init_txt_idx", 0x4, "<I"),
-		("font_class_name_idx", 0x4, "<I"),		
-		("color_idx", 0x4, "<I"),
-		("rect_idx", 0x4, "<I"),		
-		("var_name_idx", 0x4, "<I"),	# idx of name of variable
-		("unk0", 0x4, "<I"),
+		("character_id", 0x2, "<H"),
+		("font_id", 0x2, "<H"),		
+		("init_txt_idx", 0x2, "<H"),
+		("font_class_name_idx", 0x2, "<H"),		
+		("color_idx", 0x2, "<H"),
+		("rect_idx", 0x2, "<H"),		
+		("var_name_idx", 0x2, "<H"),	# idx of name of variable
+		("unk0", 0x2, "<H"),
 		("align", 0x2, "<H"),
 		("max_length", 0x2, "<H"),		
 		("flags0", 0x4, "<I"),		

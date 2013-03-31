@@ -22,10 +22,27 @@ class CTag(lm_tag_base.CTag):
 		self._blend_mode = lm_type_blend_mode.CType(d["blend_mode"])
 		self._clip_depth = d["clip_depth"]	# how to impl?
 		
+		self._cadd = None
+		if d["color_add_idx"] >= 0:
+			self._cadd = self.ctx.color_list.get_val(d["color_add_idx"])
+		
+		self._cmul = None
+		if d["color_mul_idx"] >= 0:
+			self._cmul = self.ctx.color_list.get_val(d["color_mul_idx"])
+		
+		self._clip_action_cnt = d["clip_action_cnt"]
+		self._clip_action_tags = []
+		
+	def add_sub_tag(self, tag):
+		self._clip_action_tags.append(tag)
+		
+	def get_sub_tag_cnt(self):
+		return self._clip_action_cnt
+		
 	def _get_matrix(self, trans_idx):
 		ctx = self.ctx
 		if trans_idx == -1:
-			return lm_type_mat.null_mat
+			return None
 		elif trans_idx >= 0:
 			return ctx.mat_list.get_val(trans_idx)
 		else:
@@ -36,14 +53,27 @@ class CTag(lm_tag_base.CTag):
 			mask = (1 << (size * 8 - 1))-1
 			trans_idx &= mask
 			return ctx.pos_list.get_val(trans_idx).to_mat()
-			
-	def execute(self, env):
-		target = env.get_target()
 		
-		char_dict = self.ctx["char_dict"]
-		char_tag = char_dict.get(self._char_id)
+	# Execute Place Object(3) Tag
+	#    1. it may change the status of an exsiting character
+	#    2. or it may add a new character to the timeline
+	def execute(self, target=None):
+		# Must have a target
+		if not target: return
 		
-		char_tag.instantiate()
+		if self._has_char:
+			char_tag = self.ctx.get_character(self._char_id)
+			print char_tag.get_id()
+			inst = char_tag.instantiate(parent=target)
+			if target:
+				target.add_drawable(inst, self._depth)
+		else:
+			inst = target.get_drawable(self._depth)
+		if self._mat:
+			inst.set_matrix(self._mat)
+		if self._cadd or self._cmul:
+			inst.set_cxform(self._cadd, self._cmul)
+		inst.set_blend_mode(self._blend_mode)
 	
 	@classmethod
 	def get_id(cls):

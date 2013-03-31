@@ -18,13 +18,15 @@ class CDrawable(object):
 		self._super_cadd = lm_type_color.null_cadd
 		self._super_cmul = lm_type_color.null_cmul
 		self._update_cxform()
-				
+						
 	def draw(self):
 		raise NotImplementedError
 	
 	def set_cxform(self, cadd, cmul):
-		self.color_add = cadd or lm_type_color.null_cadd
-		self.color_mul = cmul or lm_type_color.null_cmul
+		if cadd:
+			self.color_add = cadd
+		if cmul:
+			self.color_mul = cmul
 		self._update_cxform()
 	
 	def apply_cxform(self, cadd, cmul):
@@ -38,9 +40,10 @@ class CDrawable(object):
 		self._is_dirty = True
 			
 	def set_matrix(self, matrix):
-		self.matrix = matrix
+		if matrix:
+			self.matrix = matrix
 			
-	def set_blend_mode(self, mode):
+	def set_blend_mode(self, blend_mode):
 		self.blend_mode = blend_mode
 		
 	def set_depth(self, depth):

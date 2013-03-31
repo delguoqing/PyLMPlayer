@@ -13,7 +13,7 @@ class CDrawable(lm_drawable.CDrawable):
 		drawable.set_depth(depth)
 		
 	def get_drawable(self, depth):
-		return self._drawable(depth)
+		return self._drawables[depth]
 		
 	def remove_drawable(self, depth):
 		self._drawables[depth] = None

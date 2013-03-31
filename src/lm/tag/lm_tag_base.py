@@ -15,3 +15,9 @@ class CTag(object):
 	@classmethod
 	def get_id(cls):
 		raise NotImplementedError
+		
+	def add_sub_tag(self, tag):
+		raise NotImplementedError
+		
+	def get_sub_tag_cnt(self):
+		raise NotImplementedError

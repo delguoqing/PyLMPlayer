@@ -14,37 +14,38 @@ class CTag(lm_tag_base.CTag):
 		
 		self.coords = [0] * 16
 		
-		u_min = min(d["u0"], d["u1"], d["u2"], d["u3"])
-		u_max = max(d["u0"], d["u1"], d["u2"], d["u3"])
-		v_min = min(d["v0"], d["v1"], d["v2"], d["v3"])
-		v_max = max(d["v0"], d["v1"], d["v2"], d["v3"])
+		x_min = min(d["x0"], d["x1"], d["x2"], d["x3"])
+		x_max = max(d["x0"], d["x1"], d["x2"], d["x3"])
+		y_min = min(d["y0"], d["y1"], d["y2"], d["y3"])
+		y_max = max(d["y0"], d["y1"], d["y2"], d["y3"])
 		
 		for i in xrange(4):
 			u = d["u%d" % i]
 			v = d["v%d" % i]
 			x = d["x%d" % i]
 			y = d["y%d" % i]
-			if u == u_min and v == v_min:
+			if x == x_min and y == y_min:
 				self.coords[0*4+0] = x
 				self.coords[0*4+1] = y
-				self.coords[0*4+2] = u
-				self.coords[0*4+3] = v
-			elif u == u_max and v == v_min:
+				self.coords[0*4+2] = 0
+				self.coords[0*4+3] = 0
+			elif x == x_max and y == y_min:
 				self.coords[1*4+0] = x
 				self.coords[1*4+1] = y
-				self.coords[1*4+2] = u
-				self.coords[1*4+3] = v
-			elif u == u_max and v == v_max:
+				self.coords[1*4+2] = 1
+				self.coords[1*4+3] = 0
+			elif x == x_max and y == y_max:
 				self.coords[2*4+0] = x
 				self.coords[2*4+1] = y
-				self.coords[2*4+2] = u
-				self.coords[2*4+3] = v
-			elif u == u_min and v == v_max:
+				self.coords[2*4+2] = 1
+				self.coords[2*4+3] = 1
+			elif x == x_min and y == y_max:
 				self.coords[3*4+0] = x
 				self.coords[3*4+1] = y
-				self.coords[3*4+2] = u
-				self.coords[3*4+3] = v
+				self.coords[3*4+2] = 0
+				self.coords[3*4+3] = 1
 		
+		print self.coords
 		self.fill_style = d["fill_style"]
 		self.fill_idx = d["fill_idx"]
 		

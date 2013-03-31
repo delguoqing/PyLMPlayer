@@ -27,8 +27,7 @@ class CContex(object):
 		
 	def set_platform(self, platform):
 		self.format = __import__("lm.format.lm_format_%s" % platform, fromlist=["lm", "format"])
-		print dir(self.format)
-		
+				
 	def set_str_list(self, tag):
 		self.str_list = tag
 	def set_color_list(self, tag):
@@ -71,7 +70,6 @@ def load(filename, root, platform):
 	# read LM file data
 	f = open(filename, "rb")
 	data = f.read()
-	f.close()
 	
 	# build initial contex
 	ctx = CContex()
@@ -79,23 +77,26 @@ def load(filename, root, platform):
 	ctx.set_platform(platform)
 	
 	# start parsing
-	data = data[0x40:]
-	while data:
+	f.seek(0x40)
+	while True:
+		data = f.read(ctx.format.HEADER_SIZE)
+		if not data:
+			break
 		header = lm_tag_reader.read_tag(ctx.format.DATA[0xFF00], data)
 		tag_type, tag_size = header["tag_type"], header["tag_size"]
-		tag_size_bytes = tag_size * 4 + ctx.format.HEADER_SIZE
 		tag_name = lm_format_map.MAP.get(tag_type)
+		data = data + f.read(tag_size * 4)
 		
 		# This tag is not handled a.t.m
 		if not tag_name:
-			data = data[tag_size_bytes:]
+			assert tag_type != 0x0027
 			continue
 			
 		# try find a handler module
 		try:
 			module = __import__("lm.tag.lm_tag_%s" % tag_name, fromlist=["lm", "tag"])
 		except ImportError:
-			data = data[tag_size_bytes:]
+			assert tag_type != 0x0027, tag_name
 			continue
 		
 		# handle different tags	
@@ -117,11 +118,30 @@ def load(filename, root, platform):
 			ctx.set_rect_list(_t)
 			
 		# ---------- DRAWABLES ---------
+		elif tag_type == lm_consts.TAG_MOVIECLIP:
+			ctx.add_super_tag(_t, _t.get_sub_tag_cnt(), ctx.add_movieclip)
 		elif tag_type == lm_consts.TAG_SPRITE:
 			ctx.add_super_tag(_t, _t.get_sub_tag_cnt(), ctx.add_sprite)
 		elif tag_type in (lm_consts.TAG_SHAPE, lm_consts.TAG_SHAPE2):
 			ctx.add_sub_tag(_t)
-			
-		data = data[tag_size_bytes:]
+		elif tag_type == lm_consts.TAG_PLACE_OBJ:
+			if _t.get_sub_tag_cnt() == 0:	# any clip action follows?
+				ctx.add_sub_tag(_t)
+			else:
+				ctx.add_super_tag(_t, _t.get_sub_tag_cnt(), ctx.add_sub_tag)
+		elif tag_type == lm_consts.TAG_REMOVE_OBJ:
+			ctx.add_sub_tag(_t)				
+		elif tag_type == lm_consts.TAG_CLIP_ACTION:
+			ctx.add_sub_tag(_t)
+		elif tag_type == lm_consts.TAG_DO_ACTION:
+			ctx.add_sub_tag(_t)
+		elif tag_type in (lm_consts.TAG_FRAME, lm_consts.TAG_KEY_FRAME):
+			if _t.get_sub_tag_cnt() == 0:
+				ctx.add_sub_tag(_t)
+			else:
+				ctx.add_super_tag(_t, _t.get_sub_tag_cnt(), ctx.add_sub_tag)
+		elif tag_type == lm_consts.TAG_FRAME_LABEL:
+			ctx.add_sub_tag(_t)
 		
+	f.close()
 	return ctx

@@ -1,5 +1,6 @@
 import lm_tag_base
 from lm import lm_consts
+from lm.as_object import as_movieclip
 
 class CTag(lm_tag_base.CTag):
 	
@@ -9,13 +10,17 @@ class CTag(lm_tag_base.CTag):
 		
 		self.character_id = d["character_id"]
 		self.max_depth = d["max_depth"]
-		self.class_name = d["class_name"]
+		self.class_name = self.ctx.str_list.get_val(d["class_name_idx"])
 
+		self._key_frame_cnt = d["key_frame_cnt"]
+		self._frame_cnt = d["0001_cnt"]
+		self._frame_label_cnt = d["frame_label_cnt"]
+		
+		self._frame_tags = []
 		self._frame_label_tags = []
 		self._key_frame_tags = []
-		self._frame_tags = []
 	
-	def add_ctrl_tag(self, tag):
+	def add_sub_tag(self, tag):
 		id = tag.get_id()
 		if id == lm_consts.TAG_FRAME_LABEL:
 			self._add_frame_label_tag(tag)
@@ -25,6 +30,12 @@ class CTag(lm_tag_base.CTag):
 			self._add_key_frame_tag(tag)
 		else:
 			assert False, "Can't add tag 0x%x to MovieClip!"
+
+	def get_character_id(self):
+		return self.character_id
+				
+	def get_sub_tag_cnt(self):
+		return self._key_frame_cnt + self._frame_cnt + self._frame_label_cnt
 		
 	def _add_frame_label_tag(self, tag):
 		self._frame_label_tags.append(tag)
@@ -38,3 +49,8 @@ class CTag(lm_tag_base.CTag):
 	@classmethod
 	def get_id(cls):
 		return lm_consts.TAG_MOVIECLIP
+		
+	def instantiate(self, parent=None):
+		inst = as_movieclip.CObj(self._frame_tags, self.max_depth, parent)
+		return inst
+		

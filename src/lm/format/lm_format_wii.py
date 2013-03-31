@@ -333,12 +333,15 @@ DATA = {
 		("unk1", 0x2, ">H"),
 	),
 
+	# Clip Action
+	# TODO:
+	#   Why is `key_code` missing?
 	0xF014: (
 		("tag_type", 0x4, ">I"),
 		("tag_size", 0x4, ">I"),
 		("as_idx", 0x4, ">I"),
 		("clip_event_flags", 0x4, ">I"),
-		("unk0", 0x0, ">I"),
+		("key_code", 0x0, ">I"),
 	),
 
 	# Define Button2
