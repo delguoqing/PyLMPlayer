@@ -17,7 +17,7 @@ from lm.drawable import lm_sprite
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
 window = pyglet.window.Window(480*2, 272*2)
-fps_display = pyglet.clock.ClockDisplay()
+#fps_display = pyglet.clock.ClockDisplay()
 
 @window.event
 def on_draw():
@@ -37,17 +37,18 @@ def on_draw():
 	global movieclip
 	movieclip.draw()
 
-	fps_display.draw()
+#	fps_display.draw()
 	
 def update(dt):
 	global movieclip
 	movieclip.advance()
+	print pyglet.clock.get_fps()
 pyglet.clock.schedule_interval(update, 0.01666666666)
 
 # --------- experiment cases ------------------
 
-ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_IDOL_HIBIKI.LM", "C:/png", "pspdx")
-movieclip = ctx.get_character(40).instantiate(parent=None)
-movieclip.set_matrix(lm_type_mat.CType((100, 200)))
+ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_11.LM", "C:/png", "pspdx")
+movieclip = ctx.get_character(52).instantiate(parent=None)
+#movieclip.set_matrix(lm_type_mat.CType((100, 200)))
 	
 pyglet.app.run()

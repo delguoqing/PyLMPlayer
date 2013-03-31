@@ -7,13 +7,9 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, color, coords, parent=None):
+	def __init__(self, vertex_list, parent=None):
 		super(CDrawable, self).__init__(parent)
-		self._vertex_list = pyglet.graphics.vertex_list(4,
-			("v2f/static", (coords[0], coords[1], coords[4], 
-				coords[5], coords[8], coords[9], coords[12], coords[13])),
-			("c4B/static", (color.rB, color.gB, color.bB, color.aB) * 4),
-			)
+		self._vertex_list = vertex_list
 		self.shader = lm_shader.cxform_shader_no_texture
 		
 	def draw(self):

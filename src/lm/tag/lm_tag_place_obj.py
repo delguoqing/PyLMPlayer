@@ -63,7 +63,6 @@ class CTag(lm_tag_base.CTag):
 		
 		if self._has_char:
 			char_tag = self.ctx.get_character(self._char_id)
-			print char_tag.get_id()
 			inst = char_tag.instantiate(parent=target)
 			if target:
 				target.add_drawable(inst, self._depth)

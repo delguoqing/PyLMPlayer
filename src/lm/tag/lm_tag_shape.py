@@ -1,3 +1,4 @@
+import pyglet
 import lm_tag_base
 
 from lm import lm_consts
@@ -45,27 +46,40 @@ class CTag(lm_tag_base.CTag):
 				self.coords[3*4+2] = 0
 				self.coords[3*4+3] = 1
 		
-		print self.coords
 		self.fill_style = d["fill_style"]
 		self.fill_idx = d["fill_idx"]
+		coords = self.coords
 		
+		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
+			color = self.ctx.color_list.get_val(self.fill_idx)
+			self._vertex_list = pyglet.graphics.vertex_list(4,
+				("v2f/static", (coords[0], coords[1], coords[4], 
+					coords[5], coords[8], coords[9], coords[12], coords[13])),
+				("c4B/static", (color.rB, color.gB, color.bB, color.aB) * 4),
+			)
+		else:
+			self._vertex_list = pyglet.graphics.vertex_list(4,
+				("v2f/static", (coords[0], coords[1], coords[4], coords[5],
+					coords[8], coords[9], coords[12], coords[13])),
+				("t2f/static", (coords[2], coords[15], coords[6], coords[11],
+					coords[10], coords[7], coords[14], coords[3])),
+			)
 	@classmethod
 	def get_id(cls):
 		return lm_consts.TAG_SHAPE
 		
 	def instantiate(self, parent=None):
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
-			color = self.ctx.color_list.get_val(self.fill_idx)
-			shape = lm_shape_solid_color.CDrawable(color, self.coords, 
+			shape = lm_shape_solid_color.CDrawable(self._vertex_list,
 				parent=parent)
 		elif self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
 			image = self.ctx.img_list.get_val(self.fill_idx)
 			shape = lm_shape_clipped_image.CDrawable(image.get_texture(), 
-				self.coords, parent=parent)
+				self._vertex_list, parent=parent)
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
 			image = self.ctx.img_list.get_val(self.fill_idx)
 			shape = lm_shape_tiled_image.CDrawable(image.get_texture(), 
-				self.coords, parent=parent)
+				self._vertex_list, parent=parent)
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
 		return shape

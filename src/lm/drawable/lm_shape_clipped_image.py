@@ -7,21 +7,13 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, texture, coords, parent=None):
+	def __init__(self, texture, vertex_list, parent=None):
 		super(CDrawable, self).__init__(parent)
 		self._texture = texture
-		self._vertex_list = pyglet.graphics.vertex_list(4,
-			("v2f/static", (coords[0], coords[1], coords[4], coords[5],
-				coords[8], coords[9], coords[12], coords[13])),
-			("t2f/static", (coords[2], coords[15], coords[6], coords[11],
-				coords[10], coords[7], coords[14], coords[3])),
-		)
+		self._vertex_list = vertex_list
 		self.shader = lm_shader.cxform_shader
-		self._rect = lm_type_rect.CType(coords[0], coords[1], coords[8], coords[9])
 		
 	def draw(self):
-#		center = self._rect.get_center()
-#		glTranslatef(-center[0], -center[1], 0)
 		
 		self.blend_mode.setup()
 		
