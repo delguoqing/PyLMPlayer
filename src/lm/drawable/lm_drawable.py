@@ -2,6 +2,9 @@ from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
 from lm.type import lm_type_mat
 
+import pyglet
+import lm_render_state
+
 class CDrawable(object):
 
 	def __init__(self, parent=None):
@@ -18,8 +21,14 @@ class CDrawable(object):
 		self._super_cadd = lm_type_color.null_cadd
 		self._super_cmul = lm_type_color.null_cmul
 		self._update_cxform()
-						
-	def draw(self):
+		
+		if parent is None:
+			self._batch = pyglet.graphics.Batch()
+			self._render_state = lm_render_state.CObj()
+		else:
+			self._batch = self.parent._batch
+			
+	def draw(self, render_state):
 		raise NotImplementedError
 	
 	def set_cxform(self, cadd, cmul):
@@ -29,6 +38,12 @@ class CDrawable(object):
 			self.color_mul = cmul
 		self._update_cxform()
 	
+	def get_color_add(self):
+		return self.color_add
+		
+	def get_color_mul(self):
+		return self.color_mul
+				
 	def apply_cxform(self, cadd, cmul):
 		self._super_cadd = cadd
 		self._super_cmul = cmul
@@ -42,6 +57,9 @@ class CDrawable(object):
 	def set_matrix(self, matrix):
 		if matrix:
 			self.matrix = matrix
+		
+	def get_matrix(self):
+		return self.matrix
 			
 	def set_blend_mode(self, blend_mode):
 		self.blend_mode = blend_mode

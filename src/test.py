@@ -14,13 +14,25 @@ from lm.drawable import lm_shape_clipped_image
 from lm.drawable import lm_shape_tiled_image
 from lm.drawable import lm_sprite
 
-
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480*2, 272*2)
+window = pyglet.window.Window(480, 272)
 #fps_display = pyglet.clock.ClockDisplay()
 
+# one frame movieclip can be drawn as a display_list
+
+@window.event
+def on_key_press(symbol, modifiers):
+	if symbol == pyglet.window.key.SPACE:
+		global movieclip
+		movieclip.play()
+    
 @window.event
 def on_draw():
+	# switch off some expensive operation
+	glShadeModel(GL_FLAT)
+	glDisable(GL_DEPTH_TEST)
+	glDisable(GL_DITHER)
+	
 	# change default pyglet setting, for a origin at left top corner
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
@@ -35,20 +47,21 @@ def on_draw():
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 	global movieclip
-	movieclip.draw()
+#	for i in xrange(30):
+	movieclip.draw(movieclip._render_state)
 
 #	fps_display.draw()
 	
 def update(dt):
 	global movieclip
 	movieclip.advance()
-	print pyglet.clock.get_fps()
-pyglet.clock.schedule_interval(update, 0.01666666666)
+#	print pyglet.clock.get_fps()
+pyglet.clock.schedule_interval(update, 0.0333333333)
 
 # --------- experiment cases ------------------
 
-ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_11.LM", "C:/png", "pspdx")
-movieclip = ctx.get_character(52).instantiate(parent=None)
-#movieclip.set_matrix(lm_type_mat.CType((100, 200)))
+ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_10.LM", "D:/tmp_dl/disasmTNT/GimConv/png", "pspdx")
+movieclip = ctx.get_character(40).instantiate(parent=None)
+#movieclip.set_matrix(lm_type_mat.CType((100, 0)))
 	
 pyglet.app.run()

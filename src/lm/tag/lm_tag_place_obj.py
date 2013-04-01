@@ -57,21 +57,32 @@ class CTag(lm_tag_base.CTag):
 	# Execute Place Object(3) Tag
 	#    1. it may change the status of an exsiting character
 	#    2. or it may add a new character to the timeline
+	#
+	# Notice:
+	#	a new character replacing an old character which has no matrix(cxform) 
+	# will have to use the old character's matrix(cxform)
 	def execute(self, target=None):
 		# Must have a target
 		if not target: return
 		
+		old_inst = target.get_drawable(self._depth)
 		if self._has_char:
 			char_tag = self.ctx.get_character(self._char_id)
 			inst = char_tag.instantiate(parent=target)
-			if target:
-				target.add_drawable(inst, self._depth)
+			target.add_drawable(inst, self._depth)
 		else:
 			inst = target.get_drawable(self._depth)
+			
 		if self._mat:
 			inst.set_matrix(self._mat)
+		elif old_inst:
+			inst.set_matrix(old_inst.get_matrix())
+			
 		if self._cadd or self._cmul:
 			inst.set_cxform(self._cadd, self._cmul)
+		elif old_inst:
+			inst.set_cxform(old_inst.get_color_add(), old_inst.get_color_mul())
+			
 		inst.set_blend_mode(self._blend_mode)
 	
 	@classmethod

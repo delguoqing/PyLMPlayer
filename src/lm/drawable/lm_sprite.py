@@ -5,15 +5,15 @@ import lm_drawable_container
 from pyglet.gl import *
 
 class CDrawable(lm_drawable_container.CDrawable):
-				
-	def draw(self):
+
+	def draw(self, render_state):
 		glPushMatrix()
 		glMultMatrixf(self.matrix.get_ctype())
 		
 		for drawable in self:
 			if self._is_dirty:
 				drawable.apply_cxform(self._tot_cadd, self._tot_cmul)
-			drawable.draw()
+			drawable.draw(render_state)
 		self._is_dirty = False
 		
 		glPopMatrix()

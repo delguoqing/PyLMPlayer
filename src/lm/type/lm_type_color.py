@@ -36,6 +36,7 @@ class CType(object):
 		return CType(self.r+o.r, self.g+o.g, self.b+o.b, self.a+o.a)
 	def __str__(self):
 		return "(%.2f, %.2f, %.2f, %.2f)" % (self.r, self.g, self.b, self.a)
-		
+	def __eq__(self, o):
+		return self._r == o._r and self._g == o._g and self._b == o._b and self._a == o._a
 null_cadd = CType(0.0, 0.0, 0.0, 0.0)
 null_cmul = CType(1.0, 1.0, 1.0, 1.0)

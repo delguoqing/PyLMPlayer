@@ -51,6 +51,6 @@ class CTag(lm_tag_base.CTag):
 		return lm_consts.TAG_MOVIECLIP
 		
 	def instantiate(self, parent=None):
-		inst = as_movieclip.CObj(self._frame_tags, self.max_depth, parent)
+		inst = as_movieclip.CObj(self._frame_tags, self.max_depth, parent=parent)
 		return inst
 		
