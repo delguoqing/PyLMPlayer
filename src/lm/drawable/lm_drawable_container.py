@@ -18,6 +18,18 @@ class CDrawable(lm_drawable.CDrawable):
 	def remove_drawable(self, depth):
 		self._drawables[depth] = None
 		
+	def refresh(self):
+		_matd = self._is_mat_dirty
+		_cxfd = self._is_cxform_dirty
+		super(CDrawable, self).refresh()
+	
+		for drawable in self:
+			if _matd:
+				drawable.apply_matrix(self._tot_mat)
+			if _cxfd:
+				drawable.apply_cxform(self._cadd, self._cmul)
+			drawable.refresh()
+			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)
 		

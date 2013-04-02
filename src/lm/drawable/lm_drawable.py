@@ -15,12 +15,15 @@ class CDrawable(object):
 		self.depth = None
 		self.parent = parent
 
-		self._is_dirty = True
+		self._is_cxform_dirty = False
 		self._tot_cadd = None
 		self._tot_cmul = None
 		self._super_cadd = lm_type_color.null_cadd
 		self._super_cmul = lm_type_color.null_cmul
-		self._update_cxform()
+		
+		self._is_mat_dirty = False
+		self._tot_mat = None
+		self._super_mat = lm_type_mat.null_mat
 		
 		if parent is None:
 			self._batch = pyglet.graphics.Batch()
@@ -34,9 +37,10 @@ class CDrawable(object):
 	def set_cxform(self, cadd, cmul):
 		if cadd:
 			self.color_add = cadd
+			self._is_cxform_dirty = True
 		if cmul:
 			self.color_mul = cmul
-		self._update_cxform()
+			self._is_cxform_dirty = True
 	
 	def get_color_add(self):
 		return self.color_add
@@ -47,19 +51,33 @@ class CDrawable(object):
 	def apply_cxform(self, cadd, cmul):
 		self._super_cadd = cadd
 		self._super_cmul = cmul
-		self._update_cxform()
+		self._is_cxform_dirty = True
 		
 	def _update_cxform(self):
 		self._tot_cadd = self.color_add * self._super_cmul + self._super_cadd
-		self._tot_cmul = self.color_mul * self._super_cmul
-		self._is_dirty = True
+		self._tot_cmul = self.color_mul * self._super_cmul		
 			
+	def apply_matrix(self, matrix):
+		self._super_mat = matrix
+		self._is_mat_dirty = True
+		
 	def set_matrix(self, matrix):
 		if matrix:
 			self.matrix = matrix
+			self._is_mat_dirty = True
+			
+	def _update_matrix(self):
+		self._tot_mat = self._super_mat * self.matrix
 		
 	def get_matrix(self):
 		return self.matrix
+		
+	def refresh(self):
+		if self._is_cxform_dirty:
+			self._update_cxform()
+		if self._is_mat_dirty:
+			self._update_mat()
+		self._is_cxform_dirty = self._is_mat_dirty = False
 			
 	def set_blend_mode(self, blend_mode):
 		self.blend_mode = blend_mode

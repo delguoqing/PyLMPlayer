@@ -8,39 +8,25 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, texture, vertex_list, parent=None):
+	def __init__(self, texture, rect, parent=None):
 		super(CDrawable, self).__init__(parent)
 		self._texture = texture
-		self._vertex_list = vertex_list
-		self.shader = lm_shader.cxform_shader
+		self._is_mat_dirty = True
+		self._is_cxform_dirty = True
+		self._rect = rect
+		self._create_vertex_list()
 		
-	def draw(self, render_state):
+	def _create_vertex_list(self):
+		self._vertex_list = self._batch.add(4, GL_QUADS, self._group,
+				'v2i/dynamic', 
+				'c4B', ('t2B', (0, 0, 1, 0, 1, 1, 0, 1)))
+				
+	def refresh(self):
+		_matd = self._is_mat_dirty
+		_cxfd = self._is_cxform_dirty
+		super(CDrawable, self).refresh()
 		
-		self.blend_mode.setup()
-		
-		render_state.set_active_texture(self._texture)
-	
-		has_cadd = (self._tot_cadd != lm_type_color.null_cadd)
-		has_cmul = (self._tot_cmul != lm_type_color.null_cmul)		
-		need_shader = has_cadd and has_cmul
-		use_tex_env = has_cmul
-			
-		if need_shader:
-			self.shader.bind()
-			self.shader.uniformi("sampler", 0)
-		
-			c = self._tot_cadd
-			self.shader.uniformf("color_add", c.r, c.g, c.b, c.a)
-			c = self._tot_cmul		
-			self.shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
-		elif use_tex_env:
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-			c = self._tot_cmul
-			glColor4f(c.r, c.g, c.b, c.a)
-			
-		self._vertex_list.draw(GL_QUADS)
-		
-		if need_shader:
-			self.shader.unbind()
-		elif use_tex_env:
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)			
+		if _matd:
+			self._vertex_list.vertices[:] = []
+		if _cxfd:
+			self._vertex_list.colors[:] = []

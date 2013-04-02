@@ -7,26 +7,20 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, vertex_list, parent=None):
+	def __init__(self, color, rect, parent=None):
 		super(CDrawable, self).__init__(parent)
-		self._vertex_list = vertex_list
-		self.shader = lm_shader.cxform_shader_no_texture
+		self._color = color
+		self._rect = rect
 		
-	def draw(self, render_state):
-		self.blend_mode.setup()
-	
-		has_cadd = (self._tot_cadd != lm_type_color.null_cadd)
-		has_cmul = (self._tot_cmul != lm_type_color.null_cmul)
-		need_shader = has_cadd or has_cmul
-			
-		if need_shader:
-			self.shader.bind()
-			c = self._tot_cadd
-			self.shader.uniformf("color_add", c.r, c.g, c.b, c.a)
-			c = self._tot_cmul
-			self.shader.uniformf("color_mul", c.r, c.g, c.b, c.a)
-			
-		self._vertex_list.draw(GL_QUADS)
+		self._vertex_list = self._batch.
 		
-		if need_shader:
-			self.shader.unbind()
+	def refresh(self):
+		_matd = self._is_mat_dirty
+		_cxfd = self._is_cxform_dirty
+		super(CDrawable, self).refresh()
+		
+		if _matd:
+			self._vertex_list.vertices[:] = []
+		if _cxfd:
+			v = self._color * self._tot_cmul + self._tot_cadd
+			self._vertex_list.colors[:] = [v.rB, v.gB, v.bB, v.aB] * 4

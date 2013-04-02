@@ -14,5 +14,20 @@ class CType(object):
 			0, 0, 1, 0,
 			self.translate[0], self.translate[1], 0, 1,
 		)
+	
+	def __mul__(self, o):
+		s = self.scale
+		r = self.rotateskew
+		t = self.translate
+		
+		s1 = o.scale
+		r1 = o.rotateskew
+		t1 = o.translate
+		
+		return CType(
+			(s[0]*t1[0]+r[1]*t1[1]+t[0], r[0]*t1[0]+s[1]*t1[1]+t[1]),
+			(s[0]*s1[0]+r[1]+r1[0], r[0]*r1[0]+s[1]*s1[1]),
+			(r[0]*s1[0]+s[1]*r1[0], s[0]*r1[1]+r[1]*s1[1])
+			)
 		
 null_mat = CType((0.0, 0.0))
