@@ -19,16 +19,16 @@ class CType(object):
 		return self._a
 	a = property(_get_a)
 	def _get_rB(self):
-		return int(self._r * 256)
+		return int(self._r * 255)
 	rB = property(_get_rB)
 	def _get_gB(self):
-		return int(self._g * 256)
+		return int(self._g * 255)
 	gB = property(_get_gB)
 	def _get_bB(self):
-		return int(self._b * 256)
+		return int(self._b * 255)
 	bB = property(_get_bB)
 	def _get_aB(self):
-		return int(self._a * 256)
+		return int(self._a * 255)
 	aB = property(_get_aB)
 	def __mul__(self, o):
 		return CType(self.r*o.r, self.g*o.g, self.b*o.b, self.a*o.a)

@@ -34,13 +34,16 @@ class CObj(lm_sprite.CDrawable):
 			if self._play_head >= self._total_frame:
 				# TODO:
 				#   Gabage collection?
-				#self._drawables = [None] * self._max_depth
-				#self._play_head = 0
+#				self.destroy()
+#				self._play_head = 0
 				pass
 			else:
 				self._frame_tags[self._play_head].execute(target=self)
 				self._play_head += 1
 		
+			if self._total_frame == 1:
+				self.stop()
+				
 		for drawable in self:
 			if hasattr(drawable, "advance"):
 				drawable.advance()

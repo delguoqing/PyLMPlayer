@@ -12,6 +12,9 @@ class CDrawable(lm_drawable.CDrawable):
 		self._drawables[depth] = drawable
 		drawable.set_depth(depth)
 		
+		drawable.apply_matrix(self._tot_mat)
+		drawable.apply_cxform(self._tot_cadd, self._tot_cmul)
+		
 	def get_drawable(self, depth):
 		return self._drawables[depth]
 		
@@ -27,8 +30,10 @@ class CDrawable(lm_drawable.CDrawable):
 			if _matd:
 				drawable.apply_matrix(self._tot_mat)
 			if _cxfd:
-				drawable.apply_cxform(self._cadd, self._cmul)
+				drawable.apply_cxform(self._tot_cadd, self._tot_cmul)
 			drawable.refresh()
+		
+#		print "container refreshed!"
 			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)
@@ -36,5 +41,5 @@ class CDrawable(lm_drawable.CDrawable):
 	def destroy(self):
 		for drawable in self:
 			drawable.destroy()
-		self._drawables = []
-		super(CDrawable, self).destroy()
+		self._drawables = [None] * self._max_depth
+#		super(CDrawable, self).destroy()

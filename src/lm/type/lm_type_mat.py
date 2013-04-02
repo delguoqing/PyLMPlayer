@@ -29,5 +29,12 @@ class CType(object):
 			(s[0]*s1[0]+r[1]+r1[0], r[0]*r1[0]+s[1]*s1[1]),
 			(r[0]*s1[0]+s[1]*r1[0], s[0]*r1[1]+r[1]*s1[1])
 			)
+	
+	def get_transformed_point(self, x, y):
+		return x * self.scale[0] + y * self.rotateskew[1] + self.translate[0],\
+			y * self.scale[1] + x * self.rotateskew[0] + self.translate[1]
+		
+	def __str__(self):
+		return "%f %f \n%f %f \n%f %f" % (self.translate + self.scale + self.rotateskew)
 		
 null_mat = CType((0.0, 0.0))

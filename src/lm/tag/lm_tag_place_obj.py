@@ -83,6 +83,9 @@ class CTag(lm_tag_base.CTag):
 		elif old_inst:
 			inst.set_cxform(old_inst.get_color_add(), old_inst.get_color_mul())
 			
+		if self._has_char and old_inst:
+			old_inst.destroy()
+			
 		inst.set_blend_mode(self._blend_mode)
 	
 	@classmethod

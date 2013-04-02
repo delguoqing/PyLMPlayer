@@ -1,6 +1,7 @@
 import os
 from pyglet.resource import texture
 from pyglet.image import CheckerImagePattern
+import pyglet
 
 class CType(object):
 	def __init__(self, filename, idx, width, height):
