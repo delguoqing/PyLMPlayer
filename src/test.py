@@ -65,9 +65,9 @@ def on_draw(dt):
 pyglet.clock.schedule(on_draw)
 
 # --------- experiment cases ------------------
-ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_14.LM", "C:/png", "pspdx")
+ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_04.LM", "C:/png", "pspdx")
 
-movieclip = ctx.get_character(29).instantiate(999, 0, parent=None)
+movieclip = ctx.get_character(144).instantiate(999, 0, parent=None)
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
 	
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

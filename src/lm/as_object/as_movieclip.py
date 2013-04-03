@@ -5,7 +5,7 @@ from lm.type import lm_type_mat
 
 class CObj(lm_sprite.CDrawable):
 	
-	def __init__(self, frame_tags, max_depth, inst_id, depth, parent=None):
+	def __init__(self, frame_tags, key_frame_tags, label_dict, max_depth, inst_id, depth, parent=None):
 		super(CObj, self).__init__(max_depth, inst_id, depth, parent=parent)
 		
 		self._play_head = 0	# 0-based frame id
@@ -15,12 +15,13 @@ class CObj(lm_sprite.CDrawable):
 		
 		# TODO:
 		#   implement the following
-		self._key_frame_tags = [] # key frame, used to rebuild a frame when 
-								  # navigate along the timeline
-		self._frame_label_tags = [] # frame label tags
+		self._key_frame_tags = key_frame_tags # key frame, used to rebuild a 
+											  # frame when 
+											  # navigate along the timeline
 		self._clip_actions = [] # the clip actions
 		self._real_mat = lm_type_mat.CType((0,0))
 
+		self._label_2_frame = label_dict # look up frame id
 		# Character instance cache
 		# All the characters that will be used along the timeline at depth `d`
 		# will be cached in self._pool[d]
@@ -54,6 +55,30 @@ class CObj(lm_sprite.CDrawable):
 			self._pool[depth].append(_d)
 		super(CObj, self).remove_drawable(depth)
 	
+	def goto_frame(self, frame_id):
+		if isinstance(frame_id, str):
+			frame_id = self._label_2_frame[frame_id]
+		self.clear()
+		for _t in self._key_frame_tags:
+			if _t.get_frame_id() == frame_id:
+				_t.execute(target=self)
+				self._play_head = frame_id + 1
+				return 
+		# Must have a key frame!!
+		assert False, "Must be a key frame"
+		
+	def gotoAndPlay(self, frame_id):
+		self.goto_frame(frame_id)
+		# What if the target frame has a action 
+		# which sets the movieclip stop?
+		self.play()
+		
+	def gotoAndStop(self, frame_id):
+		# What if the target frame has a action 
+		# which sets the movieclip play?		
+		self.goto_frame(frame_id)		
+		self.stop()
+		
 	# TODO:
 	#	1.implement auto loop play
 	#	2.implement rebuild frame method(build frame 0, or when jump happens)

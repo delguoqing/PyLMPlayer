@@ -19,7 +19,8 @@ class CTag(lm_tag_base.CTag):
 		self._frame_tags = []
 		self._frame_label_tags = []
 		self._key_frame_tags = []
-	
+		self._label_dict = {}
+		
 	def add_sub_tag(self, tag):
 		id = tag.get_id()
 		if id == lm_consts.TAG_FRAME_LABEL:
@@ -39,6 +40,7 @@ class CTag(lm_tag_base.CTag):
 		
 	def _add_frame_label_tag(self, tag):
 		self._frame_label_tags.append(tag)
+		self._label_dict[tag.name] = tag.frame_id
 		
 	def _add_frame_tag(self, tag):
 		self._frame_tags.append(tag)
@@ -51,6 +53,6 @@ class CTag(lm_tag_base.CTag):
 		return lm_consts.TAG_MOVIECLIP
 		
 	def instantiate(self, inst_id, depth, parent=None):
-		inst = as_movieclip.CObj(self._frame_tags, self.max_depth, inst_id, depth, parent=parent)
+		inst = as_movieclip.CObj(self._frame_tags, self._key_frame_tags, self._label_dict, self.max_depth, inst_id, depth, parent=parent)
 		return inst
 		
