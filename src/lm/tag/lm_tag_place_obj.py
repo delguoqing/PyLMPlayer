@@ -55,8 +55,8 @@ class CTag(lm_tag_base.CTag):
 			return ctx.pos_list.get_val(trans_idx).to_mat()
 		
 	# Execute Place Object(3) Tag
-	#    1. it may change the status of an exsiting character
-	#    2. or it may add a new character to the timeline
+	#	1. it may change the status of an exsiting character
+	#	2. or it may add a new character to the timeline
 	#
 	# Notice:
 	#	a new character replacing an old character which has no matrix(cxform) 
@@ -65,27 +65,37 @@ class CTag(lm_tag_base.CTag):
 		# Must have a target
 		if not target: return
 		
+		# Old Character at `depth`
 		old_inst = target.get_drawable(self._depth)
+		
+		# Matrix and Cxform
+		_mat = self._mat
+		_cadd = self._cadd
+		_cmul = self._cmul
+		if old_inst:
+			_mat = _mat or old_inst.get_matrix()
+			_cadd = _cadd or old_inst.get_color_add()
+			_cmul = _cmul or old_inst.get_color_mul()
+		
+		# Place or Move?
 		if self._has_char:
-			char_tag = self.ctx.get_character(self._char_id)
-			inst = char_tag.instantiate(parent=target)
+			# remove old if any
+			target.remove_drawable(self._depth)
+			# try allocate from cache
+			inst = target.alloc_drawable(self._depth, self._inst_id)
+#			print "allocate old"
+			if not inst:		
+				char_tag = self.ctx.get_character(self._char_id)
+				inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
+#				print "instantiate new"
 			target.add_drawable(inst, self._depth)
 		else:
 			inst = target.get_drawable(self._depth)
-			
-		if self._mat:
-			inst.set_matrix(self._mat)
-		elif old_inst:
-			inst.set_matrix(old_inst.get_matrix())
-			
-		if self._cadd or self._cmul:
-			inst.set_cxform(self._cadd, self._cmul)
-		elif old_inst:
-			inst.set_cxform(old_inst.get_color_add(), old_inst.get_color_mul())
-			
-		if self._has_char and old_inst:
-			old_inst.destroy()
-			
+#			print "move old at depth%d" % self._depth
+		
+		# Set Matrix and Cxform	
+		inst.set_matrix(_mat)
+		inst.set_cxform(_cadd, _cmul)
 		inst.set_blend_mode(self._blend_mode)
 	
 	@classmethod

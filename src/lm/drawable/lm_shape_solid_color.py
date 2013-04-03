@@ -7,11 +7,11 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable.CDrawable):
 	
-	def __init__(self, color, rect, parent=None):
-		super(CDrawable, self).__init__(parent)
+	def __init__(self, color, rect, inst_id, depth, parent=None):
+		super(CDrawable, self).__init__(inst_id, depth, parent=parent)
 		self._color = color
 		self._rect = rect
-		self._group = None
+		self._group = None		
 		self._create_vertex_list()
 		
 	def _create_vertex_list(self):
@@ -31,12 +31,16 @@ class CDrawable(lm_drawable.CDrawable):
 			x2, y2 = self._tot_mat.get_transformed_point(_rect.xmax, _rect.ymax)
 			x3, y3 = self._tot_mat.get_transformed_point(_rect.xmin, _rect.ymax)
 			
-			self._vertex_list.vertices[:] = [int(x0), int(y0), int(x1), int(y1), int(x2), int(y2), int(x3), int(y3)]
+			self._vertex_list.vertices[:] = [x0, y0, x1, y1, x2, y2, x3, y3]
 			
 		if _cxfd:
 			v = self._color * self._tot_cmul + self._tot_cadd
 			self._vertex_list.colors[:] = [v.rB, v.gB, v.bB, v.aB] * 4
 
+	def clear(self):
+		self._vertex_list.vertices[:] = [0] * 8
+		self._is_mat_dirty = True		
+		
 	def destroy(self):
 		super(CDrawable, self).destroy()
 		self._vertex_list.delete()			

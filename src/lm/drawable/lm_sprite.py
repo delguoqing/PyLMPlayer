@@ -5,5 +5,8 @@ import lm_drawable_container
 from pyglet.gl import *
 
 class CDrawable(lm_drawable_container.CDrawable):
-
-	pass
+		
+	def clear(self):
+		# Clear all shapes' view, but no remove
+		for _d in self:
+			_d.clear()

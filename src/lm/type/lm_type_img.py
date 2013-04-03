@@ -20,6 +20,7 @@ class CType(object):
 				break
 		
 		if self._texture is None:
+#			print "No Image Found!"
 			# fall back to a empty file
 			self._texture = CheckerImagePattern().create_image(int(width), int(height))
 

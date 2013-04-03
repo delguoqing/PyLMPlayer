@@ -22,8 +22,6 @@ class CContex(object):
 		
 	def set_img_root(self, root):
 		self.img_root = root
-		pyglet.resource.path.insert(0, root)
-		pyglet.resource.reindex()
 		
 	def set_platform(self, platform):
 		self.format = __import__("lm.format.lm_format_%s" % platform, fromlist=["lm", "format"])

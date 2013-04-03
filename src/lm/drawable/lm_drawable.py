@@ -7,14 +7,21 @@ import lm_render_state
 
 class CDrawable(object):
 
-	def __init__(self, parent=None):
+	def __init__(self, inst_id, depth, parent=None):
 		self.color_add = lm_type_color.null_cadd
 		self.color_mul = lm_type_color.null_cmul
 		self.matrix = lm_type_mat.null_mat
 		self.blend_mode = lm_type_blend_mode.null_blend
-		self.depth = None
-		self.parent = parent
 
+		self.parent = parent
+		self.inst_id = inst_id
+
+		self.depth = depth
+		if parent is None:
+			self._abs_depth = (depth, )
+		else:
+			self._abs_depth = self.parent._abs_depth + (depth, )
+				
 		self._is_cxform_dirty = True
 		self._tot_cadd = None
 		self._tot_cmul = None
@@ -24,7 +31,7 @@ class CDrawable(object):
 		self._is_mat_dirty = True
 		self._tot_mat = None
 		self._super_mat = lm_type_mat.null_mat
-		
+
 		if parent is None:
 			self._batch = pyglet.graphics.Batch()
 			self._render_state = lm_render_state.CObj()
@@ -37,10 +44,10 @@ class CDrawable(object):
 	def set_cxform(self, cadd, cmul):
 		if cadd:
 			self.color_add = cadd
-			self._is_cxform_dirty = True
+			self._is_cxform_dirty = False
 		if cmul:
 			self.color_mul = cmul
-			self._is_cxform_dirty = True
+			self._is_cxform_dirty = False
 	
 	def get_color_add(self):
 		return self.color_add
@@ -51,10 +58,10 @@ class CDrawable(object):
 	def apply_cxform(self, cadd, cmul):
 		if cadd:
 			self._super_cadd = cadd
-			self._is_cxform_dirty = True
+			self._is_cxform_dirty = False
 		if cmul:
 			self._super_cmul = cmul
-			self._is_cxform_dirty = True
+			self._is_cxform_dirty = False
 		
 	def _update_cxform(self):
 		self._tot_cadd = self.color_add * self._super_cmul + self._super_cadd
@@ -72,31 +79,30 @@ class CDrawable(object):
 			
 	def _update_matrix(self):
 		self._tot_mat = self._super_mat * self.matrix
-		
-#		print "matrix multiply:"
+#		print "Updating Matrix:"
 #		print self._super_mat
 #		print "-" * 10
 #		print self.matrix
 #		print "-" * 10		
 #		print self._tot_mat
-#		print "================"
-		
+#		print "=" * 10
 	def get_matrix(self):
 		return self.matrix
 		
 	def refresh(self):
 		if self._is_cxform_dirty:
 			self._update_cxform()
+			self._is_cxform_dirty = False
 		if self._is_mat_dirty:
 			self._update_matrix()
-		self._is_cxform_dirty = self._is_mat_dirty = False
-			
+			self._is_mat_dirty = False
+		
 	def set_blend_mode(self, blend_mode):
 		self.blend_mode = blend_mode
-		
-	def set_depth(self, depth):
-		self.depth = depth
-		
+			
+	def clear(self):
+		raise NotImplementedError
+	
 	def destroy(self):
 		self.color_add = None
 		self.color_mul = None
