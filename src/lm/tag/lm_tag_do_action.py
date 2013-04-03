@@ -8,6 +8,7 @@ class CTag(lm_tag_base.CTag):
 		d = self.parse_tag(ctx, tag)
 		
 		self.as_idx = d["as_idx"]
+		self.script = ctx.as_list.get_val(self.as_idx)
 		
 	@classmethod
 	def get_id(cls):
@@ -15,5 +16,5 @@ class CTag(lm_tag_base.CTag):
 		
 	def execute(self, target=None):
 		if not target: return
-		target.stop()
+		self.script(target)
 		

@@ -33,8 +33,17 @@ class CTag(lm_tag_base.CTag):
 		self._clip_action_cnt = d["clip_action_cnt"]
 		self._clip_action_tags = []
 		
+		# Check if multiple clip action ever appears
+		assert self._clip_action_cnt <= 1
+		
+		# Generated from clip action tags
+		# The only known type: on_enter_frame
+		self._on_enter_frame = None
+		
 	def add_sub_tag(self, tag):
 		self._clip_action_tags.append(tag)
+		
+		# Check if other clip event type than 'onEnterFrame' ever exists
 		
 	def get_sub_tag_cnt(self):
 		return self._clip_action_cnt
@@ -88,7 +97,7 @@ class CTag(lm_tag_base.CTag):
 				char_tag = self.ctx.get_character(self._char_id)
 				inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
 #				print "instantiate new"
-			target.add_drawable(inst, self._depth)
+			target.add_drawable(inst, self._depth, self._name)
 		else:
 			inst = target.get_drawable(self._depth)
 #			print "move old at depth%d" % self._depth
@@ -97,7 +106,7 @@ class CTag(lm_tag_base.CTag):
 		inst.set_matrix(_mat)
 		inst.set_cxform(_cadd, _cmul)
 		inst.set_blend_mode(self._blend_mode)
-	
+			
 	@classmethod
 	def get_id(cls):
 		return lm_consts.TAG_PLACE_OBJ

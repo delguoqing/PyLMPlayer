@@ -26,9 +26,15 @@ class CDrawable(object):
 	
 	def set_cxform(self, cadd, cmul):
 		if cadd:
-			self.color_add = cadd
+			if cadd == lm_type_color.null_cadd:
+				self.color_add = None
+			else:
+				self.color_add = cadd
 		if cmul:
-			self.color_mul = cmul
+			if cmul == lm_type_color.null_cmul:
+				self.color_mul = None
+			else:
+				self.color_mul = cmul
 	
 	def get_color_add(self):
 		return self.color_add

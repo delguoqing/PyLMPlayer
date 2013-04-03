@@ -25,7 +25,6 @@ class CDrawable(lm_drawable.CDrawable):
 		)
 		
 	def draw(self, render_state):
-		render_state.set_active_texture(self._texture)
 		self._vertex_list.draw(GL_QUADS)
 		
 	def destroy(self):

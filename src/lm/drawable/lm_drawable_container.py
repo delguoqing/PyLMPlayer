@@ -25,13 +25,13 @@ class CDrawable(lm_drawable.CDrawable):
 			glPushMatrix()
 			glMultMatrixf(self.matrix.get_ctype())
 		if self.color_mul:
-			glColor4i(self.color_mul.rB,  self.color_mul.gB, self.color_mul.bB, self.color_mul.aB)
+			glColor4f(self.color_mul.r,  self.color_mul.g, self.color_mul.b, self.color_mul.a)
 		for drawable in self:
 			drawable.draw(render_state)
 		if self.matrix:
 			glPopMatrix()
 		if self.color_mul:
-			glColor4i(255, 255, 255, 255)
+			glColor4f(1, 1, 1, 1)
 			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)

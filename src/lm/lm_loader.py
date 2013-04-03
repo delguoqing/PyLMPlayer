@@ -1,3 +1,4 @@
+import os
 import pyglet
 
 from lm.util import lm_tag_reader
@@ -109,6 +110,8 @@ def load(filename, root, platform):
 		elif tag_type == lm_consts.TAG_MAT_LIST:
 			ctx.set_mat_list(_t)
 		elif tag_type == lm_consts.TAG_AS_LIST:
+			patch_module = __import__("py_actionscript.%s" % os.path.splitext(os.path.split(filename)[1])[0], fromlist=[["py_actionscript"]])
+			_t.patch_py_actionscript(patch_module.DATA)
 			ctx.set_as_list(_t)
 		elif tag_type == lm_consts.TAG_IMG_LIST:
 			ctx.set_img_list(_t)
