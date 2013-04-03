@@ -40,7 +40,7 @@ def on_draw():
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	glClearColor(1, 1, 0, 1)
+#	glClearColor(1, 1, 0, 1)
 	window.clear()
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -49,8 +49,7 @@ def on_draw():
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 	global movieclip
 #	for i in xrange(30):
-	movieclip.refresh()
-	movieclip._batch.draw()
+	movieclip.draw(movieclip._render_state)
 
 	fps_display.draw()
 
@@ -59,17 +58,20 @@ def update(dt):
 	movieclip.advance()
 	
 #	print dt - 0.0166666667
-	print dt
+#	print dt
 #	print pyglet.clock.get_fps()
 pyglet.clock.schedule(update)
 
 # --------- experiment cases ------------------
 
-ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_06.LM", "D:/tmp_dl/disasmTNT/GimConv/png", "pspdx")
-movieclip = ctx.get_character(84).instantiate(0, 0, parent=None)
+ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_01.LM", "D:/tmp_dl/disasmTNT/GimConv/png", "pspdx")
+movieclip = ctx.get_character(45).instantiate(0, 0, parent=None)
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
 	
+
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+glEnable(GL_BLEND)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 #import cProfile
 pyglet.app.run()

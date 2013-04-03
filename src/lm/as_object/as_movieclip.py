@@ -33,7 +33,8 @@ class CObj(lm_sprite.CDrawable):
 				idx = i
 				break
 		if idx >= 0:
-			return self._pool[depth].pop(idx)
+			inst = self._pool[depth].pop(idx)
+			inst.clear()
 		return None
 		
 	def add_drawable(self, drawable, depth):
@@ -45,7 +46,6 @@ class CObj(lm_sprite.CDrawable):
 		# Cache the instance before remove!
 		_d = self.get_drawable(depth)
 		if _d is not None:
-			_d.clear()
 			self._pool[depth].append(_d)
 		super(CObj, self).remove_drawable(depth)
 	
@@ -67,7 +67,6 @@ class CObj(lm_sprite.CDrawable):
 			elif self._play_head >= self._total_frame:
 #				self.stop()
 				self.clear()
-#				print "loop, total frame = %d" % self._total_frame
 				
 		for drawable in self:
 			if hasattr(drawable, "advance"):
@@ -82,7 +81,6 @@ class CObj(lm_sprite.CDrawable):
 	def clear(self):
 		for _d in self:
 			self._pool[_d.depth].append(_d)
-			_d.clear()
 		self._drawables = [None] * self._max_depth
 		self._play_head = 0
-#		self.play()
+		self._is_playing = True
