@@ -26,8 +26,9 @@ def on_key_press(symbol, modifiers):
 	if symbol == pyglet.window.key.SPACE:
 		global movieclip
 		movieclip.play()
-	
-def on_draw(dt):
+		
+@window.event
+def on_draw():
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
 	glDisable(GL_DEPTH_TEST)
@@ -52,13 +53,15 @@ def on_draw(dt):
 	movieclip._batch.draw()
 
 	fps_display.draw()
-pyglet.clock.schedule_interval(on_draw, 0.0166666667)
 
 def update(dt):
 	global movieclip
 	movieclip.advance()
+	
+#	print dt - 0.0166666667
+	print dt
 #	print pyglet.clock.get_fps()
-pyglet.clock.schedule_interval(update, 0.0166666667)
+pyglet.clock.schedule(update)
 
 # --------- experiment cases ------------------
 
@@ -67,7 +70,7 @@ movieclip = ctx.get_character(84).instantiate(0, 0, parent=None)
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
 	
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
-	
+
 #import cProfile
 pyglet.app.run()
 
