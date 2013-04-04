@@ -117,6 +117,8 @@ def load(filename, root, platform):
 			ctx.set_img_list(_t)
 		elif tag_type == lm_consts.TAG_RECT_LIST:
 			ctx.set_rect_list(_t)
+		elif tag_type == lm_consts.TAG_STAGE_INFO:
+			ctx.stage_info = _t
 			
 		# ---------- DRAWABLES ---------
 		elif tag_type == lm_consts.TAG_MOVIECLIP:

@@ -1,5 +1,7 @@
 # -*- coding: gbk -*-
 
+import sys
+import os
 import cProfile
 import pyglet
 from pyglet.gl import *
@@ -89,12 +91,14 @@ debug_advance = 99999
 
 img_root = "C:/png"
 platform = "pspdx"
-filename = "../../LMDumper/lm/pspdx/DANCE_BG_RYU.LM"
-char_id = 10
+filename = os.path.join("../../LMDumper/lm/pspdx/", sys.argv[1])
 inst_id = 999
 depth = 0
 
 ctx = lm_loader.load(filename, img_root, platform)
+char_id = ctx.stage_info.start_character_id
+
+
 movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
