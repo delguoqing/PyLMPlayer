@@ -32,6 +32,10 @@ class CObj(lm_sprite.CDrawable):
 		
 		self.onEnterFrame = None
 		
+		# Cache gotos
+		self._target_frame = None
+		self._after_jump = None
+		
 	def alloc_drawable(self, depth, inst_id):
 		idx = -1
 		for i, inst in enumerate(self._pool[depth]):
@@ -56,9 +60,6 @@ class CObj(lm_sprite.CDrawable):
 		super(CObj, self).remove_drawable(depth)
 	
 	def goto_frame(self, frame_id):
-		if isinstance(frame_id, str):
-			frame_id = self._label_2_frame[frame_id]
-		self.clear()
 		for _t in self._key_frame_tags:
 			if _t.get_frame_id() == frame_id:
 				_t.execute(target=self)
@@ -68,16 +69,16 @@ class CObj(lm_sprite.CDrawable):
 		assert False, "Must be a key frame"
 		
 	def gotoAndPlay(self, frame_id):
-		self.goto_frame(frame_id)
-		# What if the target frame has a action 
-		# which sets the movieclip stop?
-		self.play()
+		if isinstance(frame_id, str):
+			frame_id = self._label_2_frame[frame_id]	
+		self._target_frame = frame_id
+		self._after_jump = self.play
 		
 	def gotoAndStop(self, frame_id):
-		# What if the target frame has a action 
-		# which sets the movieclip play?		
-		self.goto_frame(frame_id)		
-		self.stop()
+		if isinstance(frame_id, str):
+			frame_id = self._label_2_frame[frame_id]
+		self._target_frame = frame_id
+		self._after_jump = self.stop
 		
 	# TODO:
 	#	1.implement auto loop play
@@ -88,6 +89,7 @@ class CObj(lm_sprite.CDrawable):
 		if self._play_head == 0:
 			self._frame_tags[self._play_head].execute(target=self)
 			self._play_head += 1
+				
 			if self._total_frame == 1:
 				self.stop()
 										
@@ -100,8 +102,16 @@ class CObj(lm_sprite.CDrawable):
 			if self._play_head >= self._total_frame:
 				self.clear()
 			self._frame_tags[self._play_head].execute(target=self)
-			self._play_head += 1
-				
+			
+			# Whether we jumped?		
+			if self._target_frame is not None:
+				self.goto_frame(self._target_frame)
+				self._after_jump()
+				self._play_head = self._target_frame + 1
+				self._target_frame = self._after_jump = None
+			else:
+				self._play_head += 1			
+
 		self._sub_advance()
 		
 	# For Debug

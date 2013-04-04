@@ -24,13 +24,12 @@ class CTag(lm_tag_base.CTag):
 	def execute(self, target=None):
 		# Must have a target!
 		if not target: return
-#		print "executing frame %d BEG" % self._frame_id		
+#		if target.char_id == 52:
+#			print "executing frame %d BEG" % self._frame_id		
 		for tag in self._ctrl_tags:
 			tag.execute(target=target)
 #		print "executing frame %d END" % self._frame_id		
-			
 
-			
 	@classmethod
 	def get_id(cls):
 		return lm_consts.TAG_FRAME

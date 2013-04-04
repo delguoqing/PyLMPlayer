@@ -87,10 +87,10 @@ debug_advance = 99999
 
 # --------- experiment cases ------------------
 
-filename = "../../LMDumper/lm/pspdx/DANCE_BG_04.LM"
 img_root = "C:/png"
 platform = "pspdx"
-char_id = 144
+filename = "../../LMDumper/lm/pspdx/DANCE_BG_RYU.LM"
+char_id = 10
 inst_id = 999
 depth = 0
 
@@ -114,3 +114,8 @@ pyglet.app.run()
 
 # TODO:
 # 1. character pool bug. DANCE_BG_12, enter normal_fever twice
+# 2. BLEND MODE
+# 3. Sprite not complete matching together. metedai?dancebg05
+# 4. mask!
+# 5. dance bg 04 mushroom looks better in game???
+# 6. property _rotation dance_bg_frenesi

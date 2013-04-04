@@ -1,15 +1,16 @@
 def func_0(this):
-	gotoAndPlay(0)
-	
-def func_1(this):
 	def onEnterFrame(_this):
-		_this._x -= 2
-		if _this._x <= -480:
-			_this._x = 0
+		bg = _this.bg
+		bg._x -= 0.5
+		if bg._x <= -270:
+			bg._x = 0
 	this.onEnterFrame = onEnterFrame
+
+def func_1(this):
+	this.stop()
 	
 def func_2(this):
-	this.stop()
+	pass
 
 DATA = (
 	func_0,

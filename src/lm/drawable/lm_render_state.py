@@ -9,7 +9,6 @@ class CObj(object):
 		self._texture = None
 		self._shader = lm_shader.cxform_shader
 		self._color_stack = collections.deque()
-		self._is_color_dirty = False
 		
 	def begin(self):
 		self._shader.bind()
@@ -17,6 +16,7 @@ class CObj(object):
 		self._shader.uniformi("use_texture", 1)
 		self._use_texture = True
 		self._color_stack.append((lm_type_color.null_cadd, lm_type_color.null_cmul))
+		self._is_color_dirty = True		
 		
 	def set_enable_texture(self, flag):
 		if flag != self._use_texture:

@@ -88,16 +88,21 @@ class CTag(lm_tag_base.CTag):
 		
 		# Place or Move?
 		if self._has_char:
-			# remove old if any
-			target.remove_drawable(self._depth)
-			# try allocate from cache
-			inst = target.alloc_drawable(self._depth, self._inst_id)
-#			print "allocate old"
-			if not inst:		
-				char_tag = self.ctx.get_character(self._char_id)
-				inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
+		
+			if not old_inst or old_inst.inst_id != self._inst_id:
+				# remove old if any
+				target.remove_drawable(self._depth)
+				
+				# try allocate from cache
+				inst = target.alloc_drawable(self._depth, self._inst_id)
+				if not inst:		
+					char_tag = self.ctx.get_character(self._char_id)
+					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
 
-			target.add_drawable(inst, self._depth, self._name)
+				target.add_drawable(inst, self._depth, self._name)
+				
+			else:	# reuse the old inst
+				inst = old_inst
 		else:
 			inst = target.get_drawable(self._depth)
 #			print "move old at depth%d" % self._depth
