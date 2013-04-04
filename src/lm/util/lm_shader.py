@@ -6,13 +6,19 @@ frag=[
 """
 uniform vec4 color_add;
 uniform vec4 color_mul;
+uniform int use_texture;
 uniform sampler2D sampler;
 
 void main(void)
 {
 	vec2 coords = gl_TexCoord[0].st;
-	vec4 final_color = texture2D(sampler, coords);
-	gl_FragColor = final_color * color_mul  + color_add;
+	vec4 color;
+	if (use_texture) {
+		color = texture2D(sampler, coords);
+	} else {
+		color = gl_Color;
+	}
+	gl_FragColor = color * color_mul  + color_add;
 }
 """
 ]

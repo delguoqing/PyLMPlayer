@@ -25,6 +25,7 @@ class CDrawable(lm_drawable.CDrawable):
 		)
 		
 	def draw(self, render_state):
+		render_state.update_cxform()
 		self._vertex_list.draw(GL_QUADS)
 		
 	def destroy(self):

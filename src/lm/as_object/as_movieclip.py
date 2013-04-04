@@ -40,7 +40,7 @@ class CObj(lm_sprite.CDrawable):
 				break
 		if idx >= 0:
 			inst = self._pool[depth].pop(idx)
-			inst.clear()
+			return inst
 		return None
 		
 	def add_drawable(self, drawable, depth, name=""):
@@ -102,10 +102,15 @@ class CObj(lm_sprite.CDrawable):
 			self._frame_tags[self._play_head].execute(target=self)
 			self._play_head += 1
 				
+		self._sub_advance()
+		
+	# For Debug
+	# Remember remove it!
+	def _sub_advance(self):
 		for drawable in self:
 			if hasattr(drawable, "advance"):
-				drawable.advance()
-				
+				drawable.advance()		
+	
 	def play(self):
 		self._is_playing = True
 	
@@ -124,14 +129,15 @@ class CObj(lm_sprite.CDrawable):
 		if self._real_mat:
 			glPushMatrix()
 			glMultMatrixf(self._real_mat.get_ctype())
-		if self.color_mul:
-			glColor4f(self.color_mul.r,  self.color_mul.g, self.color_mul.b, self.color_mul.a)
+		has_cxform = self.color_mul or self.color_add			
+		if has_cxform:
+			render_state.push_cxform(self.color_add, self.color_mul)
 		for drawable in self:
 			drawable.draw(render_state)
 		if self._real_mat:
 			glPopMatrix()
-		if self.color_mul:
-			glColor4f(1, 1, 1, 1)
+		if has_cxform:
+			render_state.pop_cxform()
 	
 	# Modified from actionscrip			
 	def _set_x(self, x):

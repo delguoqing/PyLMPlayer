@@ -24,14 +24,22 @@ class CDrawable(lm_drawable.CDrawable):
 		if self.matrix:
 			glPushMatrix()
 			glMultMatrixf(self.matrix.get_ctype())
-		if self.color_mul:
-			glColor4f(self.color_mul.r,  self.color_mul.g, self.color_mul.b, self.color_mul.a)
+#		if self.color_mul:
+#			glColor4f(self.color_mul.r,  self.color_mul.g, self.color_mul.b, self.color_mul.a)
+		
+		has_cxform = self.color_mul or self.color_add
+		if has_cxform:
+			render_state.push_cxform(self.color_add, self.color_mul)
+			
 		for drawable in self:
 			drawable.draw(render_state)
 		if self.matrix:
 			glPopMatrix()
-		if self.color_mul:
-			glColor4f(1, 1, 1, 1)
+#		if self.color_mul:
+#			glColor4f(1, 1, 1, 1)
+
+		if has_cxform:
+			render_state.pop_cxform()
 			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)

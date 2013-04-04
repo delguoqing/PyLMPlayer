@@ -96,7 +96,7 @@ class CTag(lm_tag_base.CTag):
 			if not inst:		
 				char_tag = self.ctx.get_character(self._char_id)
 				inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
-#				print "instantiate new"
+
 			target.add_drawable(inst, self._depth, self._name)
 		else:
 			inst = target.get_drawable(self._depth)
@@ -106,6 +106,9 @@ class CTag(lm_tag_base.CTag):
 		inst.set_matrix(_mat)
 		inst.set_cxform(_cadd, _cmul)
 		inst.set_blend_mode(self._blend_mode)
+		
+		if self._char_id >= 0:
+			inst.char_id = self._char_id
 			
 	@classmethod
 	def get_id(cls):

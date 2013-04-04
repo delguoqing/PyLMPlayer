@@ -24,4 +24,10 @@ class CDrawable(lm_drawable.CDrawable):
 		
 	def destroy(self):
 		super(CDrawable, self).destroy()
-		self._vertex_list.delete()			
+		self._vertex_list.delete()
+		
+	def draw(self, render_state):
+		render_state.update_cxform()
+		render_state.set_enable_texture(False)
+		self._vertex_list.draw(GL_QUADS)
+		render_state.set_enable_texture(True)

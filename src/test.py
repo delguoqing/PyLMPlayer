@@ -23,16 +23,21 @@ fps_display = pyglet.clock.ClockDisplay()
 
 @window.event
 def on_key_press(symbol, modifiers):
-	if symbol == pyglet.window.key.SPACE:
-		global movieclip
+	global movieclip
+	
+	if symbol == pyglet.window.key.SPACE:	
 		movieclip.play()
-
+	elif symbol == pyglet.window.key.F:
+		movieclip.advance()
 
 def on_draw2():
 	window.clear()
 	fps_display.draw()
 
 def on_draw(dt):
+	global movieclip, ctx
+	global debug_advance
+	
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
 	glDisable(GL_DEPTH_TEST)
@@ -49,25 +54,49 @@ def on_draw(dt):
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 	
-	global movieclip, ctx
+	
 	
 	# Bind The overall Texture
+	# TODO:
+	#	what if more than one texture atlas are used?
 	tex = ctx.img_list.get_val(0)
 	glEnable(tex.target)
 	glBindTexture(tex.target, tex.id)
 	
-	# Draw movieclip
-	movieclip.advance()				
-	movieclip.draw(movieclip._render_state)
-
+	render_state = movieclip._render_state
+	render_state.begin()
+	# if debug is on, movie will not advance automaticly
+	# when it reaches `debug_advance`
+	# movieclip will be advanced by pressing `F`
+	# see on_key_press.
+	if movieclip._play_head <= debug_advance - 1:
+		movieclip.advance()
+	else:
+		movieclip._sub_advance()
+	
+	# Draw movieclip	
+	movieclip.draw(render_state)
+	
+	render_state.end()
+	# Draw fps counter
 	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
-# --------- experiment cases ------------------
-ctx = lm_loader.load("../../LMDumper/lm/pspdx/DANCE_BG_04.LM", "C:/png", "pspdx")
+debug_advance = 99999
 
-movieclip = ctx.get_character(144).instantiate(999, 0, parent=None)
+# --------- experiment cases ------------------
+
+filename = "../../LMDumper/lm/pspdx/DANCE_BG_04.LM"
+img_root = "C:/png"
+platform = "pspdx"
+char_id = 144
+inst_id = 999
+depth = 0
+
+ctx = lm_loader.load(filename, img_root, platform)
+movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
+movieclip.char_id = char_id
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
 	
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
@@ -75,9 +104,13 @@ glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
 	
 #import cProfile
 pyglet.app.run()
 
 
 #pyglet.app.run()
+
+# TODO:
+# 1. character pool bug. DANCE_BG_12, enter normal_fever twice
