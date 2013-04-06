@@ -122,4 +122,4 @@ pyglet.app.run()
 # 3. Sprite not complete matching together. metedai?dancebg05
 # 4. mask!
 # 5. dance bg 04 mushroom looks better in game???
-# 6. property _rotation dance_bg_frenesi
+# 7. fscommand(used everywhere for callback)

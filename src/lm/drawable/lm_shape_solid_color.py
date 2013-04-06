@@ -14,6 +14,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self._create_vertex_list()
 		
 	def _create_vertex_list(self):
+		_r = self._rect
 		self._vertex_list = pyglet.graphics.vertex_list(4,
 			('v2f/static', (_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
 				_r.ymin, _r.xmin, _r.ymin)),
@@ -27,7 +28,4 @@ class CDrawable(lm_drawable.CDrawable):
 		self._vertex_list.delete()
 		
 	def draw(self, render_state):
-		render_state.update_cxform()
-		render_state.set_enable_texture(False)
-		self._vertex_list.draw(GL_QUADS)
-		render_state.set_enable_texture(True)
+		render_state.draw_solid(self._vertex_list)

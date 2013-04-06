@@ -17,10 +17,15 @@ class CDrawable(object):
 		self.inst_id = inst_id
 
 		self.depth = depth
+		self._as_tween_only = False
 
 		if parent is None:
 			self._render_state = lm_render_state.CObj()
-			
+	
+	def _get_forbid_timeline(self):
+		return self._as_tween_only
+	forbid_timeline = property(_get_forbid_timeline)
+				
 	def draw(self, render_state):
 		raise NotImplementedError
 	

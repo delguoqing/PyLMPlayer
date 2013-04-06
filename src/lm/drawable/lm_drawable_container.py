@@ -19,27 +19,16 @@ class CDrawable(lm_drawable.CDrawable):
 		
 	def remove_drawable(self, depth):
 		self._drawables[depth] = None
-			
+
 	def draw(self, render_state):
-		if self.matrix:
-			glPushMatrix()
-			glMultMatrixf(self.matrix.get_ctype())
-#		if self.color_mul:
-#			glColor4f(self.color_mul.r,  self.color_mul.g, self.color_mul.b, self.color_mul.a)
+		render_state.push_matrix(self.matrix)
+		render_state.push_cxform(self.color_add, self.color_mul)
 		
-		has_cxform = self.color_mul or self.color_add
-		if has_cxform:
-			render_state.push_cxform(self.color_add, self.color_mul)
-			
 		for drawable in self:
 			drawable.draw(render_state)
-		if self.matrix:
-			glPopMatrix()
-#		if self.color_mul:
-#			glColor4f(1, 1, 1, 1)
 
-		if has_cxform:
-			render_state.pop_cxform()
+		render_state.pop_matrix()
+		render_state.pop_cxform()
 			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)

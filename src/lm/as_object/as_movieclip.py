@@ -1,27 +1,40 @@
+import math
 import as_obj_base
 from lm.drawable import lm_sprite
 from pyglet.gl import *
 from lm.type import lm_type_mat
 
+
+
 class CObj(lm_sprite.CDrawable):
 	
 	def __init__(self, frame_tags, key_frame_tags, label_dict, max_depth, inst_id, depth, parent=None):
 		super(CObj, self).__init__(max_depth, inst_id, depth, parent=parent)
-		
-		self._play_head = 0	# 0-based frame id
-		self._frame_tags = frame_tags # frame tags		
-		self._total_frame = len(self._frame_tags)
-		self._is_playing = True		
-		
-		# TODO:
-		#   implement the following
-		self._key_frame_tags = key_frame_tags # key frame, used to rebuild a 
-											  # frame when 
-											  # navigate along the timeline
-		self._clip_actions = [] # the clip actions
-		self._real_mat = lm_type_mat.CType((0,0))
 
-		self._label_2_frame = label_dict # look up frame id
+		# Tags
+		self._frame_tags = frame_tags
+		self._key_frame_tags = key_frame_tags
+		self._label_2_frame = label_dict
+		
+		# Playing control
+		self._play_head = 0	# 0-based frame id	
+		self._total_frame = len(self._frame_tags)		
+		self._is_playing = True	
+
+		# The `clip actions`
+		# support onEnterFrame only
+		self.onEnterFrame = None
+		
+		# Movieclip attributes that can be manipulated by as		
+		# ---- non-direct access
+		self.__x = None
+		self.__y = None
+		self.__rotation = None
+		self.__xscale = None
+		self.__yscale = None
+		# ---- direct access
+		self._name = ""
+		
 		# Character instance cache
 		# All the characters that will be used along the timeline at depth `d`
 		# will be cached in self._pool[d]
@@ -30,96 +43,106 @@ class CObj(lm_sprite.CDrawable):
 		# be super efficient!
 		self._pool =[[]] * self._max_depth
 		
-		self.onEnterFrame = None
-		
-		# Cache gotos
-		self._target_frame = None
-		self._after_jump = None
-		
+	# Allocate a cached drawable from pool
 	def alloc_drawable(self, depth, inst_id):
-		idx = -1
-		for i, inst in enumerate(self._pool[depth]):
-			if inst.inst_id == inst_id:
+		_cache = self._pool[depth]
+		idx = None
+		for i, drawable in enumerate(_cache):
+			if drawable.inst_id == inst_id:
 				idx = i
 				break
-		if idx >= 0:
-			inst = self._pool[depth].pop(idx)
-			return inst
-		return None
+		if idx is None:
+			return None
+		return _cache.pop(idx)
 		
+	# Add an drawable.
+	# if it is specified with a name, this object has an attr
 	def add_drawable(self, drawable, depth, name=""):
 		super(CObj, self).add_drawable(drawable, depth)
 		if name:
 			setattr(self, name, drawable)
+			drawable._name = name
 	
+	# Remove object
+	# if it is specified with a name, this object removes the attr
+	# The object is not really deleted, it is cached for reuse
 	def remove_drawable(self, depth):
-		# Cache the instance before remove!
 		_d = self.get_drawable(depth)
 		if _d is not None:
 			self._pool[depth].append(_d)
 		super(CObj, self).remove_drawable(depth)
-	
+
+	# -------------------------
+	# The Action script stuff
+	# -------------------------	
+	# Play mode: jump!
 	def goto_frame(self, frame_id):
-		for _t in self._key_frame_tags:
-			if _t.get_frame_id() == frame_id:
-				_t.execute(target=self)
-				self._play_head = frame_id + 1
-				return 
-		# Must have a key frame!!
-		assert False, "Must be a key frame"
+		if frame_id == 0:
+			key_frame = self._frame_tags[0]
+		else:
+			for key_frame_tag in self._key_frame_tags:
+				if key_frame_tag.get_frame_id() == frame_id:
+					key_frame = key_frame_tag
+					break
+		key_frame.execute(target=self)
 		
+	# Play mode: Normal!
+	def advance(self):
+	
+		# what ever, should do the onEnterFrame
+		if self.onEnterFrame:
+			self.onEnterFrame(self)
+		
+		# if a movieclip has only one frame, then it won't play
+		if self._is_playing and self._total_frame > 1:
+			self._play_head += 1
+			if self._play_head >= self._total_frame:
+				self.gotoAndPlay(0)
+			else:
+				self._frame_tags[self._play_head].execute(target=self)
+	
+		# whatever, sub movieclip is not stopped!
+		for drawable in self:
+			if isinstance(drawable, CObj):
+				drawable.advance()
+				
+	# initialization when first placed on stage
+	def init(self):
+		# Remove all
+		to_remove = []
+		for drawable in self:
+			to_remove.append(drawable.depth)
+		for depth in to_remove:
+			self.remove_drawable(depth)	
+		# Warning: The following set up may be changed by as
+		self._play_head = 0
+		self._is_playing = True
+		self._as_tween_only = False
+		# Execute the frame 0 tags
+		self._frame_tags[0].execute(target=self)
+
+	# Movieclip property and method!!		
 	def gotoAndPlay(self, frame_id):
 		if isinstance(frame_id, str):
-			frame_id = self._label_2_frame[frame_id]	
-		self._target_frame = frame_id
-		self._after_jump = self.play
+			frame_id = self._label_2_frame[frame_id]
+			
+		self._is_playing = True
+		if frame_id == self._play_head:
+			return
+		self._play_head = frame_id		
+		
+		self.goto_frame(frame_id)
 		
 	def gotoAndStop(self, frame_id):
 		if isinstance(frame_id, str):
 			frame_id = self._label_2_frame[frame_id]
-		self._target_frame = frame_id
-		self._after_jump = self.stop
-		
-	# TODO:
-	#	1.implement auto loop play
-	#	2.implement rebuild frame method(build frame 0, or when jump happens)
-	def advance(self):
-		
-		# Force advance for the 1st frame
-		if self._play_head == 0:
-			self._frame_tags[self._play_head].execute(target=self)
-			self._play_head += 1
-				
-			if self._total_frame == 1:
-				self.stop()
-										
-		if self.onEnterFrame:
-			self.onEnterFrame(self)
 			
-		# Movieclip can be stopped from actionscript
-		if self._is_playing:
+		self._is_playing = False
+		if frame_id == self._play_head:
+			return
+		self._play_head = frame_id
 		
-			if self._play_head >= self._total_frame:
-				self.clear()
-			self._frame_tags[self._play_head].execute(target=self)
-			
-			# Whether we jumped?		
-			if self._target_frame is not None:
-				self.goto_frame(self._target_frame)
-				self._after_jump()
-				self._play_head = self._target_frame + 1
-				self._target_frame = self._after_jump = None
-			else:
-				self._play_head += 1			
-
-		self._sub_advance()
-		
-	# For Debug
-	# Remember remove it!
-	def _sub_advance(self):
-		for drawable in self:
-			if hasattr(drawable, "advance"):
-				drawable.advance()		
+		self.goto_frame(frame_id)
 	
 	def play(self):
 		self._is_playing = True
@@ -127,36 +150,43 @@ class CObj(lm_sprite.CDrawable):
 	def stop(self):
 		self._is_playing = False
 		
-	def clear(self):
-		for _d in self:
-			self._pool[_d.depth].append(_d)
-			_d.clear()
-		self._drawables = [None] * self._max_depth
-		self._play_head = 0
-		self._is_playing = True
-	
-	def draw(self, render_state):
-		if self._real_mat:
-			glPushMatrix()
-			glMultMatrixf(self._real_mat.get_ctype())
-		has_cxform = self.color_mul or self.color_add			
-		if has_cxform:
-			render_state.push_cxform(self.color_add, self.color_mul)
-		for drawable in self:
-			drawable.draw(render_state)
-		if self._real_mat:
-			glPopMatrix()
-		if has_cxform:
-			render_state.pop_cxform()
-	
-	# Modified from actionscrip			
-	def _set_x(self, x):
-		self._real_mat.translate = (x, self._real_mat.translate[1])
 	def _get_x(self):
-		return self._real_mat.translate[0]
+		if not self.matrix: return 0
+		return self.matrix.translate[0]
+	
+	def _set_x(self, x):
+		if not self.matrix:
+			_m = self.matrix = lm_type_mat.CType()
+		else:
+			_m = self.matrix
+		_t = _m.translate
+		_m.translate = (x, _t[1])
+		self._as_tween_only = True
+		if self.char_id == 24:
+			print "forbid timeline"		
+#		if self.parent:
+#			self.parent.stop()
+	
 	_x = property(_get_x, _set_x)
+	
+	# Don't bother to do extra math
+	# I don't see a movieclip with different x, y scale rate,
+	# and don't see a movieclip with rotation and scale at the
+	# same time.
+	def _get_rotation(self):
+		if self.__rotation: return self.__rotation
+		if self.matrix:
+			return math.asin(self.matrix.rotateskew[0]) * 180.0 / math.pi
+		return 0
 		
-	# Set matrix from timeline, overwrite action script!
-	def set_matrix(self, matrix):
-		super(CObj, self).set_matrix(matrix)
-		self._real_mat.copy_from(self.matrix)
+	def _set_rotation(self, rotation):
+		self.__rotation = rotation
+		radian = rotation * math.pi / 180.0
+		cos = math.cos(radian)
+		sin = math.sin(radian)
+		
+		self.matrix.rotateskew = (sin, -sin)
+		self.matrix.scale = (cos, cos)
+		self._as_tween_only = True
+		
+	_rotation = property(_get_rotation, _set_rotation)

@@ -15,6 +15,7 @@ class CTag(lm_tag_base.CTag):
 		
 	def execute(self, target=None):
 		if not target: return
+				
 		target.remove_drawable(self.depth)
 		
 #		print "Remove drawable at depth %d" % self.depth

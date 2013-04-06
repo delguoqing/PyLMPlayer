@@ -44,6 +44,8 @@ class CTag(lm_tag_base.CTag):
 		self._clip_action_tags.append(tag)
 		
 		# Check if other clip event type than 'onEnterFrame' ever exists
+		assert tag.clip_event_flag == 2
+		self._on_enter_frame = self.ctx.as_list.get_val(tag.as_idx)
 		
 	def get_sub_tag_cnt(self):
 		return self._clip_action_cnt
@@ -76,7 +78,7 @@ class CTag(lm_tag_base.CTag):
 		
 		# Old Character at `depth`
 		old_inst = target.get_drawable(self._depth)
-		
+			
 		# Matrix and Cxform
 		_mat = self._mat
 		_cadd = self._cadd
@@ -99,11 +101,15 @@ class CTag(lm_tag_base.CTag):
 					char_tag = self.ctx.get_character(self._char_id)
 					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
 
+				if self._on_enter_frame:
+					inst.onEnterFrame = self._on_enter_frame
 				target.add_drawable(inst, self._depth, self._name)
-				
+
 			else:	# reuse the old inst
 				inst = old_inst
 		else:
+			if old_inst and old_inst.forbid_timeline:
+				return
 			inst = target.get_drawable(self._depth)
 #			print "move old at depth%d" % self._depth
 		

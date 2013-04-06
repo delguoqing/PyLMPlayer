@@ -2,6 +2,7 @@ import collections
 from lm.util import lm_shader
 from lm.type import lm_type_color
 
+from pyglet.gl import *
 
 class CObj(object):
 
@@ -9,6 +10,7 @@ class CObj(object):
 		self._texture = None
 		self._shader = lm_shader.cxform_shader
 		self._color_stack = collections.deque()
+		self._matrix_stack = collections.deque()
 		
 	def begin(self):
 		self._shader.bind()
@@ -55,6 +57,26 @@ class CObj(object):
 #		print cadd
 #		print cmul
 		
+	def push_matrix(self, matrix):
+		self._matrix_stack.append(matrix)
+		if matrix:
+			matrix.set()
+		
+	def pop_matrix(self):
+		matrix = self._matrix_stack.pop()
+		if matrix:
+			matrix.unset()
+		
+	def draw_image(self, vertex_list):
+		self.update_cxform()
+		vertex_list.draw(GL_QUADS)
+		
+	def draw_solid(self, vertex_list):
+		self.update_cxform()
+		self.set_enable_texture(False)
+		vertex_list.draw(GL_QUADS)
+		self.set_enable_texture(True)
+			
 	def end(self):
 		self._shader.unbind()
 		self._texture = None
