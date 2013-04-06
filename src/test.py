@@ -114,7 +114,6 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 pyglet.app.run()
 
 # TODO:
-# 1. BLEND MODE
 # 2. mask!
 # 3. fscommand(used everywhere for callback)
 # 4. DANCE_BG_10.LM bubble flashs.
