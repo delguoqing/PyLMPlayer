@@ -109,6 +109,7 @@ class CObj(lm_sprite.CDrawable):
 				
 	# initialization when first placed on stage
 	def init(self, fully=False):
+		
 		# Remove all
 		to_remove = []
 		for drawable in self:
@@ -124,10 +125,6 @@ class CObj(lm_sprite.CDrawable):
 
 		# Execute the frame 0 tags
 		self._frame_tags[0].execute(target=self)
-		
-		# init sub mc
-		for drawable in self:
-			drawable.is_movieclip() and drawable.init(fully=True)
 
 	# Movieclip property and method!!		
 	def gotoAndPlay(self, frame_id):

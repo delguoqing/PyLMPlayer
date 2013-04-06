@@ -23,12 +23,14 @@ class CDrawable(lm_drawable.CDrawable):
 	def draw(self, render_state):
 		render_state.push_matrix(self.matrix)
 		render_state.push_cxform(self.color_add, self.color_mul)
+		render_state.push_blend_mode(self.blend_mode)
 		
 		for drawable in self:
 			drawable.draw(render_state)
 
 		render_state.pop_matrix()
 		render_state.pop_cxform()
+		render_state.pop_blend_mode()		
 			
 	def __iter__(self):
 		return itertools.ifilter(None, self._drawables)

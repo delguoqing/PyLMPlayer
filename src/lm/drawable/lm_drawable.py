@@ -50,6 +50,9 @@ class CDrawable(object):
 	def get_color_mul(self):
 		return self.color_mul
 		
+	def get_blend_mode(self):
+		return self.blend_mode
+		
 	def set_matrix(self, matrix):
 		if matrix is not None:
 			self.matrix = matrix

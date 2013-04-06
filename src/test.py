@@ -30,11 +30,11 @@ def on_key_press(symbol, modifiers):
 	if symbol == pyglet.window.key.SPACE:	
 		movieclip.play()
 	elif symbol == pyglet.window.key.F:
-		movieclip.advance()
+		on_draw(1)
 
-def on_draw2():
-	window.clear()
-	fps_display.draw()
+#@window.event
+#def on_draw2():
+#	pass
 
 def on_draw(dt):
 	global movieclip, ctx
@@ -67,14 +67,9 @@ def on_draw(dt):
 	
 	render_state = movieclip._render_state
 	render_state.begin()
-	# if debug is on, movie will not advance automaticly
-	# when it reaches `debug_advance`
-	# movieclip will be advanced by pressing `F`
-	# see on_key_press.
-	if movieclip._play_head <= debug_advance - 1:
-		movieclip.advance()
-	else:
-		movieclip._sub_advance()
+
+#	if movieclip._play_head < 171:
+	movieclip.advance()
 	
 	# Draw movieclip	
 	movieclip.draw(render_state)
@@ -85,7 +80,6 @@ def on_draw(dt):
 	
 pyglet.clock.schedule(on_draw)
 
-debug_advance = 99999
 
 # --------- experiment cases ------------------
 
@@ -103,7 +97,7 @@ movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
 movieclip.init()
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
-	
+
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -112,10 +106,12 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 	
 #import cProfile
-pyglet.app.run()
-
-
 #pyglet.app.run()
+
+#print
+#on_draw(1)
+
+pyglet.app.run()
 
 # TODO:
 # 1. BLEND MODE

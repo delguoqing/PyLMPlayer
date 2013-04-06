@@ -83,10 +83,12 @@ class CTag(lm_tag_base.CTag):
 		_mat = self._mat
 		_cadd = self._cadd
 		_cmul = self._cmul
+		_blend_mode = self._blend_mode
 		if old_inst:
 			_mat = _mat or old_inst.get_matrix()
 			_cadd = _cadd or old_inst.get_color_add()
 			_cmul = _cmul or old_inst.get_color_mul()
+			_blend_mode = _blend_mode or old_inst.get_blend_mode()
 		
 		# Place or Move?
 		if self._has_char:
@@ -100,12 +102,12 @@ class CTag(lm_tag_base.CTag):
 				if not inst:		
 					char_tag = self.ctx.get_character(self._char_id)
 					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
-
+					inst.char_id = self._char_id
 				target.add_drawable(inst, self._depth, self._name)
 
 				# if the character is a movieclip
 				# then it needs a init
-				inst.is_movieclip() and inst.init(True)
+				inst.is_movieclip() and inst.init(fully=True)
 				if self._on_enter_frame:
 					inst.onEnterFrame = self._on_enter_frame
 				
@@ -116,17 +118,16 @@ class CTag(lm_tag_base.CTag):
 			if old_inst and old_inst.forbid_timeline:
 				return
 			inst = target.get_drawable(self._depth)
-
 		
 		# Set Matrix and Cxform	
 		inst.set_matrix(_mat)
 		inst.set_cxform(_cadd, _cmul)
-		inst.set_blend_mode(self._blend_mode)
-		
+		inst.set_blend_mode(_blend_mode)
+	
 		# Set instance ID			
 		if self._char_id >= 0:
 			inst.char_id = self._char_id
-			
+
 	@classmethod
 	def get_id(cls):
 		return lm_consts.TAG_PLACE_OBJ
