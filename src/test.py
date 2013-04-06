@@ -101,6 +101,7 @@ char_id = ctx.stage_info.start_character_id
 
 movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
+movieclip.init()
 #movieclip.set_matrix(lm_type_mat.CType((256, 64)))
 	
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
@@ -117,7 +118,7 @@ pyglet.app.run()
 #pyglet.app.run()
 
 # TODO:
-# 1. character pool bug. DANCE_BG_12, enter normal_fever twice
+# 1. DANCE_BG_10.LM bubble flashs.
 # 2. BLEND MODE
 # 3. Sprite not complete matching together. metedai?dancebg05
 # 4. mask!

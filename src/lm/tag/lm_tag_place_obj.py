@@ -101,23 +101,29 @@ class CTag(lm_tag_base.CTag):
 					char_tag = self.ctx.get_character(self._char_id)
 					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
 
-				if self._on_enter_frame:
-					inst.onEnterFrame = self._on_enter_frame
 				target.add_drawable(inst, self._depth, self._name)
 
+				# if the character is a movieclip
+				# then it needs a init
+				inst.is_movieclip() and inst.init(True)
+				if self._on_enter_frame:
+					inst.onEnterFrame = self._on_enter_frame
+				
 			else:	# reuse the old inst
 				inst = old_inst
+
 		else:
 			if old_inst and old_inst.forbid_timeline:
 				return
 			inst = target.get_drawable(self._depth)
-#			print "move old at depth%d" % self._depth
+
 		
 		# Set Matrix and Cxform	
 		inst.set_matrix(_mat)
 		inst.set_cxform(_cadd, _cmul)
 		inst.set_blend_mode(self._blend_mode)
 		
+		# Set instance ID			
 		if self._char_id >= 0:
 			inst.char_id = self._char_id
 			

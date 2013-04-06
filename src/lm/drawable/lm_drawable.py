@@ -22,6 +22,9 @@ class CDrawable(object):
 		if parent is None:
 			self._render_state = lm_render_state.CObj()
 	
+	def is_movieclip(self):
+		return False
+		
 	def _get_forbid_timeline(self):
 		return self._as_tween_only
 	forbid_timeline = property(_get_forbid_timeline)
@@ -48,7 +51,7 @@ class CDrawable(object):
 		return self.color_mul
 		
 	def set_matrix(self, matrix):
-		if matrix:
+		if matrix is not None:
 			self.matrix = matrix
 
 	def get_matrix(self):

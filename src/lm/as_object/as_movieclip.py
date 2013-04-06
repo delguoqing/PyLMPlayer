@@ -27,11 +27,7 @@ class CObj(lm_sprite.CDrawable):
 		
 		# Movieclip attributes that can be manipulated by as		
 		# ---- non-direct access
-		self.__x = None
-		self.__y = None
 		self.__rotation = None
-		self.__xscale = None
-		self.__yscale = None
 		# ---- direct access
 		self._name = ""
 		
@@ -70,12 +66,17 @@ class CObj(lm_sprite.CDrawable):
 		_d = self.get_drawable(depth)
 		if _d is not None:
 			self._pool[depth].append(_d)
+			_d._as_tween_only = False
 		super(CObj, self).remove_drawable(depth)
 
+	def is_movieclip(self):
+		return True
+		
 	# -------------------------
 	# The Action script stuff
 	# -------------------------	
 	# Play mode: jump!
+	# if the new
 	def goto_frame(self, frame_id):
 		if frame_id == 0:
 			key_frame = self._frame_tags[0]
@@ -88,7 +89,7 @@ class CObj(lm_sprite.CDrawable):
 		
 	# Play mode: Normal!
 	def advance(self):
-	
+			
 		# what ever, should do the onEnterFrame
 		if self.onEnterFrame:
 			self.onEnterFrame(self)
@@ -97,7 +98,7 @@ class CObj(lm_sprite.CDrawable):
 		if self._is_playing and self._total_frame > 1:
 			self._play_head += 1
 			if self._play_head >= self._total_frame:
-				self.gotoAndPlay(0)
+				self.init()
 			else:
 				self._frame_tags[self._play_head].execute(target=self)
 	
@@ -107,19 +108,26 @@ class CObj(lm_sprite.CDrawable):
 				drawable.advance()
 				
 	# initialization when first placed on stage
-	def init(self):
+	def init(self, fully=False):
 		# Remove all
 		to_remove = []
 		for drawable in self:
-			to_remove.append(drawable.depth)
+			if fully or not drawable.forbid_timeline:
+				to_remove.append(drawable.depth)
+
 		for depth in to_remove:
 			self.remove_drawable(depth)	
 		# Warning: The following set up may be changed by as
 		self._play_head = 0
 		self._is_playing = True
 		self._as_tween_only = False
+
 		# Execute the frame 0 tags
 		self._frame_tags[0].execute(target=self)
+		
+		# init sub mc
+		for drawable in self:
+			drawable.is_movieclip() and drawable.init(fully=True)
 
 	# Movieclip property and method!!		
 	def gotoAndPlay(self, frame_id):
@@ -162,10 +170,6 @@ class CObj(lm_sprite.CDrawable):
 		_t = _m.translate
 		_m.translate = (x, _t[1])
 		self._as_tween_only = True
-		if self.char_id == 24:
-			print "forbid timeline"		
-#		if self.parent:
-#			self.parent.stop()
 	
 	_x = property(_get_x, _set_x)
 	
