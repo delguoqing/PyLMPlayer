@@ -118,9 +118,10 @@ pyglet.app.run()
 #pyglet.app.run()
 
 # TODO:
-# 1. DANCE_BG_10.LM bubble flashs.
-# 2. BLEND MODE
-# 3. Sprite not complete matching together. metedai?dancebg05
-# 4. mask!
+# 1. BLEND MODE
+# 2. mask!
+# 3. fscommand(used everywhere for callback)
+# 4. DANCE_BG_10.LM bubble flashs.
 # 5. dance bg 04 mushroom looks better in game???
-# 7. fscommand(used everywhere for callback)
+# 6. Sprite not complete matching together. metedai?dancebg05
+# 7. optimization.
