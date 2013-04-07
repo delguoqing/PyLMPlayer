@@ -18,7 +18,7 @@ from lm.drawable import lm_shape_tiled_image
 from lm.drawable import lm_sprite
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(640, 480)
 fps_display = pyglet.clock.ClockDisplay()
 
 # one frame movieclip can be drawn as a display_list
@@ -30,6 +30,7 @@ def on_key_press(symbol, modifiers):
 	if symbol == pyglet.window.key.SPACE:	
 		movieclip.play()
 	elif symbol == pyglet.window.key.F:
+
 		on_draw(1)
 
 #@window.event
@@ -49,15 +50,13 @@ def on_draw(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(0, 480, 272, 0, -1, 1)
+	glOrtho(0, 640, 480, 0, -1, 1)
 	
 #	glClearColor(1, 1, 0, 1)
 	window.clear()
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
-	
-	
-	
+		
 	# Bind The overall Texture
 	# TODO:
 	#	what if more than one texture atlas are used?
@@ -68,9 +67,8 @@ def on_draw(dt):
 	render_state = movieclip._render_state
 	render_state.begin()
 
-#	if movieclip._play_head < 171:
-	movieclip.advance()
-	
+
+	movieclip.advance()	
 	# Draw movieclip	
 	movieclip.draw(render_state)
 	
@@ -90,34 +88,35 @@ inst_id = 999
 depth = 0
 
 ctx = lm_loader.load(filename, img_root, platform)
-char_id = ctx.stage_info.start_character_id
+char_id = 54 or ctx.stage_info.start_character_id
 
 
 movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
 movieclip.init()
-#movieclip.set_matrix(lm_type_mat.CType((256, 64)))
+movieclip.set_matrix(lm_type_mat.CType((256, 264)))
 
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+# Turn off texture filter
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-	
-#import cProfile
-#pyglet.app.run()
-
-#print
-#on_draw(1)
 
 pyglet.app.run()
 
 # TODO:
 # 1. introduce `scene`
 # 3. fscommand(used everywhere for callback)
-# 4. DANCE_BG_10.LM bubble flashs.
 # 6. Sprite not complete matching together. metedai?dancebg05
 # 7. optimization.
-# 8. try wii version
 # 9. implement font, static text, edit text, button, etc.
+
+# DONE
+# 8. try wii version. frame rate almost the same, so, my player is most 
+#    probably cpu bounded.
+# 4. DANCE_BG_10.LM bubble flashs. Bug fixed, a mc which is inited in the 
+#    current frame should not advance in the same frame
