@@ -12,6 +12,7 @@ class CDrawable(object):
 		self.color_mul = None
 		self.matrix = None
 		self.blend_mode = None
+		self.clip_depth = 0
 
 		self.parent = parent
 		self.inst_id = inst_id

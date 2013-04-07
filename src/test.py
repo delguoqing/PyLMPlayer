@@ -114,9 +114,10 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 pyglet.app.run()
 
 # TODO:
-# 2. mask!
+# 1. introduce `scene`
 # 3. fscommand(used everywhere for callback)
 # 4. DANCE_BG_10.LM bubble flashs.
-# 5. dance bg 04 mushroom looks better in game???
 # 6. Sprite not complete matching together. metedai?dancebg05
 # 7. optimization.
+# 8. try wii version
+# 9. implement font, static text, edit text, button, etc.

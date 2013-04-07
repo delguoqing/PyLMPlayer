@@ -1,12 +1,12 @@
 import math
 import as_obj_base
-from lm.drawable import lm_sprite
+from lm.drawable import lm_drawable_container
 from pyglet.gl import *
 from lm.type import lm_type_mat
 
 
 
-class CObj(lm_sprite.CDrawable):
+class CObj(lm_drawable_container.CDrawable):
 	
 	def __init__(self, frame_tags, key_frame_tags, label_dict, max_depth, inst_id, depth, parent=None):
 		super(CObj, self).__init__(max_depth, inst_id, depth, parent=parent)

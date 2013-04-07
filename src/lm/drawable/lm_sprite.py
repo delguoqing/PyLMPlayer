@@ -6,7 +6,6 @@ from pyglet.gl import *
 
 class CDrawable(lm_drawable_container.CDrawable):
 		
-	def clear(self):
-		# Clear all shapes' view, but no remove
-		for _d in self:
-			_d.clear()
+	def __init__(self, rect, max_depth, inst_id, depth, parent=None):
+		super(CDrawable, self).__init__(max_depth, inst_id, depth, parent)
+		self._rect = rect

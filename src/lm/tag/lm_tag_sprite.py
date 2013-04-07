@@ -34,7 +34,7 @@ class CTag(lm_tag_base.CTag):
 		return self.char_id
 		
 	def instantiate(self, inst_id, depth, parent=None):
-		sprite = lm_sprite.CDrawable(len(self._shape_tags), inst_id, depth, parent=parent)
+		sprite = lm_sprite.CDrawable(self._rect, len(self._shape_tags), inst_id, depth, parent=parent)
 		for i, shape_tag in enumerate(self._shape_tags):
 			shape = shape_tag.instantiate(0, i, parent=sprite)
 			sprite.add_drawable(shape, i)

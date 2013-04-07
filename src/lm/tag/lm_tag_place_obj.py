@@ -123,6 +123,7 @@ class CTag(lm_tag_base.CTag):
 		inst.set_matrix(_mat)
 		inst.set_cxform(_cadd, _cmul)
 		inst.set_blend_mode(_blend_mode)
+		inst.clip_depth = self._clip_depth
 	
 		# Set instance ID			
 		if self._char_id >= 0:
