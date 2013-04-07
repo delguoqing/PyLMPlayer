@@ -20,6 +20,7 @@ class CObj(lm_drawable_container.CDrawable):
 		self._play_head = 0	# 0-based frame id	
 		self._total_frame = len(self._frame_tags)		
 		self._is_playing = True	
+		self._init_no_frame = False
 
 		# The `clip actions`
 		# support onEnterFrame only
@@ -105,6 +106,9 @@ class CObj(lm_drawable_container.CDrawable):
 		# whatever, sub movieclip is not stopped!
 		for drawable in self:
 			if isinstance(drawable, CObj):
+				if drawable._init_frame:
+					drawable._init_frame = False
+					continue
 				drawable.advance()
 				
 	# initialization when first placed on stage
@@ -122,6 +126,7 @@ class CObj(lm_drawable_container.CDrawable):
 		self._play_head = 0
 		self._is_playing = True
 		self._as_tween_only = False
+		self._init_frame = True
 
 		# Execute the frame 0 tags
 		self._frame_tags[0].execute(target=self)
