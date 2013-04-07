@@ -26,9 +26,13 @@ class CTag(lm_tag_base.CTag):
 		
 		for info in d["img_list"]:
 			filename = self.ctx.str_list.get_val(info["name_idx"])
+
 			def_filename = "noname_%d" % info["img_idx"]
 			if filename == "":
 				filename = def_filename
+			elif not filename.endswith(".png"):
+				filename = os.path.splitext(filename)[0] + ".png"
+				
 			fullpath = os.path.join(self.ctx.img_root, filename)
 
 			image_data = None
