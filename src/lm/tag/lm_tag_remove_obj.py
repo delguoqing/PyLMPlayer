@@ -9,7 +9,7 @@ class CTag(lm_tag_base.CTag):
 		
 		self.depth = d["depth"]
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_REMOVE_OBJ
 		

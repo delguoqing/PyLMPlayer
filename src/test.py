@@ -88,13 +88,13 @@ inst_id = 999
 depth = 0
 
 ctx = lm_loader.load(filename, img_root, platform)
-char_id = 54 or ctx.stage_info.start_character_id
+char_id = ctx.stage_info.start_character_id
 
 
 movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
 movieclip.init()
-movieclip.set_matrix(lm_type_mat.CType((256, 264)))
+#movieclip.set_matrix(lm_type_mat.CType((256, 264)))
 
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
@@ -111,12 +111,23 @@ pyglet.app.run()
 # TODO:
 # 1. introduce `scene`
 # 3. fscommand(used everywhere for callback)
-# 6. Sprite not complete matching together. metedai?dancebg05
-# 7. optimization.
+# 7. optimization. play with numba or Cython.
 # 9. implement font, static text, edit text, button, etc.
+#10. optimization. create vertex for sprite only once.
+#12.
 
 # DONE
-# 8. try wii version. frame rate almost the same, so, my player is most 
+# 8. try wii version. 
+#      frame rate almost the same, so, my player is most 
 #    probably cpu bounded.
-# 4. DANCE_BG_10.LM bubble flashs. Bug fixed, a mc which is inited in the 
+#
+# 4. DANCE_BG_10.LM bubble flashs. 
+#      Bug fixed, a mc which is inited in the 
 #    current frame should not advance in the same frame
+#
+# 6. Sprite not complete matching together. metedai?dancebg05
+#      tag shape can define a boundbox smaller than the filling image.fixed.
+#
+#11. make get_id method of tag class a normal method.(not class method!!)
+#      In fact, I don't know how to use this..., so remove.
+#

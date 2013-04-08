@@ -6,7 +6,7 @@ class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
 		super(CTag, self).__init__(ctx, tag)
-		d = CTag.parse_tag(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 
 		self._data = []
 		for c in d["color_list"]:
@@ -17,6 +17,6 @@ class CTag(lm_tag_base.CTag):
 	def get_val(self, idx):
 		return self._data[idx]
 	
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_COLOR_LIST

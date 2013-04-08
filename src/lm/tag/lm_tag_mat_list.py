@@ -18,6 +18,6 @@ class CTag(lm_tag_base.CTag):
 	def get_val(self, idx):
 		return self._data[idx]
 	
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_MAT_LIST

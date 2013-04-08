@@ -129,6 +129,6 @@ class CTag(lm_tag_base.CTag):
 		if self._char_id >= 0:
 			inst.char_id = self._char_id
 
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_PLACE_OBJ

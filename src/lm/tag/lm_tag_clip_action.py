@@ -13,7 +13,7 @@ class CTag(lm_tag_base.CTag):
 		self.as_idx = d["as_idx"]
 		self.key_code = d["key_code"]
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_CLIP_ACTION
 		

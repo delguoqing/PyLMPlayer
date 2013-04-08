@@ -5,7 +5,7 @@ class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
 		super(CTag, self).__init__(ctx, tag)
-		d = CTag.parse_tag(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 		
 		self._frame_id = d["frame_id"]
 		self._cmd_cnt = d["cmd_cnt"]
@@ -39,6 +39,6 @@ class CTag(lm_tag_base.CTag):
 		for tag in self._action_tags:
 			tag.execute(target=target)
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_FRAME

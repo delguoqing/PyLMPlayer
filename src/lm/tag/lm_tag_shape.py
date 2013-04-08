@@ -12,7 +12,7 @@ class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
 		super(CTag, self).__init__(ctx, tag)
-		d = CTag.parse_tag(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 		
 		x_min = min(d["x0"], d["x1"], d["x2"], d["x3"])
 		x_max = max(d["x0"], d["x1"], d["x2"], d["x3"])
@@ -33,7 +33,7 @@ class CTag(lm_tag_base.CTag):
 			self.texture = self.ctx.img_list.get_val(self.fill_idx)
 			self.tex_coords = self.texture.tex_coords
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_SHAPE
 		

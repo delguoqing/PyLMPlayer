@@ -6,7 +6,7 @@ class CTag(lm_tag_base.CTag):
 	
 	def __init__(self, ctx, tag):
 		super(CTag, self).__init__(ctx, tag)
-		d = CTag.parse_tag(ctx, tag)
+		d = self.parse_tag(ctx, tag)
 		
 		self.character_id = d["character_id"]
 		self.max_depth = d["max_depth"]
@@ -48,7 +48,7 @@ class CTag(lm_tag_base.CTag):
 	def _add_key_frame_tag(self, tag):
 		self._key_frame_tags.append(tag)
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_MOVIECLIP
 		

@@ -41,6 +41,6 @@ class CTag(lm_tag_base.CTag):
 		
 		return sprite
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_SPRITE

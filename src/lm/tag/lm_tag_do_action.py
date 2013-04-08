@@ -10,7 +10,7 @@ class CTag(lm_tag_base.CTag):
 		self.as_idx = d["as_idx"]
 		self.script = ctx.as_list.get_val(self.as_idx)
 		
-	@classmethod
+	
 	def get_id(cls):
 		return lm_consts.TAG_DO_ACTION
 		

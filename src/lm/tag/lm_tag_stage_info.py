@@ -18,6 +18,6 @@ class CTag(lm_tag_base.CTag):
 		self.y = d["y"]
 		self.ctx = ctx
 	
-	@classmethod		
+			
 	def get_id(self):
 		return lm_consts.TAG_STAGE_INFO
