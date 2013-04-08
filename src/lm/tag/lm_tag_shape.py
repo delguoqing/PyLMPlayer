@@ -4,9 +4,6 @@ import lm_tag_base
 from lm import lm_consts
 from lm.type import lm_type_pos
 from lm.type import lm_type_rect
-from lm.drawable import lm_shape_clipped_image
-from lm.drawable import lm_shape_tiled_image
-from lm.drawable import lm_shape_solid_color
 
 class CTag(lm_tag_base.CTag):
 	
@@ -26,29 +23,80 @@ class CTag(lm_tag_base.CTag):
 		
 		self.color = None 
 		self.texture = None
-		self.tex_coords = None
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
 			self.color = self.ctx.color_list.get_val(self.fill_idx)
 		else:
 			self.texture = self.ctx.img_list.get_val(self.fill_idx)
-			self.tex_coords = self.texture.tex_coords
+			self.base_tex_coords = self.texture.tex_coords
+			
+		self.tex_coords = None
+		self.vertices = None			
+		self.create_vertex_list()
 		
-	
-	def get_id(cls):
-		return lm_consts.TAG_SHAPE
+	def create_vertex_list(self):
+		if self.tex_coords:
+			return self.fill_style != lm_consts.FILL_STYLE_SOLID_COLOR, \
+				self.vertices, self.tex_coords
 		
-	def instantiate(self, inst_id, depth, parent=None):
+		_r = self._rect
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
-			shape = lm_shape_solid_color.CDrawable(self.color, self._rect, 
-				inst_id, depth, parent=parent)
+			self.vertices = [_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
+				_r.ymin, _r.xmin, _r.ymin]
+			self.tex_coords = [self._color.rB, self._color.gB, self._color.bB, 
+				self._color.aB] * 4
 		elif self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
-			image = self.ctx.img_list.get_val(self.fill_idx)
-			shape = lm_shape_clipped_image.CDrawable(self.texture, 
-				self._rect, self.tex_coords, inst_id, depth, parent=parent)
+			scale_tx = _r.width * 1.0 / self.texture.width
+			scale_ty = _r.height * 1.0 / self.texture.height
+
+			_tex_coords = None
+			if scale_tx != 1.0:
+				_tex_coords = _tex_coords or list(self.base_tex_coords)
+				_tx_len = _tex_coords[-9] - _tex_coords[-3]
+				_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx
+			if scale_ty != 1.0:
+				_tex_coords = _tex_coords or list(self.base_tex_coords)
+				_ty_len = _tex_coords[-8] - _tex_coords[-5]
+				_tex_coords[-8] = _tex_coords[-11] = _tex_coords[-5] + _ty_len * scale_ty
+				
+			_tex_coords = _tex_coords or list(self.base_tex_coords)
+				
+			self.vertices = [_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
+				_r.ymin, _r.xmin, _r.ymin]
+			self.tex_coords = _tex_coords
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
-			image = self.ctx.img_list.get_val(self.fill_idx)
-			shape = lm_shape_tiled_image.CDrawable(self.texture, 
-				self._rect, self.tex_coords, inst_id, depth, parent=parent)
+			_vertices = []
+			_tex_coords = []
+			count = 0
+			for _y in xrange(_r.ymin, _r.ymax, self.texture.height):
+				for _x in xrange(_r.xmin, _r.xmax, self.texture.width):
+	
+					_xmin = _x
+					_xmax = _x + self.texture.width
+					_ymin = _y
+					_ymax = _y + self.texture.height
+									
+					_vertices += (_xmin, _ymax, _xmax, _ymax, _xmax, 
+					_ymin, _xmin, _ymin)
+					_tex_coords += self.base_tex_coords
+					
+					if _xmax > _r.xmax:
+						scale_tx = (_r.xmax - _xmin) * 1.0 / self.texture.width
+						_vertices[-4] = _vertices[-6] = _r.xmax
+						_tx_len = _tex_coords[-9] - _tex_coords[-3]
+						_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx					
+					if _ymax > _r.ymax:
+						scale_ty = (_r.ymax - _ymin) * 1.0 / self.texture.height
+						_vertices[-5] = _vertices[-7] = _r.ymax
+						_ty_len = _tex_coords[-8] - _tex_coords[-5]
+						_tex_coords[-8] = _tex_coords[-11] = _tex_coords[-5] + _ty_len * scale_ty
+					
+					count += 1	
+			self.vertices = _vertices
+			self.tex_coords = _tex_coords					
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
-		return shape
+		
+		return self.vertices, self.tex_coords
+		
+	def get_id(cls):
+		return lm_consts.TAG_SHAPE

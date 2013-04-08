@@ -12,9 +12,6 @@ from lm import lm_loader
 from lm.type import lm_type_color
 from lm.type import lm_type_mat
 
-from lm.drawable import lm_shape_solid_color
-from lm.drawable import lm_shape_clipped_image
-from lm.drawable import lm_shape_tiled_image
 from lm.drawable import lm_sprite
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript

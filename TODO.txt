@@ -3,8 +3,11 @@
 # 3. fscommand(used everywhere for callback)
 # 7. optimization. play with numba or Cython.
 # 9. implement font, static text, edit text, button, etc.
-#10. optimization. create vertex for sprite only once.
-#12.
+#12. bubbles in DANCE_BG_10.LM experiences a significant slow down. If i remember right, i don't have #    this problem before.
+#13. optimization. play with cProfile.
+#14. Don't use opengl api to do matrix calculation
+#15.
+#16.
 
 # DONE
 # 8. try wii version. 
@@ -21,3 +24,5 @@
 #11. make get_id method of tag class a normal method.(not class method!!)
 #      In fact, I don't know how to use this..., so remove.
 #
+#10. optimization. create vertex for sprite only once.
+#      haven't check if this really improves.
