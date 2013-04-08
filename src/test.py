@@ -107,27 +107,3 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 
 pyglet.app.run()
-
-# TODO:
-# 1. introduce `scene`
-# 3. fscommand(used everywhere for callback)
-# 7. optimization. play with numba or Cython.
-# 9. implement font, static text, edit text, button, etc.
-#10. optimization. create vertex for sprite only once.
-#12.
-
-# DONE
-# 8. try wii version. 
-#      frame rate almost the same, so, my player is most 
-#    probably cpu bounded.
-#
-# 4. DANCE_BG_10.LM bubble flashs. 
-#      Bug fixed, a mc which is inited in the 
-#    current frame should not advance in the same frame
-#
-# 6. Sprite not complete matching together. metedai?dancebg05
-#      tag shape can define a boundbox smaller than the filling image.fixed.
-#
-#11. make get_id method of tag class a normal method.(not class method!!)
-#      In fact, I don't know how to use this..., so remove.
-#
