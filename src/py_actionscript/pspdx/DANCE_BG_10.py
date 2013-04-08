@@ -1,5 +1,5 @@
 def func_0(this):
-	gotoAndPlay(0)
+	this.gotoAndPlay(0)
 	
 def func_1(this):
 	def onEnterFrame(_this):

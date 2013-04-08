@@ -3,11 +3,13 @@
 # 3. fscommand(used everywhere for callback)
 # 7. optimization. play with numba or Cython.
 # 9. implement font, static text, edit text, button, etc.
-#12. bubbles in DANCE_BG_10.LM experiences a significant slow down. If i remember right, i don't have #    this problem before.
-#13. optimization. play with cProfile.
+#12. bubbles in DANCE_BG_10.LM experiences a significant slow down. 
+#      If i remember right, i don't have this problem before.
+#      It seems that too many color composition and matrix math is the main #      cost.but i already have an idea in my mind~~~see 15.
 #14. Don't use opengl api to do matrix calculation
-#15.
+#15. try to implement a dirty render state algorithm.
 #16.
+#17.
 
 # DONE
 # 8. try wii version. 
@@ -26,3 +28,6 @@
 #
 #10. optimization. create vertex for sprite only once.
 #      haven't check if this really improves.
+#
+#13. optimization. play with cProfile.
+#      have use cProfile to find the hot spot.creating too much color instance.
