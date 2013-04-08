@@ -18,10 +18,26 @@ class CDrawable(lm_drawable.CDrawable):
 		
 	def _create_vertex_list(self):
 		_r = self._rect
+		
+		scale_tx = _r.width * 1.0 / self._texture.width
+		scale_ty = _r.height * 1.0 / self._texture.height
+
+		_tex_coords = None
+		if scale_tx != 1.0:
+			_tex_coords = _tex_coords or list(self._tex_coords)
+			_tx_len = _tex_coords[-9] - _tex_coords[-3]
+			_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx
+		if scale_ty != 1.0:
+			_tex_coords = _tex_coords or list(self._tex_coords)
+			_ty_len = _tex_coords[-8] - _tex_coords[-5]
+			_tex_coords[-8] = _tex_coords[-11] = _tex_coords[-5] + _ty_len * scale_ty
+			
+		_tex_coords = _tex_coords or self._tex_coords
+			
 		self._vertex_list = pyglet.graphics.vertex_list(4,
 			('v2f/static', (_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
 				_r.ymin, _r.xmin, _r.ymin)),
-			('t3f/static', self._tex_coords)
+			('t3f/static', _tex_coords)
 		)
 		
 	def draw(self, render_state):

@@ -29,11 +29,15 @@ class CDrawable(lm_shape_clipped_image.CDrawable):
 				_tex_coords += self._tex_coords
 				
 				if _xmax > _r.xmax:
+					scale_tx = (_r.xmax - _xmin) * 1.0 / self._texture.width
 					_vertices[-4] = _vertices[-6] = _r.xmax
-					_tex_coords[-6] = _tex_coords[-9] = (_r.xmax - _xmin) * 1.0 / self._texture.width
+					_tx_len = _tex_coords[-9] - _tex_coords[-3]
+					_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx					
 				if _ymax > _r.ymax:
+					scale_ty = (_r.ymax - _ymin) * 1.0 / self._texture.height
 					_vertices[-5] = _vertices[-7] = _r.ymax
-					_tex_coords[-8] = _tex_coords[-11] = (_r.ymax - _ymin) * 1.0 / self._texture.height
+					_ty_len = _tex_coords[-8] - _tex_coords[-5]
+					_tex_coords[-8] = _tex_coords[-11] = _tex_coords[-5] + _ty_len * scale_ty
 				
 				count += 1	
 					
