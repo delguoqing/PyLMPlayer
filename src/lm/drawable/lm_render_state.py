@@ -12,6 +12,12 @@ class CObj(object):
 		self._shader = lm_shader.cxform_shader
 		self._color_stack = collections.deque()
 		self._matrix_stack = collections.deque()
+		self._color_pool = collections.deque()
+		
+	def _get_cached_color(self):
+		if self._color_pool:
+			return self._color_pool.pop()
+		return lm_type_color.CType(0.0, 0.0, 0.0, 0.0)
 		
 	def begin(self):
 		self._shader.bind()
@@ -33,13 +39,24 @@ class CObj(object):
 		cadd = cadd or lm_type_color.null_cadd
 		cmul = cmul or lm_type_color.null_cmul
 		oadd, omul = self._color_stack[-1]
-		self._color_stack.append((cadd*omul+oadd, cmul*omul))
+		
+		new_cadd = self._get_cached_color()
+		new_cmul = self._get_cached_color()
+		
+		cadd.mul(omul, new_cadd)
+		new_cadd.add(oadd, new_cadd)
+		
+		cmul.mul(omul, new_cmul)
+		
+		self._color_stack.append((new_cadd, new_cmul))
 		self._is_color_dirty = True
 		
 	def pop_cxform(self):
-		self._color_stack.pop()
+		cadd, cmul = self._color_stack.pop()
+		self._color_pool.append(cadd)
+		self._color_pool.append(cmul)		
 		self._is_color_dirty = True
-	
+
 	def update_blend_mode(self):
 		if not self._blend_mode_stack:
 			return

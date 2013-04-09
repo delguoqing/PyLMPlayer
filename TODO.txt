@@ -1,3 +1,6 @@
+This site is amazing:
+http://ericlin2.tripod.com/
+
 # TODO:
 # 1. introduce `scene`
 # 3. fscommand(used everywhere for callback)
@@ -9,8 +12,9 @@
 #14. Don't use opengl api to do matrix calculation
 #15. try to implement a dirty render state algorithm.
 #16. try to map all leafs to a list.(not too hard)
-#18.
+#18. colors will not be truncated until it is going to display
 #19.
+#20.
 
 # DONE
 # 8. try wii version. 
