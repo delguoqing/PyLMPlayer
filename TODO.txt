@@ -8,8 +8,9 @@
 #      It seems that too many color composition and matrix math is the main #      cost.but i already have an idea in my mind~~~see 15.
 #14. Don't use opengl api to do matrix calculation
 #15. try to implement a dirty render state algorithm.
-#16.
-#17.
+#16. try to map all leafs to a list.(not too hard)
+#18.
+#19.
 
 # DONE
 # 8. try wii version. 
@@ -31,3 +32,6 @@
 #
 #13. optimization. play with cProfile.
 #      have use cProfile to find the hot spot.creating too much color instance.
+#
+#17. try reuse color instance.
+#      Better, but not satisfied.I should avoid doing math completely when there's no change.

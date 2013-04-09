@@ -1,10 +1,10 @@
 class CType(object):
 
 	def __init__(self, r, g, b, a):
-		self._r = max(0, min(r, 1.0))
-		self._g = max(0, min(g, 1.0))
-		self._b = max(0, min(b, 1.0))
-		self._a = max(0, min(a, 1.0))
+		self._r = min(r, 1.0)
+		self._g = min(g, 1.0)
+		self._b = min(b, 1.0)
+		self._a = min(a, 1.0)
 		
 	def _get_r(self):
 		return self._r
@@ -30,10 +30,19 @@ class CType(object):
 	def _get_aB(self):
 		return int(self._a * 255)
 	aB = property(_get_aB)
-	def __mul__(self, o):
-		return CType(self.r*o.r, self.g*o.g, self.b*o.b, self.a*o.a)
-	def __add__(self, o):
-		return CType(self.r+o.r, self.g+o.g, self.b+o.b, self.a+o.a)
+	
+	def mul(self, other, output):
+		output._r = self._r * other._r
+		output._g = self._g * other._g
+		output._b = self._b * other._b
+		output._a = self._a * other._a
+
+	def add(self, other, output):
+		output._r = min(self._r + other._r, 1.0)
+		output._g = min(self._g + other._g, 1.0)
+		output._b = min(self._b + other._b, 1.0)
+		output._a = min(self._a + other._a, 1.0)
+		
 	def __str__(self):
 		return "(%.2f, %.2f, %.2f, %.2f)" % (self.r, self.g, self.b, self.a)
 	def __eq__(self, o):
