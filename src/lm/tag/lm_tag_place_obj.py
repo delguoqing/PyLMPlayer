@@ -22,6 +22,16 @@ class CTag(lm_tag_base.CTag):
 		self._blend_mode = lm_type_blend_mode.CType(d["blend_mode"])
 		self._clip_depth = d["clip_depth"]	# how to impl?
 		
+		# Note:
+		# 
+		# empty color add  `(0.0, 0.0, 0.0, 0.0)`
+		# none  color add  `None`
+		# 
+		# empty color mul  `(1.0, 1.0, 1.0, 1.0)`
+		# none  color mul  `None`
+		#
+		# They are different!
+		
 		self._cadd = None
 		if d["color_add_idx"] >= 0:
 			self._cadd = self.ctx.color_list.get_val(d["color_add_idx"])
