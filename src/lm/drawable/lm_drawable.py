@@ -1,6 +1,7 @@
 from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
 from lm.type import lm_type_mat
+from lm import lm_glb
 
 import pyglet
 import lm_render_state
@@ -36,12 +37,12 @@ class CDrawable(object):
 	
 	def set_cxform(self, cadd, cmul):
 		if cadd:
-			if cadd == lm_type_color.null_cadd:
+			if cadd == lm_glb.null_cadd:
 				self.color_add = None
 			else:
 				self.color_add = cadd
 		if cmul:
-			if cmul == lm_type_color.null_cmul:
+			if cmul == lm_glb.null_cmul:
 				self.color_mul = None
 			else:
 				self.color_mul = cmul

@@ -2,6 +2,7 @@ import collections
 from lm.util import lm_shader
 from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
+from lm import lm_glb
 
 from pyglet.gl import *
 
@@ -33,7 +34,7 @@ class CObj(object):
 		self._shader.uniformi("sampler", 0)
 		self._shader.uniformi("use_texture", 1)
 		self._use_texture = True
-		self._color_stack.append((lm_type_color.null_cadd, lm_type_color.null_cmul))
+		self._color_stack.append((lm_glb.null_cadd, lm_glb.null_cmul))
 		self._is_color_dirty = True
 		self._empty_blend_mode_cnt = []		
 		self._blend_mode_stack = collections.deque()		
@@ -50,17 +51,16 @@ class CObj(object):
 			self._shader.uniformi("use_texture", int(flag))
 		
 	def push_cxform(self, cadd, cmul):
-		cadd = cadd or lm_type_color.null_cadd
-		cmul = cmul or lm_type_color.null_cmul
+		cadd = cadd or lm_glb.null_cadd
+		cmul = cmul or lm_glb.null_cmul
 		oadd, omul = self._color_stack[-1]
 		
 		new_cadd = self._get_cached_color()
 		new_cmul = self._get_cached_color()
-		
-		cadd.mul(omul, new_cadd)
-		new_cadd.add(oadd, new_cadd)
-		
-		cmul.mul(omul, new_cmul)
+				
+		new_cadd.mul(cadd, omul)
+		new_cadd.add(new_cadd, oadd)
+		new_cmul.mul(cmul, omul)
 		
 		self._color_stack.append((new_cadd, new_cmul))
 		self._is_color_dirty = True

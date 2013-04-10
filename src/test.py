@@ -72,7 +72,7 @@ def on_draw(dt):
 #	render_state.print_statistic()
 	
 	# Draw fps counter
-	fps_display.draw()
+#	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
