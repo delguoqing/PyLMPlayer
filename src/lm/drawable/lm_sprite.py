@@ -10,7 +10,10 @@ class CDrawable(lm_drawable.CDrawable):
 		self._rect = rect
 		self._vertex_lists = vertex_lists
 		
-	def draw(self, render_state):
+	def update(self, render_state, draw=True):
+		if not draw:
+			return
+			
 		render_state.push_matrix(self.matrix)
 		render_state.push_cxform(self.color_add, self.color_mul)
 		render_state.push_blend_mode(self.blend_mode)

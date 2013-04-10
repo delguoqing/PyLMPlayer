@@ -105,9 +105,6 @@ class CTag(lm_tag_base.CTag):
 					inst.char_id = self._char_id
 				target.add_drawable(inst, self._depth, self._name)
 
-				# if the character is a movieclip
-				# then it needs a init
-				inst.is_movieclip() and inst.init(fully=True)
 				if self._on_enter_frame:
 					inst.onEnterFrame = self._on_enter_frame
 				

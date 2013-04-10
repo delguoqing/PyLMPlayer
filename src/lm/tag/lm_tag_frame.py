@@ -11,17 +11,12 @@ class CTag(lm_tag_base.CTag):
 		self._cmd_cnt = d["cmd_cnt"]
 		self._ctrl_tags = []
 		
-		self._action_tags = []
-		
 	# 0 based frame id
 	def get_frame_id(self):
 		return self._frame_id
 		
 	def add_sub_tag(self, tag):
-		if tag.get_id() == lm_consts.TAG_DO_ACTION:
-			self._action_tags.append(tag)
-		else:
-			self._ctrl_tags.append(tag)
+		self._ctrl_tags.append(tag)
 		
 	def get_sub_tag_cnt(self):
 		return self._cmd_cnt
@@ -35,10 +30,6 @@ class CTag(lm_tag_base.CTag):
 		
 		for tag in self._ctrl_tags:
 			tag.execute(target=target)
-			
-		for tag in self._action_tags:
-			tag.execute(target=target)
-		
 	
 	def get_id(cls):
 		return lm_consts.TAG_FRAME

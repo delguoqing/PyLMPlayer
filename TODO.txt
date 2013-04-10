@@ -13,8 +13,8 @@ http://ericlin2.tripod.com/
 #15. try to implement a dirty render state algorithm.
 #16. try to map all leafs to a list.(not too hard)
 #18. colors will not be truncated until it is going to display
-#19.
-#20.
+#21. 
+#22. 
 
 # DONE
 # 8. try wii version. 
@@ -39,3 +39,24 @@ http://ericlin2.tripod.com/
 #
 #17. try reuse color instance.
 #      Better, but not satisfied.I should avoid doing math completely when there's no change.
+#19. may be I can measure render depth, and count draw counts.
+DANCE_BG_04.LM
+Render Statistic Peak:
+        113 nodes visited
+        79 primitive draw
+        max recursive depth: 5
+DANCE_BG_10.LM
+Render Statistic Peak:
+        110 nodes visited
+        52 primitive draw
+        max recursive depth: 7
+DANCE_BG_12.LM
+Render Statistic Peak:
+        138 nodes visited
+        89 primitive draw
+        max recursive depth: 6
+can we just advance and draw in one call?
+if i have to visit so many nodes and cost so much on recursive function call
+i can do drawing in the same visit.
+#20. Try to do drawing and update in the just one visit
+   Yes, it helps.

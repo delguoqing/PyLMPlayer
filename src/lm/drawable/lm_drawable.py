@@ -19,6 +19,7 @@ class CDrawable(object):
 
 		self.depth = depth
 		self._as_tween_only = False
+		self._inited = False
 
 		if parent is None:
 			self._render_state = lm_render_state.CObj()
@@ -30,7 +31,7 @@ class CDrawable(object):
 		return self._as_tween_only
 	forbid_timeline = property(_get_forbid_timeline)
 				
-	def draw(self, render_state):
+	def update(self, render_state, draw=True):
 		raise NotImplementedError
 	
 	def set_cxform(self, cadd, cmul):

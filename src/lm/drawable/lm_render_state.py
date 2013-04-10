@@ -14,6 +14,15 @@ class CObj(object):
 		self._matrix_stack = collections.deque()
 		self._color_pool = collections.deque()
 		
+		# statistic
+		self._draw_count = 0
+		self._max_depth = 0
+		self._node_count = 0
+		
+		self._peak_draw_count = 0
+		self._peak_max_depth = 0
+		self._peak_node_count = 0
+		
 	def _get_cached_color(self):
 		if self._color_pool:
 			return self._color_pool.pop()
@@ -29,6 +38,11 @@ class CObj(object):
 		self._empty_blend_mode_cnt = []		
 		self._blend_mode_stack = collections.deque()		
 		self._last_blend_mode = lm_type_blend_mode.null_blend
+		
+		# clear up statistic
+#		self._draw_count = 0
+#		self._max_depth = 0
+#		self._node_count = 0
 		
 	def set_enable_texture(self, flag):
 		if flag != self._use_texture:
@@ -50,7 +64,11 @@ class CObj(object):
 		
 		self._color_stack.append((new_cadd, new_cmul))
 		self._is_color_dirty = True
-		
+
+		# do statistic A
+#		self._node_count += 1
+#		self._max_depth = max(self._max_depth, len(self._color_stack))
+				
 	def pop_cxform(self):
 		cadd, cmul = self._color_stack.pop()
 		self._color_pool.append(cadd)
@@ -102,10 +120,13 @@ class CObj(object):
 		else:
 			self._empty_blend_mode_cnt[-1] -= 1
 			
-	def draw_image(self, vertex_list):
+	def draw_image(self, vertex_list):	
 		self.update_blend_mode()
 		self.update_cxform()
 		vertex_list.draw(GL_QUADS)
+		
+		# do statistic B
+#		self._draw_count += 1		
 		
 	def draw_solid(self, vertex_list):
 		self.update_blend_mode()	
@@ -113,8 +134,30 @@ class CObj(object):
 		self.set_enable_texture(False)
 		vertex_list.draw(GL_QUADS)
 		self.set_enable_texture(True)
-			
+
+		# do statistic C
+#		self._draw_count += 1		
+					
 	def end(self):
 		self._shader.unbind()
 		self._texture = None
 		self._color_stack.clear()
+		
+		# do statistic D
+		# compare peak statistc
+#		self._peak_node_count = max(self._peak_node_count, self._node_count)
+#		self._peak_draw_count = max(self._peak_draw_count, self._draw_count)
+#		self._peak_max_depth = max(self._peak_max_depth, self._max_depth)
+						
+		
+	def print_statistic(self):
+		print "Render Statistic:"
+		print "\t%d nodes visited" % self._node_count
+		print "\t%d primitive draw" % self._draw_count
+		print "\tmax recursive depth: %d" % self._max_depth
+		
+	def print_overall_statistic(self):
+		print "Render Statistic Peak:"
+		print "\t%d nodes visited" % self._peak_node_count
+		print "\t%d primitive draw" % self._peak_draw_count
+		print "\tmax recursive depth: %d" % self._peak_max_depth		

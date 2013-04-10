@@ -15,7 +15,7 @@ from lm.type import lm_type_mat
 from lm.drawable import lm_sprite
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(640, 480)
+window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay()
 
 # one frame movieclip can be drawn as a display_list
@@ -47,7 +47,7 @@ def on_draw(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(0, 640, 480, 0, -1, 1)
+	glOrtho(0, 480, 272, 0, -1, 1)
 	
 #	glClearColor(1, 1, 0, 1)
 	window.clear()
@@ -65,11 +65,12 @@ def on_draw(dt):
 	render_state.begin()
 
 
-	movieclip.advance()	
-	# Draw movieclip	
-	movieclip.draw(render_state)
+	movieclip.update(render_state)	
 	
 	render_state.end()
+	
+#	render_state.print_statistic()
+	
 	# Draw fps counter
 	fps_display.draw()
 	
@@ -91,7 +92,7 @@ char_id = ctx.stage_info.start_character_id
 movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
 movieclip.char_id = char_id
 movieclip.init()
-movieclip.set_matrix(lm_type_mat.CType((256, 264)))
+#movieclip.set_matrix(lm_type_mat.CType((256, 60)))
 
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
@@ -104,3 +105,5 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 
 pyglet.app.run()
+
+movieclip._render_state.print_overall_statistic()

@@ -68,6 +68,7 @@ class CObj(lm_drawable_container.CDrawable):
 		if _d is not None:
 			self._pool[depth].append(_d)
 			_d._as_tween_only = False
+			_d._inited = False
 		super(CObj, self).remove_drawable(depth)
 
 	def is_movieclip(self):
@@ -79,37 +80,63 @@ class CObj(lm_drawable_container.CDrawable):
 	# Play mode: jump!
 	# if the new
 	def goto_frame(self, frame_id):
-		if frame_id == 0:
-			key_frame = self._frame_tags[0]
-		else:
-			for key_frame_tag in self._key_frame_tags:
-				if key_frame_tag.get_frame_id() == frame_id:
-					key_frame = key_frame_tag
-					break
+		for key_frame_tag in self._key_frame_tags:
+			if key_frame_tag.get_frame_id() == frame_id:
+				key_frame = key_frame_tag
+				break
 		key_frame.execute(target=self)
 		
 	# Play mode: Normal!
-	def advance(self):
+	def update(self, render_state, draw=True):
+
+		if not self._inited:
+			self.init()
+			self._inited = True
 			
-		# what ever, should do the onEnterFrame
-		if self.onEnterFrame:
-			self.onEnterFrame(self)
+		else:
+			# what ever, should do the onEnterFrame
+			if self.onEnterFrame:
+				self.onEnterFrame(self)
 		
-		# if a movieclip has only one frame, then it won't play
-		if self._is_playing and self._total_frame > 1:
-			self._play_head += 1
-			if self._play_head >= self._total_frame:
-				self.init()
-			else:
-				self._frame_tags[self._play_head].execute(target=self)
+			# if a movieclip has only one frame, then it won't play
+			if self._is_playing and self._total_frame > 1:
+				self._play_head += 1
+				if self._play_head >= self._total_frame:
+					self.init()
+				else:
+					self._frame_tags[self._play_head].execute(target=self)
 	
-		# whatever, sub movieclip is not stopped!
+		# Update & Render
+		
+		render_state.push_matrix(self.matrix)
+		render_state.push_cxform(self.color_add, self.color_mul)
+		render_state.push_blend_mode(self.blend_mode)
+		
+		clip_depth = 0
+		
 		for drawable in self:
-			if isinstance(drawable, CObj):
-				if drawable._init_frame:
-					drawable._init_frame = False
-					continue
-				drawable.advance()
+			
+			if not drawable.clip_depth:
+				drawable.update(render_state, draw)
+				if clip_depth and drawable.depth == clip_depth:
+					glDisable(GL_SCISSOR_TEST)
+			else:
+				drawable.update(render_state, False)
+				# Set Scissors
+				# Assume that:
+				# 1. no nested scissor
+				# 2. no rotated or skewed scissor
+				# improve this!
+				clip_depth = drawable.clip_depth
+				glEnable(GL_SCISSOR_TEST)
+				mat = (GLfloat * 16)()
+				glGetFloatv(GL_MODELVIEW_MATRIX, mat)
+				_r = drawable._rect
+				glScissor(int(_r.xmin * mat[0] + mat[12]), 272-int(_r.ymax * mat[5] + mat[13]), int(_r.width * mat[0]), int(_r.height * mat[5]))
+			
+		render_state.pop_matrix()
+		render_state.pop_cxform()
+		render_state.pop_blend_mode()
 				
 	# initialization when first placed on stage
 	def init(self, fully=False):
