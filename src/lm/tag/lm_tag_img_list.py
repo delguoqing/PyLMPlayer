@@ -21,7 +21,7 @@ class CTag(lm_tag_base.CTag):
 		return lm_consts.TAG_IMG_LIST
 		
 	def _make_atalas(self, d):
-		self._bin = pyglet.image.atlas.TextureBin(2048, 2048)
+		self._bin = pyglet.image.atlas.TextureBin(1024, 1024)
 		self._data = []
 		
 		for info in d["img_list"]:

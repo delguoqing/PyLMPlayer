@@ -22,22 +22,47 @@ fps_display = pyglet.clock.ClockDisplay()
 
 @window.event
 def on_key_press(symbol, modifiers):
-	global movieclip
-	
-	if symbol == pyglet.window.key.SPACE:	
-		movieclip.play()
-	elif symbol == pyglet.window.key.F:
-
-		on_draw(1)
-
-#@window.event
-#def on_draw2():
-#	pass
+	global movieclips
+	if symbol == pyglet.window.key.F:
+		movieclips[LEFT_DON].gotoAndPlay("left_don")
+		movieclips[MATO].gotoAndPlay("hit_ryo")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
+		movieclips[HITEFFECTS].gotoAndPlay("don_s")
+	elif symbol == pyglet.window.key.J:
+		movieclips[RIGHT_DON].gotoAndPlay("right_don")
+		movieclips[MATO].gotoAndPlay("hit_ka")		
+		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
+		movieclips[HITEFFECTS].gotoAndPlay("don_b")
+	elif symbol == pyglet.window.key.R:
+		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
+		movieclips[MATO].gotoAndPlay("hit_dai_ryo")		
+		movieclips[HITEFFECTS].gotoAndPlay("katsu_s")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ryo_big")
+	elif symbol == pyglet.window.key.U:
+		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
+		movieclips[MATO].gotoAndPlay("hit_dai_ka")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ka_big")
+		movieclips[HITEFFECTS].gotoAndPlay("katsu_b")		
+	elif symbol == pyglet.window.key.BRACKETLEFT:
+		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
+		movieclips[GAUGE].gotoAndPlay(71)
+		movieclips[DANCE_BG].gotoAndPlay("normal_fever")
+		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
+	elif symbol == pyglet.window.key.BRACKETRIGHT:
+		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
+		movieclips[GAUGE].gotoAndPlay("gage_47")
+		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
+		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
+	elif symbol == pyglet.window.key.ENTER:		
+		movieclips[FULLCOMBO].gotoAndPlay("run")
+			
+	elif symbol == pyglet.window.key.UP:
+		movieclips[BUNKI].play()
+		movieclips[BUNKI_MOJI].play()		
+		
 
 def on_draw(dt):
-	global movieclip, ctx
-	global debug_advance
-	
+	global movieclips
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
 	glDisable(GL_DEPTH_TEST)
@@ -51,28 +76,12 @@ def on_draw(dt):
 	
 #	glClearColor(1, 1, 0, 1)
 	window.clear()
-	glMatrixMode(GL_MODELVIEW)
-	glLoadIdentity()
-		
-	# Bind The overall Texture
-	# TODO:
-	#	what if more than one texture atlas are used?
-	tex = ctx.img_list.get_val(0)
-	glEnable(tex.target)
-	glBindTexture(tex.target, tex.id)
 	
-	render_state = movieclip._render_state
-	render_state.begin()
-
-
-	movieclip.update(render_state)	
-	
-	render_state.end()
-	
-#	render_state.print_statistic()
+	for movieclip in movieclips:
+		draw_movieclip(movieclip)
 	
 	# Draw fps counter
-#	fps_display.draw()
+	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -81,29 +90,93 @@ pyglet.clock.schedule(on_draw)
 
 img_root = "C:/png"
 platform = "pspdx"
-filename = os.path.join("../../LMDumper/lm/pspdx/", sys.argv[1])
+lm_root = "../../LMDumper/lm/pspdx/"
 inst_id = 999
 depth = 0
 
-ctx = lm_loader.load(filename, img_root, platform)
-char_id = ctx.stage_info.start_character_id
+def load_movie(filename, translate=(0, 0)):
+	filename = os.path.join(lm_root, filename)
+	ctx = lm_loader.load(filename, img_root, platform)
+	char_id = ctx.stage_info.start_character_id
+	char_tag = ctx.get_character(char_id)
+	movieclip = char_tag.instantiate(inst_id, depth, parent=None)
+	movieclip.char_id = char_id
+	movieclip.init()
+	movieclip.set_matrix(lm_type_mat.CType(translate))
+	movieclip.ctx = ctx
+	return movieclip
+
+def draw_movieclip(movieclip):
+	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
+	
+	# Bind one texture for one movieclip
+	ctx = movieclip.ctx	
+	tex = ctx.img_list.get_val(0)
+	glEnable(tex.target)
+	glBindTexture(tex.target, tex.id)
+	
+	render_state = movieclip._render_state
+	render_state.begin()
+
+	movieclip.update(render_state)	
+	
+	render_state.end()
 
 
-movieclip = ctx.get_character(char_id).instantiate(inst_id, depth, parent=None)
-movieclip.char_id = char_id
-movieclip.init()
-#movieclip.set_matrix(lm_type_mat.CType((256, 60)))
+NUM_MOVIECLIP = 19
+(
+DANCE_BG, 
+ENSO_UP_BG, 
+BG_SAB_EFFECTI,
+COURSE, 
+LANE, 
+HITEFFECTS, 
+FULLCOMBO,
+TAIKO, 
+COMBO,
+BUNKI,
+MATO_GOGO, 
+BUNKI_MOJI, 
+MATO, 
+HITJUDGE, 
+LEFT_DON, 
+LEFT_KATS, 
+RIGHT_DON, 
+RIGHT_KATS, 
+GAUGE
+) = range(NUM_MOVIECLIP)
 
-glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+# Build up scene
+movieclips = [None] * NUM_MOVIECLIP
+
+movieclips[DANCE_BG] = load_movie("DANCE_BG_01.LM")
+movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_01.LM")
+movieclips[COURSE] = load_movie("COURSE_ONI.LM")
+movieclips[LANE] = load_movie("ENSO_LANE.LM")
+movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
+movieclips[TAIKO] = load_movie("ENSO_TAIKO.LM")
+movieclips[COMBO] = load_movie("ENSO_COMBO.LM")
+movieclips[MATO_GOGO] = load_movie("ENSO_MATO_GOGO.LM")
+movieclips[MATO] = load_movie("ENSO_MATO.LM")
+movieclips[HITJUDGE] = load_movie("ENSO_HITJUDGE.LM")
+movieclips[LEFT_DON] = load_movie("ENSO_LEFT_DON.LM")
+movieclips[LEFT_KATS] = load_movie("ENSO_LEFT_KATS.LM")
+movieclips[RIGHT_DON] = load_movie("ENSO_RIGHT_DON.LM")
+movieclips[RIGHT_KATS] = load_movie("ENSO_RIGHT_KATS.LM")
+movieclips[GAUGE] = load_movie("GAUGE_DON_H.LM")
+movieclips[BUNKI] = load_movie("ENSO_BUNKI.LM")
+movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
+movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
+movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
+
+# Thus we use shader to do cxform, this is not needed
+#glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
 glEnable(GL_BLEND)
-glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 # Turn off texture filter
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-
 pyglet.app.run()
-
-movieclip._render_state.print_overall_statistic()

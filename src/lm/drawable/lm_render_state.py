@@ -3,6 +3,7 @@ from lm.util import lm_shader
 from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
 from lm import lm_glb
+from lm import lm_consts
 
 from pyglet.gl import *
 
@@ -40,6 +41,7 @@ class CObj(object):
 		self._blend_mode_stack = collections.deque()		
 		self._last_blend_mode = lm_type_blend_mode.null_blend
 		
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)		
 		# clear up statistic
 #		self._draw_count = 0
 #		self._max_depth = 0
@@ -117,6 +119,8 @@ class CObj(object):
 		if self._empty_blend_mode_cnt[-1] == 0:
 			self._empty_blend_mode_cnt.pop(-1)
 			last = self._blend_mode_stack.pop()
+			if last._idx == lm_consts.BLEND_SUBTRACT:
+				glBlendEquation(GL_FUNC_ADD)
 		else:
 			self._empty_blend_mode_cnt[-1] -= 1
 			

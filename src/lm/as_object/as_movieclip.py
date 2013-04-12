@@ -21,6 +21,7 @@ class CObj(lm_drawable_container.CDrawable):
 		self._total_frame = len(self._frame_tags)		
 		self._is_playing = True	
 		self._init_no_frame = False
+		self._active = True
 
 		# The `clip actions`
 		# support onEnterFrame only
