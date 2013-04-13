@@ -18,18 +18,51 @@ from lm.drawable import lm_sprite
 window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay()
 
-# one frame movieclip can be drawn as a display_list
+MENU_UME = 1
+MENU_TAKE = 2
+MENU_MATSU = 3
+MENU_ONI = 4
 
+
+cur_menu = MENU_UME
 @window.event
 def on_key_press(symbol, modifiers):
-	global movieclips
-	if symbol == pyglet.window.key.BRACKETLEFT:
-		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
-	elif symbol == pyglet.window.key.BRACKETRIGHT:
-		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
+	global movieclips, cur_menu
+	if symbol == pyglet.window.key.UP:
+		movieclips[BG].mc_bg_000.gotoAndPlay("up_%d_in_oni" % cur_menu)
+		movieclips[TOP].diff.gotoAndPlay("up_%d_in_oni" % cur_menu)
+				
+		movieclips[cur_menu].gotoAndPlay("up_1")
+		cur_menu = cur_menu % 4 + 1
+		movieclips[cur_menu].gotoAndPlay("up_2")		
+
+
+	elif symbol == pyglet.window.key.DOWN:
+		movieclips[BG].mc_bg_000.gotoAndPlay("down_%d_in_oni" % (6-cur_menu))
+		movieclips[TOP].diff.gotoAndPlay("down_%d_in_oni" % (6-cur_menu))
+		
+		movieclips[cur_menu].gotoAndPlay("down_1")
+		cur_menu = cur_menu - 1
+		if cur_menu < 1: cur_menu = 4
+		movieclips[cur_menu].gotoAndPlay("down_2")
+
+	elif symbol == pyglet.window.key.LEFT:
+		movieclips[cur_menu].menu_top.gotoAndPlay("right_move")
+		
+	elif symbol == pyglet.window.key.RIGHT:
+		movieclips[cur_menu].menu_top.gotoAndPlay("left_move")
+		
+	elif symbol == pyglet.window.key.ENTER:		
+		movieclips[cur_menu].menu_top.gotoAndPlay("play")	
 		
 def fscommand(event, data):
-	print "fscommand(%s, %s)" % (event, data)
+	global cur_menu
+	print event, data
+	if event == "callback":
+		if data == "update_menu_matsu_sbopen_l_b":
+			movieclips[cur_menu].menu_top.gotoAndPlay("open")
+		elif data == "update_menu_matsu_sbopen_r_b":
+			movieclips[cur_menu].menu_top.gotoAndPlay("open")
 	
 def on_draw(dt):
 	global movieclips
@@ -98,17 +131,25 @@ def draw_movieclip(movieclip):
 	render_state.end()
 
 
-NUM_MOVIECLIP = 2
+NUM_MOVIECLIP = 6
 (
-SONG_SELECT_BG,
-SONG_SELECT, 
+BG,
+MENU_UME, 
+MENU_TAKE,
+MENU_MATSU,
+MENU_ONI,
+TOP,
 ) = range(NUM_MOVIECLIP)
 
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[SONG_SELECT] = load_movie("SONG_SELECT.LM")
-movieclips[SONG_SELECT_BG] = load_movie("SONG_SELECT_BG.LM")
+movieclips[BG] = load_movie("SONG_SELECT_BG.LM")
+movieclips[MENU_UME] = load_movie("SONG_SELECT_EASY.LM")
+movieclips[MENU_TAKE] = load_movie("SONG_SELECT_NORMAL.LM")
+movieclips[MENU_MATSU] = load_movie("SONG_SELECT_HARD.LM")
+movieclips[MENU_ONI] = load_movie("SONG_SELECT_ONI.LM")
+movieclips[TOP] = load_movie("SONG_SELECT_TOP.LM")
 
 # Thus we use shader to do cxform, this is not needed
 #glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
