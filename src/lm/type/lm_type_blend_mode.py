@@ -17,7 +17,7 @@ class CType(object):
 		src, dst = self.BLEND_FUNC[self._idx]
 		glBlendFunc(src, dst)
 		if self._idx == lm_consts.BLEND_SUBTRACT:
-			glBlendEquation(GL_FUNC_SUBTRACT)
+			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT)
 
 	def unset(self):
 		src, dst = self.BLEND_FUNC[lm_consts.BLEND_NORMAL]

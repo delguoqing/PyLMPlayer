@@ -2,19 +2,19 @@ This site is amazing:
 http://ericlin2.tripod.com/
 
 # TODO:
-# 1. introduce `scene`
-# 3. fscommand(used everywhere for callback)
 # 7. optimization. play with numba or Cython.
 # 9. implement font, static text, edit text, button, etc.
 #12. bubbles in DANCE_BG_10.LM experiences a significant slow down. 
 #      If i remember right, i don't have this problem before.
 #      It seems that too many color composition and matrix math is the main #      cost.but i already have an idea in my mind~~~see 15.
+#      shader.uniformi cut off almost 10 fps!
 #14. Don't use opengl api to do matrix calculation
 #15. try to implement a dirty render state algorithm.
 #16. try to map all leafs to a list.(not too hard)
 #18. colors will not be truncated until it is going to display
-#21. 
+#21. support property _visible, _parent, _root
 #22. 
+#23. 
 
 # DONE
 # 8. try wii version. 
@@ -60,3 +60,7 @@ if i have to visit so many nodes and cost so much on recursive function call
 i can do drawing in the same visit.
 #20. Try to do drawing and update in the just one visit
    Yes, it helps.
+# 1. introduce `scene`
+	load multiple lm files
+# 3. fscommand(used everywhere for callback)
+	just add an arg in do script call

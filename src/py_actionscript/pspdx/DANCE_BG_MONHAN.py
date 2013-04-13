@@ -1,4 +1,4 @@
-def func_0(this):
+def func_0(this, fscommand):
 	def onEnterFrame(_this):
 		medetai = _this.medetai
 		medetai._x -= 1.5
@@ -6,7 +6,7 @@ def func_0(this):
 			medetai._x = 0
 	this.onEnterFrame = onEnterFrame
 	
-def func_1(this):
+def func_1(this, fscommand):
 	this.stop()
 	
 DATA = (

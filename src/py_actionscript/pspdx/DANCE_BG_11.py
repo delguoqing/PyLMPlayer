@@ -1,8 +1,7 @@
-def func_0(this):
+def func_0(this, fscommand):
 	this.stop()
 	
-def func_1(this):
-#	print "gotoAndPlay: [fever]"
+def func_1(this, fscommand):
 	this.gotoAndPlay("fever")
 
 DATA = (

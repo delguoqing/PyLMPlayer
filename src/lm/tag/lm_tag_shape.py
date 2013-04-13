@@ -42,8 +42,11 @@ class CTag(lm_tag_base.CTag):
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
 			self.vertices = [_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
 				_r.ymin, _r.xmin, _r.ymin]
-			self.tex_coords = [self._color.rB, self._color.gB, self._color.bB, 
-				self._color.aB] * 4
+			self.tex_coords = [
+				int(self.color.r * 255), 
+				int(self.color.g * 255), 
+				int(self.color.b * 255), 
+				int(self.color.a * 255)] * 4
 		elif self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
 		
 			scale_tx = _r.width * 1.0 / self.texture.width
@@ -83,13 +86,17 @@ class CTag(lm_tag_base.CTag):
 					if _xmax > _r.xmax:
 						scale_tx = (_r.xmax - _xmin) * 1.0 / self.texture.width
 						_vertices[-4] = _vertices[-6] = _r.xmax
-						_tx_len = _tex_coords[-9] - _tex_coords[-3]
-						_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx					
+					else:
+						scale_tx = 1
+					_tx_len = _tex_coords[-9] - _tex_coords[-3]
+					_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx					
 					if _ymax > _r.ymax:
 						scale_ty = (_r.ymax - _ymin) * 1.0 / self.texture.height
-						_vertices[-5] = _vertices[-7] = _r.ymax
-						_ty_len = _tex_coords[-5] - _tex_coords[-8]
-						_tex_coords[-5] = _tex_coords[-2] = _tex_coords[-8] + _ty_len * scale_ty
+						_vertices[-5] = _vertices[-7] = _r.ymax	
+					else:
+						scale_ty = 1
+					_ty_len = _tex_coords[-5] - _tex_coords[-8]
+					_tex_coords[-5] = _tex_coords[-2] = _tex_coords[-8] + _ty_len * scale_ty
 					
 					count += 1	
 			self.vertices = _vertices

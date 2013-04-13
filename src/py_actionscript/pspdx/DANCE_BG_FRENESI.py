@@ -1,4 +1,4 @@
-def func_0(this):
+def func_0(this, fscommand):
 	def onEnterFrame(_this):
 		candy01 = _this.candy01
 		candy02 = _this.candy02
@@ -27,7 +27,7 @@ def func_0(this):
 			
 	this.onEnterFrame = onEnterFrame
 	
-def func_1(this):
+def func_1(this, fscommand):
 	this.stop()
 
 DATA = (

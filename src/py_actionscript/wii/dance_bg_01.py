@@ -1,4 +1,4 @@
-def func_0(this):
+def func_0(this, fscommand):
 	def onEnterFrame(_this):
 		bg = _this.bg
 		bg._x -= 0.5
@@ -6,10 +6,10 @@ def func_0(this):
 			bg._x = 0
 	this.onEnterFrame = onEnterFrame
 
-def func_1(this):
+def func_1(this, fscommand):
 	this.stop()
 	
-def func_2(this):
+def func_2(this, fscommand):
 	pass
 
 DATA = (

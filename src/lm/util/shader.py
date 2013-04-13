@@ -60,7 +60,7 @@ class Shader:
 			print buffer.value
 		else:
 			# all is well, so attach the shader to the program
-			glAttachShader(self.handle, shader);
+			glAttachShader(self.handle, shader)
  
 	def link(self):
 		# link the program
