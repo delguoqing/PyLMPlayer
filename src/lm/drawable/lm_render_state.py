@@ -16,6 +16,8 @@ class CObj(object):
 		self._matrix_stack = collections.deque()
 		self._color_pool = collections.deque()
 		self._texture = None # active texture
+		self._color_add = None # active color add
+		self._color_mul = None # active color mul
 		
 		# statistic
 		self._draw_count = 0
@@ -36,7 +38,6 @@ class CObj(object):
 		self._shader.bind()
 		self._texture = None
 		self._color_stack.append((lm_glb.null_cadd, lm_glb.null_cmul))
-		self._is_color_dirty = True
 		self._empty_blend_mode_cnt = []		
 		self._blend_mode_stack = collections.deque()		
 		self._last_blend_mode = lm_type_blend_mode.null_blend
@@ -72,7 +73,6 @@ class CObj(object):
 		new_cmul.mul(cmul, omul)
 		
 		self._color_stack.append((new_cadd, new_cmul))
-		self._is_color_dirty = True
 
 		# do statistic A
 #		self._node_count += 1
@@ -81,8 +81,7 @@ class CObj(object):
 	def pop_cxform(self):
 		cadd, cmul = self._color_stack.pop()
 		self._color_pool.append(cadd)
-		self._color_pool.append(cmul)		
-		self._is_color_dirty = True
+		self._color_pool.append(cmul)
 
 	def update_blend_mode(self):
 		if not self._blend_mode_stack:
@@ -94,14 +93,16 @@ class CObj(object):
 		top.set()
 		
 	def update_cxform(self):
-		if not self._color_stack \
-			or not self._is_color_dirty:
+		if not self._color_stack:
 			return
 			
 		cadd, cmul = self._color_stack[-1]
-		self._shader.uniformf("color_add", cadd.r, cadd.g, cadd.b, cadd.a)
-		self._shader.uniformf("color_mul", cmul.r, cmul.g, cmul.b, cmul.a)
-		self._is_color_dirty = False
+		if cadd != self._color_add:
+			self._color_add = cadd
+			self._shader.uniformf("color_add", cadd.r, cadd.g, cadd.b, cadd.a)
+		if cmul != self._color_mul:
+			self._color_mul = cmul
+			self._shader.uniformf("color_mul", cmul.r, cmul.g, cmul.b, cmul.a)
 		
 	def push_matrix(self, matrix):
 		self._matrix_stack.append(matrix)
