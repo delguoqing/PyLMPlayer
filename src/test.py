@@ -13,6 +13,7 @@ from lm.type import lm_type_color
 from lm.type import lm_type_mat
 
 from lm.drawable import lm_sprite
+from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
 window = pyglet.window.Window(480, 272)
@@ -82,11 +83,17 @@ def on_draw(dt):
 #	glClearColor(1, 1, 0, 1)
 	window.clear()
 	
-	for movieclip in movieclips:
-		draw_movieclip(movieclip)
+	render_state.begin()
 	
-	# Draw fps counter
-#	fps_display.draw()
+	for movieclip in movieclips:
+		draw_movieclip(movieclip, render_state)
+	
+	# Draw fps
+	glScalef(1.0, -1.0, 1.0)
+	glTranslatef(0.0, -64.0, 1.0)
+	fps_display.draw()
+	
+	render_state.end()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -112,7 +119,7 @@ def load_movie(filename, translate=(0, 0)):
 	movieclip.ctx = ctx
 	return movieclip
 
-def draw_movieclip(movieclip):
+def draw_movieclip(movieclip, render_state):
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 	
@@ -122,12 +129,7 @@ def draw_movieclip(movieclip):
 	glEnable(tex.target)
 	glBindTexture(tex.target, tex.id)
 	
-	render_state = movieclip._render_state
-	render_state.begin()
-
-	movieclip.update(render_state)	
-	
-	render_state.end()
+	movieclip.update(render_state)
 
 
 NUM_MOVIECLIP = 20
@@ -177,6 +179,9 @@ movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
 movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 40))
+
+# global render state control
+render_state = lm_render_state.CObj()
 
 # Thus we use shader to do cxform, this is not needed
 #glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

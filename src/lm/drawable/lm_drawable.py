@@ -4,7 +4,6 @@ from lm.type import lm_type_mat
 from lm import lm_glb
 
 import pyglet
-import lm_render_state
 
 class CDrawable(object):
 
@@ -21,9 +20,6 @@ class CDrawable(object):
 		self.depth = depth
 		self._as_tween_only = False
 		self._inited = False
-
-		if parent is None:
-			self._render_state = lm_render_state.CObj()
 	
 	def is_movieclip(self):
 		return False
