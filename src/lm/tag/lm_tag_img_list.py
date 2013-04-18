@@ -10,19 +10,18 @@ class CTag(lm_tag_base.CTag):
 		super(CTag, self).__init__(ctx, tag)
 		d = self.parse_tag(ctx, tag)
 		self._data = []
-		self._bin = None
-		self._make_atalas(d)
+		self._parsed_data = d
 			
 	def get_val(self, idx):
 		return self._data[idx]
-
 		
 	def get_id(self):
 		return lm_consts.TAG_IMG_LIST
 		
-	def _make_atalas(self, d):
-		self._bin = pyglet.image.atlas.TextureBin(1024, 1024)
+	def load_textures(self, bin):
 		self._data = []
+		d = self._parsed_data
+		self._parsed_data = None
 		
 		for info in d["img_list"]:
 			filename = self.ctx.str_list.get_val(info["name_idx"])
@@ -42,5 +41,5 @@ class CTag(lm_tag_base.CTag):
 				fullpath = os.path.join(self.ctx.img_root, def_filename)
 				image_data = pyglet.image.load(fullpath)
 				
-			texture = self._bin.add(image_data)
+			texture = bin.add(image_data)
 			self._data.append(texture)

@@ -36,24 +36,25 @@ class CTag(lm_tag_base.CTag):
 		
 		_is_image = None
 		for shape_tag in self._shape_tags:
-			is_image, vertices, tex_coords = shape_tag.create_vertex_list()
-			if is_image == _is_image:
+			is_image, vertices, tex_coords, texture = \
+				shape_tag.create_vertex_list()
+			if is_image == _is_image and _vertex_lists[-1][3] == texture:
 				_vertex_lists[-1][1].extend(vertices)
 				_vertex_lists[-1][2].extend(tex_coords)
 			else:
-				_vertex_lists.append((is_image, vertices, tex_coords))
+				_vertex_lists.append((is_image, vertices, tex_coords, texture))
 			_is_image = is_image
 		
-		for is_image, vertices, tex_coords in _vertex_lists:
+		for is_image, vertices, tex_coords, texture in _vertex_lists:
 			count = len(vertices) / 2
 			if is_image:
 				self._vertex_lists.append((is_image, 
 					pyglet.graphics.vertex_list(count, 
-						("v2f/static", vertices), ("t3f/static", tex_coords))))
+						("v2f/static", vertices), ("t3f/static", tex_coords)), texture))
 			else:
 				self._vertex_lists.append((is_image,
 					pyglet.graphics.vertex_list(count, 
-						("v2f/static", vertices), ("c4B/static", tex_coords))))
+						("v2f/static", vertices), ("c4B/static", tex_coords)), texture))
 			
 	def add_sub_tag(self, tag):
 		self._shape_tags.append(tag)

@@ -65,7 +65,7 @@ class CContex(object):
 		else:
 			self._super_tag_stack.append((super_tag, sub_cnt, callback))
 	
-def load(filename, root, platform):
+def load(filename, root, platform, texture_bin):
 	# read LM file data
 	f = open(filename, "rb")
 	data = f.read()
@@ -115,6 +115,7 @@ def load(filename, root, platform):
 				_t.patch_py_actionscript(patch_module.DATA)
 			ctx.set_as_list(_t)
 		elif tag_type == lm_consts.TAG_IMG_LIST:
+			_t.load_textures(texture_bin)
 			ctx.set_img_list(_t)
 		elif tag_type == lm_consts.TAG_RECT_LIST:
 			ctx.set_rect_list(_t)

@@ -8,6 +8,7 @@ from pyglet.gl import *
 from ctypes import *
 
 from lm import lm_loader
+from lm import lm_glb
 
 from lm.type import lm_type_color
 from lm.type import lm_type_mat
@@ -16,7 +17,7 @@ from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(480, 272, vsync=False)
 fps_display = pyglet.clock.ClockDisplay()
 
 # one frame movieclip can be drawn as a display_list
@@ -91,6 +92,8 @@ def on_draw(dt):
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
 	glTranslatef(0.0, -64.0, 1.0)
+	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
+	render_state.update_cxform()
 	fps_display.draw()
 	
 	render_state.end()
@@ -107,8 +110,10 @@ inst_id = 999
 depth = 0
 
 def load_movie(filename, translate=(0, 0)):
+	global texture_bin
+	
 	filename = os.path.join(lm_root, filename)
-	ctx = lm_loader.load(filename, img_root, platform)
+	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
 	ctx.fscommand = fscommand
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
@@ -123,14 +128,14 @@ def draw_movieclip(movieclip, render_state):
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 	
-	# Bind one texture for one movieclip
-	ctx = movieclip.ctx	
-	tex = ctx.img_list.get_val(0)
-	glEnable(tex.target)
-	glBindTexture(tex.target, tex.id)
-	
 	movieclip.update(render_state)
 
+
+# global render state control
+render_state = lm_render_state.CObj()
+
+# global texture bin
+texture_bin = pyglet.image.atlas.TextureBin(2048, 2048)
 
 NUM_MOVIECLIP = 20
 (
@@ -159,7 +164,7 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_13.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_02.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
@@ -179,9 +184,6 @@ movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
 movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 40))
-
-# global render state control
-render_state = lm_render_state.CObj()
 
 # Thus we use shader to do cxform, this is not needed
 #glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

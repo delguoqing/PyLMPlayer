@@ -36,7 +36,7 @@ class CTag(lm_tag_base.CTag):
 	def create_vertex_list(self):
 		if self.tex_coords:
 			return self.fill_style != lm_consts.FILL_STYLE_SOLID_COLOR, \
-				self.vertices, self.tex_coords
+				self.vertices, self.tex_coords, self.texture
 		
 		_r = self._rect
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
@@ -104,7 +104,7 @@ class CTag(lm_tag_base.CTag):
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
 		
-		return self.vertices, self.tex_coords
+		return self.vertices, self.tex_coords, self.texture
 		
 	def get_id(cls):
 		return lm_consts.TAG_SHAPE

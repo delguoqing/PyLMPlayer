@@ -15,6 +15,7 @@ class CObj(object):
 		self._color_stack = collections.deque()
 		self._matrix_stack = collections.deque()
 		self._color_pool = collections.deque()
+		self._texture = None # active texture
 		
 		# statistic
 		self._draw_count = 0
@@ -31,10 +32,9 @@ class CObj(object):
 		return lm_type_color.CType(0.0, 0.0, 0.0, 0.0)
 		
 	def begin(self):
+
 		self._shader.bind()
-		self._shader.uniformi("sampler", 0)
-		self._shader.uniformi("use_texture", 1)
-		self._use_texture = True
+		self._texture = None
 		self._color_stack.append((lm_glb.null_cadd, lm_glb.null_cmul))
 		self._is_color_dirty = True
 		self._empty_blend_mode_cnt = []		
@@ -47,10 +47,17 @@ class CObj(object):
 #		self._max_depth = 0
 #		self._node_count = 0
 		
-	def set_enable_texture(self, flag):
-		if flag != self._use_texture:
-			self._use_texture = flag
-			self._shader.uniformi("use_texture", int(flag))
+	def set_texture(self, texture):
+		if self._texture == texture:
+			return
+			
+		self._texture = texture
+		if texture is not None:	
+			glEnable(texture.target)
+			glBindTexture(texture.target, texture.id)
+			self._shader.uniformi("sampler", 0)
+			self._shader.uniformi("use_texture", 1)			
+		self._shader.uniformi("use_texture", (texture is not None))
 		
 	def push_cxform(self, cadd, cmul):
 		cadd = cadd or lm_glb.null_cadd
@@ -124,7 +131,8 @@ class CObj(object):
 		else:
 			self._empty_blend_mode_cnt[-1] -= 1
 			
-	def draw_image(self, vertex_list):	
+	def draw_image(self, texture, vertex_list):	
+		self.set_texture(texture)
 		self.update_blend_mode()
 		self.update_cxform()
 		vertex_list.draw(GL_QUADS)
@@ -133,11 +141,10 @@ class CObj(object):
 #		self._draw_count += 1		
 		
 	def draw_solid(self, vertex_list):
+		self.set_texture(None)
 		self.update_blend_mode()	
 		self.update_cxform()
-		self.set_enable_texture(False)
 		vertex_list.draw(GL_QUADS)
-		self.set_enable_texture(True)
 
 		# do statistic C
 #		self._draw_count += 1		
