@@ -4,6 +4,8 @@ import sys
 import os
 import cProfile
 import pyglet
+import gc
+
 from pyglet.gl import *
 from ctypes import *
 
@@ -68,7 +70,8 @@ def on_key_press(symbol, modifiers):
 def fscommand(event, data):
 	print "fscommand(%s, %s)" % (event, data)
 	
-def on_draw(dt):
+@window.event
+def on_draw():
 	global movieclips
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -81,13 +84,19 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-#	glClearColor(1, 1, 0, 1)
-	window.clear()
+	# turn off clear screen, because we will redraw the whole screen
+	# every frame.
+	# how about blend ?
+	#glClearColor(1, 1, 0, 1)
+	#window.clear()
+	
+	glMatrixMode(GL_MODELVIEW)
 	
 	render_state.begin()
 	
 	for movieclip in movieclips:
-		draw_movieclip(movieclip, render_state)
+		glLoadIdentity()
+		movieclip.update(render_state)
 	
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
@@ -98,7 +107,10 @@ def on_draw(dt):
 	
 	render_state.end()
 	
-pyglet.clock.schedule(on_draw)
+def update(dt):
+	pass
+	
+pyglet.clock.schedule_interval(update, 1.0 / 60)
 
 
 # --------- experiment cases ------------------
@@ -123,13 +135,6 @@ def load_movie(filename, translate=(0, 0)):
 	movieclip.set_matrix(lm_type_mat.CType(translate))
 	movieclip.ctx = ctx
 	return movieclip
-
-def draw_movieclip(movieclip, render_state):
-	glMatrixMode(GL_MODELVIEW)
-	glLoadIdentity()
-	
-	movieclip.update(render_state)
-
 
 # global render state control
 render_state = lm_render_state.CObj()
@@ -164,7 +169,7 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_02.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
@@ -195,5 +200,6 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-	
+
+gc.disable()	
 pyglet.app.run()
