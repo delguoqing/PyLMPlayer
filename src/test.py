@@ -169,7 +169,7 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_10.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_02.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
