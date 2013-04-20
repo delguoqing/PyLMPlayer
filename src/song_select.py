@@ -4,19 +4,25 @@ import sys
 import os
 import cProfile
 import pyglet
+import gc
+
 from pyglet.gl import *
 from ctypes import *
 
 from lm import lm_loader
+from lm import lm_glb
 
 from lm.type import lm_type_color
 from lm.type import lm_type_mat
 
 from lm.drawable import lm_sprite
+from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(480, 272, vsync=False)
 fps_display = pyglet.clock.ClockDisplay()
+
+# one frame movieclip can be drawn as a display_list
 
 MENU_UME = 1
 MENU_TAKE = 2
@@ -64,15 +70,13 @@ def fscommand(event, data):
 		elif data == "update_menu_matsu_sbopen_r_b":
 			movieclips[cur_menu].menu_top.gotoAndPlay("open")
 	
-def on_draw(dt):
+@window.event
+def on_draw():
 	global movieclips
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
 	glDisable(GL_DEPTH_TEST)
 	glDisable(GL_DITHER)
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 	
 	# change default pyglet setting, for a origin at left top corner
 	# do this wheneVer redraw event is triggered!
@@ -80,16 +84,33 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-#	glClearColor(1, 1, 0, 1)
-	window.clear()
+	# turn off clear screen, because we will redraw the whole screen
+	# every frame.
+	# how about blend ?
+	#glClearColor(1, 1, 0, 1)
+	#window.clear()
+	
+	glMatrixMode(GL_MODELVIEW)
+	
+	render_state.begin()
 	
 	for movieclip in movieclips:
-		draw_movieclip(movieclip)
+		glLoadIdentity()
+		movieclip.update(render_state)
 	
-	# Draw fps counter
-#	fps_display.draw()
+	# Draw fps
+	glScalef(1.0, -1.0, 1.0)
+	glTranslatef(0.0, -64.0, 1.0)
+	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
+	render_state.update_cxform()
+	fps_display.draw()
 	
-pyglet.clock.schedule(on_draw)
+	render_state.end()
+	
+def update(dt):
+	pass
+	
+pyglet.clock.schedule_interval(update, 1.0 / 60)
 
 
 # --------- experiment cases ------------------
@@ -101,8 +122,10 @@ inst_id = 999
 depth = 0
 
 def load_movie(filename, translate=(0, 0)):
+	global texture_bin
+	
 	filename = os.path.join(lm_root, filename)
-	ctx = lm_loader.load(filename, img_root, platform)
+	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
 	ctx.fscommand = fscommand
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
@@ -113,23 +136,11 @@ def load_movie(filename, translate=(0, 0)):
 	movieclip.ctx = ctx
 	return movieclip
 
-def draw_movieclip(movieclip):
-	glMatrixMode(GL_MODELVIEW)
-	glLoadIdentity()
-	
-	# Bind one texture for one movieclip
-	ctx = movieclip.ctx	
-	tex = ctx.img_list.get_val(0)
-	glEnable(tex.target)
-	glBindTexture(tex.target, tex.id)
-	
-	render_state = movieclip._render_state
-	render_state.begin()
+# global render state control
+render_state = lm_render_state.CObj()
 
-	movieclip.update(render_state)	
-	
-	render_state.end()
-
+# global texture bin
+texture_bin = pyglet.image.atlas.TextureBin(2048, 2048)
 
 NUM_MOVIECLIP = 6
 (
@@ -157,7 +168,10 @@ movieclips[TOP] = load_movie("SONG_SELECT_TOP.LM")
 glEnable(GL_BLEND)
 
 # Turn off texture filter
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-	
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+
+gc.disable()	
 pyglet.app.run()
