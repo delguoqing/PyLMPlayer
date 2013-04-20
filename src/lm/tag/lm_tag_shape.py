@@ -10,6 +10,7 @@ class CTag(lm_tag_base.CTag):
 	def __init__(self, ctx, tag):
 		super(CTag, self).__init__(ctx, tag)
 		d = self.parse_tag(ctx, tag)
+		self._parsed_data = d
 		
 		x_min = min(d["x0"], d["x1"], d["x2"], d["x3"])
 		x_max = max(d["x0"], d["x1"], d["x2"], d["x3"])
@@ -48,25 +49,22 @@ class CTag(lm_tag_base.CTag):
 				int(self.color.b * 255), 
 				int(self.color.a * 255)] * 4
 		elif self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
-		
-			scale_tx = _r.width * 1.0 / self.texture.width
-			scale_ty = _r.height * 1.0 / self.texture.height
-
-			_tex_coords = None
-			if scale_tx < 1.0:
-				_tex_coords = _tex_coords or list(self.base_tex_coords)
-				_tx_len = _tex_coords[-9] - _tex_coords[-3]
-				_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx
-			if scale_ty < 1.0:
-				_tex_coords = _tex_coords or list(self.base_tex_coords)
-				_ty_len = _tex_coords[-5] - _tex_coords[-8]
-				_tex_coords[-5] = _tex_coords[-2] = _tex_coords[-8] + _ty_len * scale_ty
-				
-			_tex_coords = _tex_coords or list(self.base_tex_coords)
-				
-			self.vertices = [_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
-				_r.ymin, _r.xmin, _r.ymin]
-			self.tex_coords = _tex_coords
+			_tx_len = self.base_tex_coords[-9] - self.base_tex_coords[-3]
+			_ty_len = self.base_tex_coords[-5] - self.base_tex_coords[-8]
+			_tx_base = self.base_tex_coords[-3]
+			_ty_base = self.base_tex_coords[-5] 
+			d = self._parsed_data
+			self.vertices = [d["x0"], d["y0"], d["x1"], d["y1"], d["x2"], d["y2"], d["x3"], d["y3"]]
+			self.tex_coords = [
+			_tx_base + max(0.0, min(1.0, d["u0"])) * _tx_len, 
+			_ty_base - max(0.0, min(1.0, d["v0"])) * _ty_len, 0.0, 
+			_tx_base + max(0.0, min(1.0, d["u1"])) * _tx_len, 
+			_ty_base - max(0.0, min(1.0, d["v1"])) * _ty_len, 0.0, 
+			_tx_base + max(0.0, min(1.0, d["u2"])) * _tx_len, 
+			_ty_base - max(0.0, min(1.0, d["v2"])) * _ty_len, 0.0, 
+			_tx_base + max(0.0, min(1.0, d["u3"])) * _tx_len, 
+			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len, 0.0, ]
+			
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
 			_vertices = []
 			_tex_coords = []
@@ -103,7 +101,9 @@ class CTag(lm_tag_base.CTag):
 			self.tex_coords = _tex_coords					
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
-		
+
+#		self._parsed_data = None
+				
 		return self.vertices, self.tex_coords, self.texture
 		
 	def get_id(cls):
