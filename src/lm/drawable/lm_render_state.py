@@ -127,8 +127,6 @@ class CObj(object):
 		if self._empty_blend_mode_cnt[-1] == 0:
 			self._empty_blend_mode_cnt.pop(-1)
 			last = self._blend_mode_stack.pop()
-			if last._idx == lm_consts.BLEND_SUBTRACT:
-				glBlendEquation(GL_FUNC_ADD)
 		else:
 			self._empty_blend_mode_cnt[-1] -= 1
 			
