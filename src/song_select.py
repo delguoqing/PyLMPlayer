@@ -19,7 +19,7 @@ from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480, 272, vsync=False)
+window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay()
 
 # one frame movieclip can be drawn as a display_list
@@ -70,8 +70,7 @@ def fscommand(event, data):
 		elif data == "update_menu_matsu_sbopen_r_b":
 			movieclips[cur_menu].menu_top.gotoAndPlay("open")
 	
-@window.event
-def on_draw():
+def on_draw(dt):
 	global movieclips
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -107,10 +106,7 @@ def on_draw():
 	
 	render_state.end()
 	
-def update(dt):
-	pass
-	
-pyglet.clock.schedule_interval(update, 1.0 / 60)
+pyglet.clock.schedule(on_draw)
 
 
 # --------- experiment cases ------------------

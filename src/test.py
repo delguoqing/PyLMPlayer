@@ -19,9 +19,8 @@ from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
-window = pyglet.window.Window(480, 272, vsync=False)
+window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay()
-
 # one frame movieclip can be drawn as a display_list
 
 @window.event
@@ -70,8 +69,7 @@ def on_key_press(symbol, modifiers):
 def fscommand(event, data):
 	print "fscommand(%s, %s)" % (event, data)
 	
-@window.event
-def on_draw():
+def on_draw(dt):
 	global movieclips
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -88,15 +86,19 @@ def on_draw():
 	# every frame.
 	# how about blend ?
 	#glClearColor(1, 1, 0, 1)
-	#window.clear()
+	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	
 	render_state.begin()
 	
 	for movieclip in movieclips:
+		if movieclip == movieclips[HITJUDGE]:
+			print "updating, %d beg" % movieclip._play_head
 		glLoadIdentity()
 		movieclip.update(render_state)
+		if movieclip == movieclips[HITJUDGE]:
+			print "updating, %d end" % movieclip._play_head		
 	
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
@@ -107,10 +109,7 @@ def on_draw():
 	
 	render_state.end()
 	
-def update(dt):
-	pass
-	
-pyglet.clock.schedule_interval(update, 1.0 / 60)
+pyglet.clock.schedule_interval(on_draw, 1.0 / 60)
 
 
 # --------- experiment cases ------------------
@@ -169,8 +168,8 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_10.LM")
-movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_02.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
+movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_07.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
 movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
