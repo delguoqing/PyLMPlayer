@@ -93,12 +93,8 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
-		if movieclip == movieclips[HITJUDGE]:
-			print "updating, %d beg" % movieclip._play_head
 		glLoadIdentity()
 		movieclip.update(render_state)
-		if movieclip == movieclips[HITJUDGE]:
-			print "updating, %d end" % movieclip._play_head		
 	
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
