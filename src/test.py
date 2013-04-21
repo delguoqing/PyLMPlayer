@@ -25,7 +25,7 @@ fps_display = pyglet.clock.ClockDisplay()
 
 @window.event
 def on_key_press(symbol, modifiers):
-	global movieclips
+	global movieclips, render_state
 	if symbol == pyglet.window.key.F:
 		movieclips[LEFT_DON].gotoAndPlay("left_don")
 		movieclips[MATO].gotoAndPlay("hit_ryo")
@@ -66,6 +66,12 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key.DOWN:
 		movieclips[DON].play()
 		
+	elif symbol == pyglet.window.key._1:
+		render_state.enable_statistic(1)
+		
+	elif symbol == pyglet.window.key._0:
+		render_state.enable_statistic(2000)		
+		
 def fscommand(event, data):
 	print "fscommand(%s, %s)" % (event, data)
 	
@@ -86,7 +92,7 @@ def on_draw(dt):
 	# every frame.
 	# how about blend ?
 	#glClearColor(1, 1, 0, 1)
-	window.clear()
+	#window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	

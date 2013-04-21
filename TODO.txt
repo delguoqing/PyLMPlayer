@@ -13,8 +13,9 @@ http://ericlin2.tripod.com/
 #16. try to map all leafs to a list.(not too hard)
 #18. colors will not be truncated until it is going to display
 #21. support property _visible, _parent, _root
-#22. 
-#23. 
+#22. [Important!] Dynamic batching!
+#23. use t2f instead of t3f.
+#24.
 
 # DONE
 # 8. try wii version. 

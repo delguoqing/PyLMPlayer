@@ -28,6 +28,9 @@ class CObj(object):
 		self._peak_max_depth = 0
 		self._peak_node_count = 0
 		
+		self._is_enable_statistic = False
+		self._to_enable_statistic = None
+		
 	def _get_cached_color(self):
 		if self._color_pool:
 			return self._color_pool.pop()
@@ -42,11 +45,28 @@ class CObj(object):
 		self._blend_mode_stack = collections.deque()		
 		self._last_blend_mode = lm_type_blend_mode.null_blend
 		
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)		
-		# clear up statistic
-#		self._draw_count = 0
-#		self._max_depth = 0
-#		self._node_count = 0
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+		if self._to_enable_statistic:
+			self._is_enable_statistic = self._to_enable_statistic
+			self._to_enable_statistic = None
+			
+		if self._is_enable_statistic:		
+			# clear up statistic
+			self._draw_count = 0
+			self._max_depth = 0
+			self._node_count = 0
+
+	def enable_statistic(self, loop=1):
+		self._to_enable_statistic = loop
+		
+	def disable_statistic(self):
+		self._is_enable_statistic = 0
+		self._to_enable_statistic = None
+		print "<====================>"
+		self.print_statistic()		
+		self.print_overall_statistic()
+		print
 		
 	def set_texture(self, texture):
 		if self._texture == texture:
@@ -75,8 +95,9 @@ class CObj(object):
 		self._color_stack.append((new_cadd, new_cmul))
 
 		# do statistic A
-#		self._node_count += 1
-#		self._max_depth = max(self._max_depth, len(self._color_stack))
+		if self._is_enable_statistic:
+			self._node_count += 1
+			self._max_depth = max(self._max_depth, len(self._color_stack))
 				
 	def pop_cxform(self):
 		cadd, cmul = self._color_stack.pop()
@@ -132,13 +153,15 @@ class CObj(object):
 			self._empty_blend_mode_cnt[-1] -= 1
 			
 	def draw_image(self, texture, vertex_list):	
+
 		self.set_texture(texture)
 		self.update_blend_mode()
 		self.update_cxform()
 		vertex_list.draw(GL_QUADS)
 		
 		# do statistic B
-#		self._draw_count += 1		
+		if self._is_enable_statistic:
+			self._draw_count += 1
 		
 	def draw_solid(self, vertex_list):
 		self.set_texture(None)
@@ -147,7 +170,8 @@ class CObj(object):
 		vertex_list.draw(GL_QUADS)
 
 		# do statistic C
-#		self._draw_count += 1		
+		if self._is_enable_statistic:
+			self._draw_count += 1
 					
 	def end(self):
 		self._shader.unbind()
@@ -156,19 +180,23 @@ class CObj(object):
 		
 		# do statistic D
 		# compare peak statistc
-#		self._peak_node_count = max(self._peak_node_count, self._node_count)
-#		self._peak_draw_count = max(self._peak_draw_count, self._draw_count)
-#		self._peak_max_depth = max(self._peak_max_depth, self._max_depth)
-						
-		
+		if self._is_enable_statistic:
+			self._peak_node_count = max(self._peak_node_count,self._node_count)
+			self._peak_draw_count = max(self._peak_draw_count,self._draw_count)
+			self._peak_max_depth = max(self._peak_max_depth, self._max_depth)
+			self._is_enable_statistic -= 1
+			
+			if not self._is_enable_statistic:
+				self.disable_statistic()
+								
 	def print_statistic(self):
 		print "Render Statistic:"
 		print "\t%d nodes visited" % self._node_count
-		print "\t%d primitive draw" % self._draw_count
+		print "\t%d primitives draw" % self._draw_count
 		print "\tmax recursive depth: %d" % self._max_depth
 		
 	def print_overall_statistic(self):
 		print "Render Statistic Peak:"
 		print "\t%d nodes visited" % self._peak_node_count
-		print "\t%d primitive draw" % self._peak_draw_count
+		print "\t%d primitives draw" % self._peak_draw_count
 		print "\tmax recursive depth: %d" % self._peak_max_depth		
