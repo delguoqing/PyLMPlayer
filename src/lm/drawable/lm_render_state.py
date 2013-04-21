@@ -16,8 +16,8 @@ class CObj(object):
 		self._matrix_stack = collections.deque()
 		self._color_pool = collections.deque()
 		self._texture = None # active texture
-		self._color_add = None # active color add
-		self._color_mul = None # active color mul
+		self._color_add = lm_type_color.CType(0.0, 0.0, 0.0, 0.0) # active color add
+		self._color_mul = lm_type_color.CType(0.0, 0.0, 0.0, 0.0) # active color mul
 		
 		# statistic
 		self._draw_count = 0
@@ -98,11 +98,12 @@ class CObj(object):
 			
 		cadd, cmul = self._color_stack[-1]
 		if cadd != self._color_add:
-			self._color_add = cadd
 			self._shader.uniformf("color_add", cadd.r, cadd.g, cadd.b, cadd.a)
+			self._color_add.add(cadd, lm_glb.null_cadd)
+
 		if cmul != self._color_mul:
-			self._color_mul = cmul
 			self._shader.uniformf("color_mul", cmul.r, cmul.g, cmul.b, cmul.a)
+			self._color_mul.mul(cmul, lm_glb.null_cmul)
 		
 	def push_matrix(self, matrix):
 		self._matrix_stack.append(matrix)
