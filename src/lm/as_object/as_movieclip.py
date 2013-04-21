@@ -82,15 +82,12 @@ class CObj(lm_drawable_container.CDrawable):
 	# if the new
 	def goto_frame(self, frame_id):
 		if frame_id == 0:
-			self.init()
-			return
-			
-		key_frame = None
-		for key_frame_tag in self._key_frame_tags:
-			if key_frame_tag.get_frame_id() == frame_id:
-				key_frame = key_frame_tag
-				break
-		
+			key_frame = self._frame_tags[0]
+		else:	
+			for key_frame_tag in self._key_frame_tags:
+				if key_frame_tag.get_frame_id() == frame_id:
+					key_frame = key_frame_tag
+					break
 		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
 		key_frame.execute(target=self)
 		
@@ -115,7 +112,6 @@ class CObj(lm_drawable_container.CDrawable):
 					self._frame_tags[self._play_head].execute(target=self)
 	
 		# Update & Render
-		
 		render_state.push_matrix(self.matrix)
 		render_state.push_cxform(self.color_add, self.color_mul)
 		render_state.push_blend_mode(self.blend_mode)
