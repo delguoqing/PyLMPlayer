@@ -20,7 +20,7 @@ from lm.drawable import lm_render_state
 
 # standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
 window = pyglet.window.Window(480, 272)
-fps_display = pyglet.clock.ClockDisplay()
+fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 # one frame movieclip can be drawn as a display_list
 
 @window.event
@@ -98,21 +98,19 @@ def on_draw(dt):
 	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
 	
 	render_state.begin()
 	
-	for movieclip in movieclips:
-		glLoadIdentity()
+	for movieclip in movieclips:	
 		movieclip.update(render_state)
 	
+	render_state.end()
+			
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
 	glTranslatef(0.0, -64.0, 1.0)
-#	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
-#	render_state.update_cxform()
 	fps_display.draw()
-	
-	render_state.end()
 	
 pyglet.clock.schedule_interval(on_draw, 1.0 / 60)
 
@@ -178,7 +176,7 @@ movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_07.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
 movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
-movieclips[TAIKO] = load_movie("ENSO_TAIKO.LM", ())
+movieclips[TAIKO] = load_movie("ENSO_TAIKO.LM")
 movieclips[COMBO] = load_movie("ENSO_COMBO.LM")
 movieclips[MATO_GOGO] = load_movie("ENSO_MATO_GOGO.LM")
 movieclips[MATO] = load_movie("ENSO_MATO.LM")
