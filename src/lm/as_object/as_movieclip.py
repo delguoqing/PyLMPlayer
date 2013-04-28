@@ -1,5 +1,4 @@
 import math
-import as_obj_base
 from lm.drawable import lm_drawable_container
 from pyglet.gl import *
 from lm.type import lm_type_mat
