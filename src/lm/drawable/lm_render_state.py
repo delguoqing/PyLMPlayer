@@ -176,6 +176,10 @@ class CObj(object):
 		# n vertices added
 		self._vertex_idx += n
 		
+	def log(self, str):
+		if self._is_enable_statistic:
+			print str
+			
 	def _update_contex(self):
 		if self._is_color_add_dirty:
 			use_shader = (self._color_add != lm_glb.null_cadd)
@@ -188,21 +192,27 @@ class CObj(object):
 			if self._use_shader:
 				self._shader.uniformf("color_add", self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a)
 			self._is_color_add_dirty = False
-#			print "update color add", self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a, self._color_add == lm_glb.null_cadd
+			
+			# Debug
+			self.log("update color add (%.2f, %.2f, %.2f, %.2f)" % (self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a))
 		
 		if self._is_texture_dirty:
 			texture = self._texture
 			glEnable(texture.target)
 			glBindTexture(texture.target, texture.id)
-#			print "update texture"
+			
 			if self._use_shader:
 				self._shader.uniformi("sampler", 0)
 			self._is_texture_dirty = False
+			
+			# Debug
+			self.log("update texture")
 				
-		if self._is_blend_mode_dirty:
-#			print "update blend mode"		
+		if self._is_blend_mode_dirty:	
 			self._blend_mode.set()
 			self._is_blend_mode_dirty = False
+			
+			self.log("update blend mode")
 				
 	def _flush(self):
 				
@@ -210,8 +220,7 @@ class CObj(object):
 			
 			self._update_contex()
 			
-			if self._is_enable_statistic:
-				print "batch draw %d" % ((self._vertex_idx + 1) / 4)
+			self.log("batch draw %d" % ((self._vertex_idx + 1) / 4))
 			empty_cnt = (self._vertex_count - self._vertex_idx)
 			if empty_cnt:
 				self._vertex_list.vertices[self._vertex_idx*2: ] = [0.0] * (empty_cnt * 2)
