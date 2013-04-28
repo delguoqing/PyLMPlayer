@@ -82,7 +82,8 @@ class CObj(object):
 			self._draw_count = 0
 			self._max_depth = 0
 			self._node_count = 0
-#		print "start"
+			
+#		self.log("==== render BEG ====")
 
 	def enable_statistic(self, loop=1):
 		self._to_enable_statistic = loop
@@ -155,15 +156,20 @@ class CObj(object):
 		v = self._vertex_list
 		n = len(vertices) / 2
 		
+#		self.log("New vertices data:")
+				
 		# append colors
 		s = i * 4
 		t = s + n * 4
 		v.colors[s : t] = colors
 		
+#		self.log("\tcolor = (%.2f, %.2f, %.2f, %.2f)" % tuple(v.colors[s:s+4]))
+		
 		# append tex_coords
 		s = i * 3
 		t = s + n * 3
 		v.tex_coords[s : t] = tex_coords
+#		self.log("\ttex_coords = (%f, %f, %f), (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)" % tuple(v.tex_coords[s:s+12]))
 		
 		# transform and append vertices
 		s = i * 2
@@ -172,6 +178,8 @@ class CObj(object):
 			x, y = vertices[j - s], vertices[j - s + 1]
 			x1, y1 = m.transform_point((x, y))
 			v.vertices[j], v.vertices[j + 1] = x1, y1
+		
+#		self.log("\tvertices = (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f)" % tuple(v.vertices[s:s+8]))
 		
 		# n vertices added
 		self._vertex_idx += n
@@ -194,7 +202,7 @@ class CObj(object):
 			self._is_color_add_dirty = False
 			
 			# Debug
-			self.log("update color add (%.2f, %.2f, %.2f, %.2f)" % (self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a))
+#			self.log("update color add (%.2f, %.2f, %.2f, %.2f)" % (self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a))
 		
 		if self._is_texture_dirty:
 			texture = self._texture
@@ -206,13 +214,13 @@ class CObj(object):
 			self._is_texture_dirty = False
 			
 			# Debug
-			self.log("update texture")
+#			self.log("update texture")
 				
 		if self._is_blend_mode_dirty:	
 			self._blend_mode.set()
 			self._is_blend_mode_dirty = False
 			
-			self.log("update blend mode")
+#			self.log("update blend mode: %r" % self._blend_mode)
 				
 	def _flush(self):
 				
@@ -220,11 +228,13 @@ class CObj(object):
 			
 			self._update_contex()
 			
-			self.log("batch draw %d" % ((self._vertex_idx + 1) / 4))
+#			self.log("%d quads batched!" % (self._vertex_idx / 4))
+			
 			empty_cnt = (self._vertex_count - self._vertex_idx)
 			if empty_cnt:
 				self._vertex_list.vertices[self._vertex_idx*2: ] = [0.0] * (empty_cnt * 2)
 			self._vertex_list.draw(GL_QUADS)
+#			self.log("%r" % self._vertex_list.vertices[:])
 			self._vertex_idx = 0
 		
 	def draw_image(self, texture, vertex_list, tex_coords):
@@ -256,7 +266,7 @@ class CObj(object):
 			
 		# any way, append vertex data
 		colors = [color_mul.r, color_mul.g, color_mul.b, color_mul.a] * n
-		self._append(vertex_list, colors, tex_coords)	
+		self._append(vertex_list, colors, tex_coords)
 		
 		# do statistic B
 		if self._is_enable_statistic:
@@ -266,7 +276,12 @@ class CObj(object):
 
 		# flush buffer anyway
 		self._flush()
-				
+						
+		if self._use_shader:
+			self._shader.unbind()
+			
+#		self.log("==== render END ====")
+		
 		# do statistic D
 		# compare peak statistc
 		if self._is_enable_statistic:
@@ -277,11 +292,7 @@ class CObj(object):
 			
 			if not self._is_enable_statistic:
 				self.disable_statistic()
-		
-		if self._use_shader:
-			self._shader.unbind()
-#		print "end"
-		
+						
 	def print_statistic(self):
 		print "Render Statistic:"
 		print "\t%d nodes visited" % self._node_count

@@ -45,4 +45,7 @@ class CType(object):
 		
 	def __eq__(self, o):
 		return self._idx == o._idx
+		
+	def __repr__(self):
+		return "%d" % self._idx
 null_blend = CType(lm_consts.BLEND_NORMAL)
