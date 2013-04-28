@@ -30,18 +30,15 @@ class CObj(object):
 		# Current Rendering Contex
 		###########################			
 		self._texture = None # active texture
-		self._color_add = lm_type_color.CType(0.0, 0.0, 0.0, 0.0) # active color add
 		self._blend_mode = lm_type_blend_mode.null_blend
-		self._use_shader = False
 		
-		self._is_color_add_dirty = False
 		self._is_blend_mode_dirty = False
 		self._is_texture_dirty = False
 		
 		# vbo
 		self._vertex_count = 100
 		self._vertex_list = pyglet.graphics.vertex_list(self._vertex_count, 
-			"v2f", "t3f", "c4f")
+			"v2f", "t3f", "c4f", "s3f")
 		self._vertex_idx = 0
 		
 		# statistic
@@ -68,10 +65,9 @@ class CObj(object):
 		
 	def begin(self):
 
+		glEnable(GL_COLOR_SUM)
 		self._texture = None
 		self._blend_mode = None
-		self._use_shader = False
-		self._color_add.zero()
 		
 		if self._to_enable_statistic:
 			self._is_enable_statistic = self._to_enable_statistic
@@ -150,7 +146,7 @@ class CObj(object):
 		else:
 			self._empty_blend_mode_cnt[-1] -= 1
 
-	def _append(self, vertices, colors, tex_coords):
+	def _append(self, vertices, colors, tex_coords, secondary_colors):
 		m = self._matrix_stack[-1]
 		i = self._vertex_idx
 		v = self._vertex_list
@@ -164,6 +160,11 @@ class CObj(object):
 		v.colors[s : t] = colors
 		
 #		self.log("\tcolor = (%.2f, %.2f, %.2f, %.2f)" % tuple(v.colors[s:s+4]))
+		
+		# append secondary colors
+		s = i * 3
+		t = s + n * 3
+		v.secondary_colors[s : t] = secondary_colors
 		
 		# append tex_coords
 		s = i * 3
@@ -189,28 +190,12 @@ class CObj(object):
 			print str
 			
 	def _update_contex(self):
-		if self._is_color_add_dirty:
-			use_shader = (self._color_add != lm_glb.null_cadd)
-			if self._use_shader != use_shader:
-				if use_shader:
-					self._shader.bind()
-				else:
-					self._shader.unbind()
-				self._use_shader = use_shader
-			if self._use_shader:
-				self._shader.uniformf("color_add", self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a)
-			self._is_color_add_dirty = False
-			
-			# Debug
-#			self.log("update color add (%.2f, %.2f, %.2f, %.2f)" % (self._color_add.r, self._color_add.g, self._color_add.b, self._color_add.a))
 		
 		if self._is_texture_dirty:
 			texture = self._texture
 			glEnable(texture.target)
 			glBindTexture(texture.target, texture.id)
-			
-			if self._use_shader:
-				self._shader.uniformi("sampler", 0)
+
 			self._is_texture_dirty = False
 			
 			# Debug
@@ -245,28 +230,25 @@ class CObj(object):
 
 		_is_texture_dirty = self._texture is None or (self._texture.id != self._texture.id)
 		_is_blend_mode_dirty = (blend_mode != self._blend_mode)
-		_is_color_add_dirty = (self._color_add != color_add)
 					
 		# if render contex changes, flush buffer, and set up new contex
 		n = len(vertex_list) / 2
 		if _is_texture_dirty\
 			or _is_blend_mode_dirty \
-			or _is_color_add_dirty \
 			or self._vertex_idx + n > self._vertex_count:
 			
 			self._flush()
 			
 			self._is_texture_dirty = _is_texture_dirty
-			self._is_color_add_dirty = _is_color_add_dirty
 			self._is_blend_mode_dirty = _is_blend_mode_dirty
 
 			self._texture = texture
 			self._blend_mode = blend_mode
-			self._color_add.copy_from(color_add)
 			
 		# any way, append vertex data
 		colors = [color_mul.r, color_mul.g, color_mul.b, color_mul.a] * n
-		self._append(vertex_list, colors, tex_coords)
+		secondary_colors = [color_add.r, color_add.g, color_add.b] * n
+		self._append(vertex_list, colors, tex_coords, secondary_colors)
 		
 		# do statistic B
 		if self._is_enable_statistic:
@@ -276,9 +258,6 @@ class CObj(object):
 
 		# flush buffer anyway
 		self._flush()
-						
-		if self._use_shader:
-			self._shader.unbind()
 			
 #		self.log("==== render END ====")
 		

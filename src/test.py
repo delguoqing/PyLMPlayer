@@ -91,18 +91,15 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	# turn off clear screen, because we will redraw the whole screen
-	# every frame.
-	# how about blend ?
 	#glClearColor(1, 1, 0, 1)
-	window.clear()
+	#window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 	
 	render_state.begin()
 	
-	for movieclip in movieclips:	
+	for movieclip in movieclips:
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -112,7 +109,7 @@ def on_draw(dt):
 	glTranslatef(0.0, -64.0, 1.0)
 	fps_display.draw()
 	
-pyglet.clock.schedule_interval(on_draw, 1.0 / 60)
+pyglet.clock.schedule(on_draw)
 
 
 # --------- experiment cases ------------------
@@ -171,7 +168,7 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_07.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
