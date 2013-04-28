@@ -22,33 +22,32 @@ class CTag(lm_tag_base.CTag):
 		self.fill_style = d["fill_style"]
 		self.fill_idx = d["fill_idx"]
 		
-		self.color = None 
 		self.texture = None
 		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
-			self.color = self.ctx.color_list.get_val(self.fill_idx)
+			self.fill_style = lm_consts.FILL_STYLE_CLIPPED_IMAGE
+			color = self.ctx.color_list.get_val(self.fill_idx)
+			self.texture = self._get_faked_texture(color)
 		else:
 			self.texture = self.ctx.img_list.get_val(self.fill_idx)
-			self.base_tex_coords = self.texture.tex_coords
+			
+		self.base_tex_coords = self.texture.tex_coords
 			
 		self.tex_coords = None
 		self.vertices = None			
 		self.create_vertex_list()
 		
+	# fake a solid color texture
+	# simplify the problem a lot!
+	def _get_faked_texture(self, color):
+		img = pyglet.image.SolidColorImagePattern((color.rB, color.gB, color.bB, color.aB)).create_image(1, 1)
+		return self.ctx.texture_bin.add(img)
+		
 	def create_vertex_list(self):
 		if self.tex_coords:
-			return self.fill_style != lm_consts.FILL_STYLE_SOLID_COLOR, \
-				self.vertices, self.tex_coords, self.texture
+			return self.vertices, self.tex_coords, self.texture
 		
 		_r = self._rect
-		if self.fill_style == lm_consts.FILL_STYLE_SOLID_COLOR:
-			self.vertices = [_r.xmin, _r.ymax, _r.xmax, _r.ymax, _r.xmax, 
-				_r.ymin, _r.xmin, _r.ymin]
-			self.tex_coords = [
-				int(self.color.r * 255), 
-				int(self.color.g * 255), 
-				int(self.color.b * 255), 
-				int(self.color.a * 255)] * 4
-		elif self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
+		if self.fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
 			_tx_len = self.base_tex_coords[-9] - self.base_tex_coords[-3]
 			_ty_len = self.base_tex_coords[-5] - self.base_tex_coords[-8]
 			_tx_base = self.base_tex_coords[-3]

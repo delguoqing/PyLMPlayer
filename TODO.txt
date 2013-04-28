@@ -15,7 +15,7 @@ http://ericlin2.tripod.com/
 #21. support property _visible, _parent, _root
 #22. [Important!] Dynamic batching!
 #23. use t2f instead of t3f.
-#24.
+#25.
 
 # DONE
 # 8. try wii version. 
@@ -65,3 +65,7 @@ i can do drawing in the same visit.
 	load multiple lm files
 # 3. fscommand(used everywhere for callback)
 	just add an arg in do script call
+#24. Using a solid color texture instead of introducing a new filling mode.
+	Shapes can have a fill style type called solid fill(0x0).This 	
+	causes trouble for batching.We can eliminate this by creating a 1x1 
+	texture of the fill color.

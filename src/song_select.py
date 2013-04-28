@@ -33,7 +33,7 @@ MENU_ONI = 4
 cur_menu = MENU_UME
 @window.event
 def on_key_press(symbol, modifiers):
-	global movieclips, cur_menu
+	global movieclips, cur_menu, render_state
 	if symbol == pyglet.window.key.UP:
 		movieclips[BG].mc_bg_000.gotoAndPlay("up_%d_in_oni" % cur_menu)
 		movieclips[TOP].diff.gotoAndPlay("up_%d_in_oni" % cur_menu)
@@ -60,6 +60,9 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.ENTER:		
 		movieclips[cur_menu].menu_top.gotoAndPlay("play")	
+		
+	elif symbol == pyglet.window.key._1:
+		render_state.enable_statistic(1)
 		
 def fscommand(event, data):
 	global cur_menu
@@ -96,15 +99,15 @@ def on_draw(dt):
 	for movieclip in movieclips:
 		glLoadIdentity()
 		movieclip.update(render_state)
-	
+
+	render_state.end()
+		
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
 	glTranslatef(0.0, -64.0, 1.0)
-	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
-	render_state.update_cxform()
 	fps_display.draw()
 	
-	render_state.end()
+
 	
 pyglet.clock.schedule(on_draw)
 

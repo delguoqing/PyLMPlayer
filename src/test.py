@@ -72,6 +72,9 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key._0:
 		render_state.enable_statistic(2000)		
 		
+	elif symbol == pyglet.window.key.ESCAPE:
+		pyglet.clock.unschedule(on_draw)
+		
 def fscommand(event, data):
 	print "fscommand(%s, %s)" % (event, data)
 	
@@ -92,7 +95,7 @@ def on_draw(dt):
 	# every frame.
 	# how about blend ?
 	#glClearColor(1, 1, 0, 1)
-	#window.clear()
+	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	
@@ -105,8 +108,8 @@ def on_draw(dt):
 	# Draw fps
 	glScalef(1.0, -1.0, 1.0)
 	glTranslatef(0.0, -64.0, 1.0)
-	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
-	render_state.update_cxform()
+#	render_state.push_cxform(lm_glb.null_cadd, lm_glb.null_cmul)
+#	render_state.update_cxform()
 	fps_display.draw()
 	
 	render_state.end()
@@ -170,7 +173,7 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_07.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
@@ -192,7 +195,7 @@ movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 40))
 
 # Thus we use shader to do cxform, this is not needed
-#glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
 glEnable(GL_BLEND)
 

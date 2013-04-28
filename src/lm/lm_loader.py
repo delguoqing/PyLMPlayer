@@ -18,6 +18,7 @@ class CContex(object):
 		self.img_list = None
 		self.rect_list = None
 		self.char_dict = {}
+		self.texture_bin = None
 	
 		self._super_tag_stack = []
 		
@@ -74,6 +75,7 @@ def load(filename, root, platform, texture_bin):
 	ctx = CContex()
 	ctx.set_img_root(root)
 	ctx.set_platform(platform)
+	ctx.texture_bin = texture_bin
 	
 	# start parsing
 	f.seek(0x40)

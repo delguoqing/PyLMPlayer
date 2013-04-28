@@ -34,8 +34,10 @@ class CType(object):
 		
 	def set(self):
 		equation, src, dst = self.BLEND_FUNC[self._idx]
+		glEnable(GL_BLEND)
 		glBlendEquation(equation)
 		glBlendFunc(src, dst)
+#		print "set up blend %d" % self._idx
 				
 	def __nonzero__(self):
 		return self._idx != lm_consts.BLEND_NORMAL \
