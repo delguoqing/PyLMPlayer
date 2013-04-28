@@ -2,20 +2,15 @@ This site is amazing:
 http://ericlin2.tripod.com/
 
 # TODO:
-# 7. optimization. play with numba or Cython.
 # 9. implement font, static text, edit text, button, etc.
-#12. bubbles in DANCE_BG_10.LM experiences a significant slow down. 
-#      If i remember right, i don't have this problem before.
-#      It seems that too many color composition and matrix math is the main #      cost.but i already have an idea in my mind~~~see 15.
-#      shader.uniformi cut off almost 10 fps!
-#14. Don't use opengl api to do matrix calculation
-#15. try to implement a dirty render state algorithm.
-#16. try to map all leafs to a list.(not too hard)
 #18. colors will not be truncated until it is going to display
 #21. support property _visible, _parent, _root
-#22. [Important!] Dynamic batching!
+#25. Use vertex array to do batch while avoid a fixed-length vbo.
+#26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
 #23. use t2f instead of t3f.
-#25.
+	Don't need z-value for a tex_coord.
+#27.
+#28.
 
 # DONE
 # 8. try wii version. 
@@ -69,3 +64,22 @@ i can do drawing in the same visit.
 	Shapes can have a fill style type called solid fill(0x0).This 	
 	causes trouble for batching.We can eliminate this by creating a 1x1 
 	texture of the fill color.
+#22. [Important!] Dynamic batching!
+	Done, much improvement seen. But fail on some file, such as 	
+	DANCE_BG_04.LM, which switch context will quickly.And also, use a 
+	fixed vbo means to fill extra vertices data, when a batch fails to 
+	fill the vbo fully.
+#12. bubbles in DANCE_BG_10.LM experiences a significant slow down. 
+#      If i remember right, i don't have this problem before.
+#      It seems that too many color composition and matrix math is the main #      cost.but i already have an idea in my mind~~~see 15.
+#      shader.uniformi cut off almost 10 fps!
+# 7. optimization. play with numba or Cython or PyPy.
+	seems that Cython is the way to go.
+	PyPy is much much slower than CPython in my case.
+	numba .. I can't get it installed on windows.
+#14. Don't use opengl api to do matrix calculation
+	Done.Need a optimization later.
+#15. try to implement a dirty render state algorithm.
+	Dropped.Not that flexible.
+#16. try to map all leafs to a list.(not too hard)
+	Dropped.Not that flexible.
