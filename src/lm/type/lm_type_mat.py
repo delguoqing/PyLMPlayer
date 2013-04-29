@@ -42,7 +42,7 @@ class CType(object):
 			self._t[0], self._t[1], 0, 1,
 		)
 		
-	def __str__(self):
+	def __repr__(self):
 		return "%f %f \n%f %f \n%f %f" % (self._t + self._s + self._r)
 		
 	def __nonzero__(self):
@@ -61,8 +61,8 @@ class CType(object):
 		
 	# Transform a point
 	def transform_point(self, p):
-		x1 = p[0] * self._s[0] + p[1] * self._r[0] + self._t[0]
-		y1 = p[0] * self._r[1] + p[1] * self._s[1] + self._t[1]
+		x1 = p[0] * self._s[0] + p[1] * self._r[1] + self._t[0]
+		y1 = p[0] * self._r[0] + p[1] * self._s[1] + self._t[1]
 		return x1, y1
 		
 	# copy referrence of tuple, no problem
