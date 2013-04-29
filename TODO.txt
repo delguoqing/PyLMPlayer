@@ -6,9 +6,6 @@ http://ericlin2.tripod.com/
 #21. support property _visible, _parent, _root
 #25. Use vertex array to do batch while avoid a fixed-length vbo.
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
-#23. use t2f instead of t3f.
-	Don't need z-value for a tex_coord.
-#27. fix rotation bug.
 #28.
 #29.
 
@@ -85,3 +82,6 @@ i can do drawing in the same visit.
 	Dropped.Not that flexible.
 #18. colors will not be truncated until it is going to display
 	Do nothing.Opengl will do that work.
+#23. use t2f instead of t3f.
+	Don't need z-value for a tex_coord.
+#27. fix rotation bug.
