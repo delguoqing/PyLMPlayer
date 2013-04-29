@@ -168,8 +168,8 @@ GAUGE
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
-movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_07.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_MIKU.LM")
+movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_01.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
 movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
@@ -187,7 +187,7 @@ movieclips[BUNKI] = load_movie("ENSO_BUNKI.LM")
 movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
 movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
-movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 40))
+movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 42))
 
 # Thus we use shader to do cxform, this is not needed
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
