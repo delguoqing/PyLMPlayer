@@ -56,13 +56,13 @@ class CTag(lm_tag_base.CTag):
 			self.vertices = [d["x0"], d["y0"], d["x1"], d["y1"], d["x2"], d["y2"], d["x3"], d["y3"]]
 			self.tex_coords = [
 			_tx_base + max(0.0, min(1.0, d["u0"])) * _tx_len, 
-			_ty_base - max(0.0, min(1.0, d["v0"])) * _ty_len, 0.0, 
+			_ty_base - max(0.0, min(1.0, d["v0"])) * _ty_len,
 			_tx_base + max(0.0, min(1.0, d["u1"])) * _tx_len, 
-			_ty_base - max(0.0, min(1.0, d["v1"])) * _ty_len, 0.0, 
+			_ty_base - max(0.0, min(1.0, d["v1"])) * _ty_len,
 			_tx_base + max(0.0, min(1.0, d["u2"])) * _tx_len, 
-			_ty_base - max(0.0, min(1.0, d["v2"])) * _ty_len, 0.0, 
+			_ty_base - max(0.0, min(1.0, d["v2"])) * _ty_len,
 			_tx_base + max(0.0, min(1.0, d["u3"])) * _tx_len, 
-			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len, 0.0, ]
+			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len, ]
 			
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
 			_vertices = []
@@ -78,23 +78,27 @@ class CTag(lm_tag_base.CTag):
 									
 					_vertices += (_xmin, _ymax, _xmax, _ymax, _xmax, 
 					_ymin, _xmin, _ymin)
-					_tex_coords += self.base_tex_coords
-					
+
+					_tex_coords2 = list(self.base_tex_coords)
 					if _xmax > _r.xmax:
 						scale_tx = (_r.xmax - _xmin) * 1.0 / self.texture.width
 						_vertices[-4] = _vertices[-6] = _r.xmax
 					else:
 						scale_tx = 1
-					_tx_len = _tex_coords[-9] - _tex_coords[-3]
-					_tex_coords[-6] = _tex_coords[-9] = _tex_coords[-3] + _tx_len * scale_tx					
+					_tx_len = _tex_coords2[-9] - _tex_coords2[-3]
+					_tex_coords2[-6] = _tex_coords2[-9] = _tex_coords2[-3] + _tx_len * scale_tx					
 					if _ymax > _r.ymax:
 						scale_ty = (_r.ymax - _ymin) * 1.0 / self.texture.height
 						_vertices[-5] = _vertices[-7] = _r.ymax	
 					else:
 						scale_ty = 1
-					_ty_len = _tex_coords[-5] - _tex_coords[-8]
-					_tex_coords[-5] = _tex_coords[-2] = _tex_coords[-8] + _ty_len * scale_ty
-					
+					_ty_len = _tex_coords2[-5] - _tex_coords2[-8]
+					_tex_coords2[-5] = _tex_coords2[-2] = _tex_coords2[-8] + _ty_len * scale_ty
+
+					for i, v in enumerate(_tex_coords2):
+						if i % 3 != 2:
+							_tex_coords.append(v)
+							
 					count += 1	
 			self.vertices = _vertices
 			self.tex_coords = _tex_coords					

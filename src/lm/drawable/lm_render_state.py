@@ -38,7 +38,7 @@ class CObj(object):
 		# vbo
 		self._vertex_count = 100
 		self._vertex_list = pyglet.graphics.vertex_list(self._vertex_count, 
-			"v2f", "t3f", "c4f", "s3f")
+			"v2f", "t2f", "c4f", "s3f")
 		self._vertex_idx = 0
 		
 		# statistic
@@ -167,8 +167,8 @@ class CObj(object):
 		v.secondary_colors[s : t] = secondary_colors
 		
 		# append tex_coords
-		s = i * 3
-		t = s + n * 3
+		s = i * 2
+		t = s + n * 2
 		v.tex_coords[s : t] = tex_coords
 #		self.log("\ttex_coords = (%f, %f, %f), (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)" % tuple(v.tex_coords[s:s+12]))
 		
