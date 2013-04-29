@@ -56,8 +56,8 @@ class CType(object):
 			a._r[0] * b._r[1] + a._s[1] * b._s[1])
 		self._t = (a._s[0] * b._t[0] + a._r[1] * b._t[1] + a._t[0],
 			a._r[0] * b._t[0] + a._s[1] * b._t[1] + a._t[1])
-		self._r = (a._r[0] * b._s[0] + a._s[1] * b._r[0],
-			a._s[0] * b._r[1] + a._r[1] * b._s[0])
+		self._r = (a._s[0] * b._r[1] + a._r[1] * b._s[1],
+			a._r[0] * b._s[0] + a._s[1] * b._r[0])
 		
 	# Transform a point
 	def transform_point(self, p):
