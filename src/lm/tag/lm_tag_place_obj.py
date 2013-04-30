@@ -113,8 +113,9 @@ class CTag(lm_tag_base.CTag):
 					char_tag = self.ctx.get_character(self._char_id)
 					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
 					inst.char_id = self._char_id
+				inst.init()
 				target.add_drawable(inst, self._depth, self._name)
-
+				
 				if self._on_enter_frame:
 					inst.onEnterFrame = self._on_enter_frame
 				

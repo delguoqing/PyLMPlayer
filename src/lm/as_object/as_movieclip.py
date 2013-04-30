@@ -19,7 +19,7 @@ class CObj(lm_drawable_container.CDrawable):
 		self._play_head = 0	# 0-based frame id	
 		self._total_frame = len(self._frame_tags)		
 		self._is_playing = True	
-		self._init_no_frame = False
+		self._init_frame = False
 		self._active = True
 
 		# The `clip actions`
@@ -39,7 +39,7 @@ class CObj(lm_drawable_container.CDrawable):
 		# If a timeline advances in normal order, find a cached character will
 		# be super efficient!
 		self._pool =[[]] * self._max_depth
-		
+				
 	# Allocate a cached drawable from pool
 	def alloc_drawable(self, depth, inst_id):
 		_cache = self._pool[depth]
@@ -68,7 +68,6 @@ class CObj(lm_drawable_container.CDrawable):
 		if _d is not None:
 			self._pool[depth].append(_d)
 			_d._as_tween_only = False
-			_d._inited = False
 		super(CObj, self).remove_drawable(depth)
 
 	def is_movieclip(self):
@@ -91,59 +90,41 @@ class CObj(lm_drawable_container.CDrawable):
 		key_frame.execute(target=self)
 		
 	# Play mode: Normal!
-	def update(self, render_state, draw=True):
-
-		if not self._inited:
-			self.init()
-			self._inited = True
-			
-		else:
+	def update(self, render_state, operation=0x3):
+		
+		if self._init_frame:
+			operation &= 0x2
+			self._init_frame = False
+		
+		if operation & 1:
 			# what ever, should do the onEnterFrame
 			if self.onEnterFrame:
 				self.onEnterFrame(self)
-		
+	
 			# if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
+				self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
 					self.init()
 				else:
 					self._frame_tags[self._play_head].execute(target=self)
-	
+
 		# Update & Render
 		render_state.push_matrix(self.matrix)
 		render_state.push_cxform(self.color_add, self.color_mul)
 		render_state.push_blend_mode(self.blend_mode)
 		
-		clip_depth = 0
-		
 		for drawable in self:
-			
-			if not drawable.clip_depth:
-				drawable.update(render_state, draw)
-				if clip_depth and drawable.depth == clip_depth:
-					glDisable(GL_SCISSOR_TEST)
-			else:
-				drawable.update(render_state, False)
-				# Set Scissors
-				# Assume that:
-				# 1. no nested scissor
-				# 2. no rotated or skewed scissor
-				# improve this!
-				clip_depth = drawable.clip_depth
-				glEnable(GL_SCISSOR_TEST)
-				mat = (GLfloat * 16)()
-				glGetFloatv(GL_MODELVIEW_MATRIX, mat)
-				_r = drawable._rect
-				glScissor(int(_r.xmin * mat[0] + mat[12]), 272-int(_r.ymax * mat[5] + mat[13]), int(_r.width * mat[0]), int(_r.height * mat[5]))
+			drawable.update(render_state, operation)
 			
 		render_state.pop_matrix()
 		render_state.pop_cxform()
 		render_state.pop_blend_mode()
-				
+		
 	# initialization when first placed on stage
 	def init(self, fully=False):
-		
+		self.log("init!!!!======>")
 		# Remove all
 		to_remove = []
 		for drawable in self:
@@ -161,6 +142,10 @@ class CObj(lm_drawable_container.CDrawable):
 		# Execute the frame 0 tags
 		self._frame_tags[0].execute(target=self)
 
+		for drawable in self:
+			if not drawable.forbid_timeline:
+				drawable.init()
+				
 	# Movieclip property and method!!		
 	def gotoAndPlay(self, frame_id):
 		if isinstance(frame_id, str):
@@ -168,10 +153,13 @@ class CObj(lm_drawable_container.CDrawable):
 			
 		self._is_playing = True
 		if frame_id == self._play_head:
+			self.log("already at that frame!")
 			return
 		self._play_head = frame_id		
 		
 		self.goto_frame(frame_id)
+		
+		self.log("After gotoAndPlay, play_head = %d" % self._play_head)
 		
 	def gotoAndStop(self, frame_id):
 		if isinstance(frame_id, str):
@@ -183,7 +171,9 @@ class CObj(lm_drawable_container.CDrawable):
 		self._play_head = frame_id
 		
 		self.goto_frame(frame_id)
-	
+
+		self.log("After gotoAndStop, play_head = %d" % self._play_head)
+			
 	def play(self):
 		self._is_playing = True
 	
@@ -209,6 +199,9 @@ class CObj(lm_drawable_container.CDrawable):
 	# I don't see a movieclip with different x, y scale rate,
 	# and don't see a movieclip with rotation and scale at the
 	# same time.
+	#
+	# Update: use rotateskew0 as the `_rotation` property. This is exactly 
+	# what official flash player does. 
 	def _get_rotation(self):
 		if self.__rotation: return self.__rotation
 		if self.matrix:

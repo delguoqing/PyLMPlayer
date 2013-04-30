@@ -23,7 +23,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self._drawables[depth] = None
 
 	
-	def update(self, render_state, draw=True):
+	def update(self, render_state, operation=0x3):
 		raise NotImplementedError
 			
 	def __iter__(self):

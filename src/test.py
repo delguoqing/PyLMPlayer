@@ -66,6 +66,9 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key.DOWN:
 		movieclips[DON].play()
 		
+	elif symbol == pyglet.window.key.NUM_ADD:
+		set_combo(cur_combo + 1)
+		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
 		
@@ -91,8 +94,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	#glClearColor(1, 1, 0, 1)
-	#window.clear()
+#	glClearColor(1, 1, 0, 1)
+#	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -100,6 +103,8 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
+#		if movieclip != movieclips[COMBO]:
+#			continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -111,6 +116,50 @@ def on_draw(dt):
 	
 pyglet.clock.schedule(on_draw)
 
+cur_combo = 998
+def set_combo(combo):
+	global movieclips, cur_combo
+	if combo < 10:
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo0-9")
+	elif combo < 100:
+		num10 = combo // 10
+		num1 = combo - num10 * 10
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo10-99")		
+		movieclips[COMBO].enso_combo.num1.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10.gotoAndPlay("number_%d" % num10)
+		
+	elif combo < 1000:
+		num100 = combo // 100
+		num10 = (combo - num100 * 100) // 10
+		num1 = combo - num100 * 100 - num10 * 10
+		
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo100-999color")
+		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)		
+		
+		_num100 = cur_combo // 100
+		if _num100 != num100:
+			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+	elif combo < 10000:
+		num1000 = combo // 1000
+		num100 = (combo - num1000 * 1000) // 100
+		num10 = (combo - num1000 * 1000 - num100 * 100) // 10
+		num1 = combo - num1000 * 1000 - num100 * 100 - num10 * 10
+		
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo1000-9999color")
+		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)
+		movieclips[COMBO].enso_combo.num1000color.gotoAndPlay("number_%d" % num1000)
+
+		_num1000 = cur_combo // 1000
+		_num100 = (cur_combo - _num1000 * 1000) // 100
+
+		if _num100 != num100:
+			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+					
+	cur_combo = combo
 
 # --------- experiment cases ------------------
 
@@ -141,7 +190,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(2048, 2048)
 
-NUM_MOVIECLIP = 20
+NUM_MOVIECLIP = 22
 (
 DANCE_BG, 
 ENSO_UP_BG, 
@@ -162,14 +211,52 @@ LEFT_DON,
 LEFT_KATS, 
 RIGHT_DON, 
 RIGHT_KATS, 
-GAUGE
+GAUGE,
+
+SCORE_ADD, SCORE_MAIN,
+
+# To be layout correctly
+#SYOUSETSU,
+#FEVER,
+#RENDA_EFFECT,
+#RENDA_NUM,
+#CHIBI1,
+#CHIBI2,
+#CHIBI3,
+#CHIBI4,
+#CHIBI5,
+#CHIBI6,
+#CHIBI_MISS,
+#DANDER1,
+#DANDER2,
+#DANDER3,
+#DANDER4,
+#DANDER5,
+#ONP_DON,
+#ONP_KATS,
+#ONP_DON_DAI,
+#ONP_KATS_DAI,
+#ONP_RENDA1,
+#ONP_RENDA2,
+#ONP_RENDA3,
+#ONP_RENDA1_DAI,
+#ONP_RENDA2_DAI,
+#ONP_RENDA3_DAI,
+#ONP_IMO,
+#ONP_BALLOON,
+#ONP_FLY_DON,
+#ONP_FLY_DON_DAI,
+#ONP_FLY_KATS,
+#ONP_FLY_KATS_DAI,
+#ONP_FLY_BALLOON,
+#IMO,
 ) = range(NUM_MOVIECLIP)
 
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_MIKU.LM")
-movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_01.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
+movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_04.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
 movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
@@ -188,6 +275,8 @@ movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
 movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 42))
+movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
+movieclips[SCORE_ADD] = load_movie("ENSO_SCORE_ADD.LM")
 
 # Thus we use shader to do cxform, this is not needed
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

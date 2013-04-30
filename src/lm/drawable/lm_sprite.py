@@ -10,8 +10,8 @@ class CDrawable(lm_drawable.CDrawable):
 		self._rect = rect
 		self._vertex_lists = vertex_lists
 		
-	def update(self, render_state, draw=True):
-		if not draw:
+	def update(self, render_state, operation=0x3):
+		if (operation & 0x2) == 0:
 			return
 			
 		render_state.push_matrix(self.matrix)

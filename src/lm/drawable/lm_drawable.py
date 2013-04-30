@@ -19,7 +19,6 @@ class CDrawable(object):
 
 		self.depth = depth
 		self._as_tween_only = False
-		self._inited = False
 	
 	def is_movieclip(self):
 		return False
@@ -27,10 +26,17 @@ class CDrawable(object):
 	def _get_forbid_timeline(self):
 		return self._as_tween_only
 	forbid_timeline = property(_get_forbid_timeline)
-				
-	def update(self, render_state, draw=True):
+			
+	def init(self, fully=False):
+		pass
+			
+	def update(self, render_state, operation=0x3):
 		raise NotImplementedError
 	
+	def log(self, str):
+		if self.inst_id == 83:
+			print str
+				
 	def set_cxform(self, cadd, cmul):
 		if cadd:
 			if cadd == lm_glb.null_cadd:
