@@ -12,7 +12,9 @@ http://ericlin2.tripod.com/
 	0xF018: Button Record.
 #32. try to arrange the order of LM files.(For best performance)
 #33. adjust clip depth implementation.
-#34.
+#34. create several score add movieclips and Reuse them.
+#35.
+#36.
 
 # DONE
 # 8. try wii version. 

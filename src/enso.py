@@ -5,6 +5,7 @@ import os
 import cProfile
 import pyglet
 import gc
+import random
 
 from pyglet.gl import *
 from ctypes import *
@@ -23,6 +24,111 @@ window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 # one frame movieclip can be drawn as a display_list
 
+###################################
+# Game Logic
+###################################
+cur_combo = 0	# current combo
+cur_score = 0	# current score
+
+def set_combo(combo):
+
+	global movieclips, cur_combo
+	if combo < 10:
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo0-9")
+	elif combo < 100:
+		num10 = combo // 10
+		num1 = combo - num10 * 10
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo10-99")		
+		movieclips[COMBO].enso_combo.num1.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10.gotoAndPlay("number_%d" % num10)
+		
+	elif combo < 1000:
+		num100 = combo // 100
+		num10 = (combo - num100 * 100) // 10
+		num1 = combo - num100 * 100 - num10 * 10
+		
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo100-999color")
+		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)		
+		
+		_num100 = cur_combo // 100
+		if _num100 != num100:
+			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+	elif combo < 10000:
+		num1000 = combo // 1000
+		num100 = (combo - num1000 * 1000) // 100
+		num10 = (combo - num1000 * 1000 - num100 * 100) // 10
+		num1 = combo - num1000 * 1000 - num100 * 100 - num10 * 10
+		
+		movieclips[COMBO].enso_combo.gotoAndPlay("combo1000-9999color")
+		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)
+		movieclips[COMBO].enso_combo.num1000color.gotoAndPlay("number_%d" % num1000)
+
+		_num1000 = cur_combo // 1000
+		_num100 = (cur_combo - _num1000 * 1000) // 100
+
+		if _num100 != num100:
+			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+					
+	cur_combo = combo
+	
+def add_score(score):
+	set_score(cur_score + score)
+	_s = score
+	num_10000 = _s // 10000
+	_s -= num_10000 * 10000	
+	num_1000 = _s // 1000
+	_s -= num_1000 * 1000
+	num_100 = _s // 100
+	_s -= num_100 * 100	
+	num_10 = _s // 10
+	_s -= num_10 * 10	
+	num_1 = _s // 1
+	_s -= num_1 * 1	
+	mc = movieclips[SCORE_ADD]
+	mc.gotoAndPlay(0)
+	
+	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
+	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
+	score >= 100 and mc.num_100.gotoAndPlay("number_%d" % num_100)
+	score >= 1000 and mc.num_1000.gotoAndPlay("number_%d" % num_1000)
+	score >= 10000 and mc.num_10000.gotoAndPlay("number_%d" % num_10000)
+
+def set_score(score):
+	global cur_score
+	_s = score
+	num_10000000 = _s // 10000000
+	_s -= num_10000000 * 10000000
+	num_1000000 = _s // 1000000
+	_s -= num_1000000 * 1000000
+	num_100000 = _s // 100000
+	_s -= num_100000 * 100000
+	num_10000 = _s // 10000
+	_s -= num_10000 * 10000	
+	num_1000 = _s // 1000
+	_s -= num_1000 * 1000
+	num_100 = _s // 100
+	_s -= num_100 * 100	
+	num_10 = _s // 10
+	_s -= num_10 * 10	
+	num_1 = _s // 1
+	_s -= num_1 * 1	
+	mc = movieclips[SCORE_MAIN]
+	
+	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
+	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
+	score >= 100 and mc.num_100.gotoAndPlay("number_%d" % num_100)
+	score >= 1000 and mc.num_1000.gotoAndPlay("number_%d" % num_1000)
+	score >= 10000 and mc.num_10000.gotoAndPlay("number_%d" % num_10000)
+	score >= 100000 and mc.num_100000.gotoAndPlay("number_%d" % num_100000)
+	score >= 1000000 and mc.num_1000000.gotoAndPlay("number_%d" % num_1000000)
+	score >= 10000000 and mc.num_10000000.gotoAndPlay("number_%d" % num_10000000)
+	
+	cur_score = score
+	
 @window.event
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
@@ -68,6 +174,7 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.NUM_ADD:
 		set_combo(cur_combo + 1)
+		add_score(random.randint(500, 2000))
 		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
@@ -81,6 +188,9 @@ def on_key_press(symbol, modifiers):
 def fscommand(event, data):
 	print "fscommand(%s, %s)" % (event, data)
 	
+###################################
+# Rendering
+###################################
 def on_draw(dt):
 	global movieclips
 	# switch off some expensive operation
@@ -114,52 +224,9 @@ def on_draw(dt):
 	
 pyglet.clock.schedule(on_draw)
 
-cur_combo = 98
-def set_combo(combo):
-	global movieclips, cur_combo
-	if combo < 10:
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo0-9")
-	elif combo < 100:
-		num10 = combo // 10
-		num1 = combo - num10 * 10
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo10-99")		
-		movieclips[COMBO].enso_combo.num1.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10.gotoAndPlay("number_%d" % num10)
-		
-	elif combo < 1000:
-		num100 = combo // 100
-		num10 = (combo - num100 * 100) // 10
-		num1 = combo - num100 * 100 - num10 * 10
-		
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo100-999color")
-		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
-		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)		
-		
-		_num100 = cur_combo // 100
-		if _num100 != num100:
-			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
-	elif combo < 10000:
-		num1000 = combo // 1000
-		num100 = (combo - num1000 * 1000) // 100
-		num10 = (combo - num1000 * 1000 - num100 * 100) // 10
-		num1 = combo - num1000 * 1000 - num100 * 100 - num10 * 10
-		
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo1000-9999color")
-		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
-		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)
-		movieclips[COMBO].enso_combo.num1000color.gotoAndPlay("number_%d" % num1000)
-
-		_num1000 = cur_combo // 1000
-		_num100 = (cur_combo - _num1000 * 1000) // 100
-
-		if _num100 != num100:
-			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
-					
-	cur_combo = combo
-
-# --------- experiment cases ------------------
+###################################
+# Setup code
+###################################
 
 img_root = "C:/png"
 platform = "pspdx"
@@ -190,11 +257,35 @@ texture_bin = pyglet.image.atlas.TextureBin(2048, 2048)
 
 NUM_MOVIECLIP = 22
 (
+#######################
+# Lower Part!
+# Some dance bg is such made that its elements can move event to the top,
+# which should be hidden by the enso up bg.
+#######################
 DANCE_BG, 
+
+########################
+# Upper Part!
+########################
+
+# Enso up bg. Scrolling from left to right.
 ENSO_UP_BG, 
+# sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI,
+# Course icon. not affected by sabi effect.
 COURSE, 
+# Character don.
 DON,
+# The tamashi gauge
+GAUGE,
+
+# ====> Chibis <======
+
+########################
+# Middle Part!
+# Middle parts rules.hit judge effect can be the most top.
+# The onp_fly animation is on top of the gauge and something else
+########################
 LANE, 
 HITEFFECTS, 
 BUNKI,
@@ -212,7 +303,12 @@ COMBO,
 # Hit judge text and effect(which covers part of the taiko).
 HITJUDGE, 
 
-GAUGE,
+#######################
+# HUD Part!
+#######################
+# Scores.
+# Score Add: How many score is added in the last hit
+# Score Main: The total score.
 SCORE_ADD, SCORE_MAIN,
 
 # To be layout correctly
