@@ -16,5 +16,5 @@ class CTag(lm_tag_base.CTag):
 		
 	def execute(self, target=None):
 		if not target: return
-		self.script(target, self.ctx.fscommand)
+		self.script(target)
 		

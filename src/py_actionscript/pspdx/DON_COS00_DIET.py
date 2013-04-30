@@ -1,109 +1,109 @@
-def func_0(this, fscommand):
-	fscommand("callback", "combo_end")
+def func_0(this):
+	this.fscommand("callback", "combo_end")
 	this.stop()
 
-def func_1(this, fscommand):
+def func_1(this):
 	this.stop()	
 	
-def func_2(this, fscommand):
-	fscommand("callback", "baloon_success_end")
+def func_2(this):
+	this.fscommand("callback", "baloon_success_end")
 	this.stop()
 	
-def func_3(this, fscommand):
-	fscommand("callback", "balloon_miss_end")
+def func_3(this):
+	this.fscommand("callback", "balloon_miss_end")
 	this.stop()
 	
-def func_4(this, fscommand):
-	fscommand("callback", "miss1_end")
+def func_4(this):
+	this.fscommand("callback", "miss1_end")
 	this.stop()
 	
-def func_5(this, fscommand):
+def func_5(this):
 #	this.don.gotoAndStop(4)
 #	this is bug.
 	pass
 	
-def func_6(this, fscommand):
-	fscommand("callback", "miss2_end")
+def func_6(this):
+	this.fscommand("callback", "miss2_end")
 	this.stop()
 	
-def func_7(this, fscommand):	
-	fscommand("callback", "miss_anim_end")	
+def func_7(this):	
+	this.fscommand("callback", "miss_anim_end")	
 	this.stop()
 	
-def func_8(this, fscommand):
-	fscommand("callback", "miss_normal_start_end")
+def func_8(this):
+	this.fscommand("callback", "miss_normal_start_end")
 	this.stop()	
 
-def func_9(this, fscommand):	
-	fscommand("callback", "norma_up_end")
+def func_9(this):	
+	this.fscommand("callback", "norma_up_end")
 	this.stop()
 		
-def func_10(this, fscommand):	
-	fscommand("callback", "norma_down_end")
+def func_10(this):	
+	this.fscommand("callback", "norma_down_end")
 	this.stop()
 	
-def func_11(this, fscommand):
-	fscommand("callback", "normal_down_end")
+def func_11(this):
+	this.fscommand("callback", "normal_down_end")
 	this.stop()
 		
-def func_12(this, fscommand):	
-	fscommand("callback", "full_gauge_start_end")
+def func_12(this):	
+	this.fscommand("callback", "full_gauge_start_end")
 	this.stop()
 		
-def func_13(this, fscommand):	
-	fscommand("callback", "imo_in_end")
+def func_13(this):	
+	this.fscommand("callback", "imo_in_end")
 	this.stop()
 		
-def func_14(this, fscommand):	
-	fscommand("callback", "imo_break_end")
+def func_14(this):	
+	this.fscommand("callback", "imo_break_end")
 	this.stop()
 		
-def func_15(this, fscommand):	
-	fscommand("callback", "imo_miss_end")
+def func_15(this):	
+	this.fscommand("callback", "imo_miss_end")
 	this.stop()
 		
-def func_16(this, fscommand):	
-	fscommand("event", "end")
+def func_16(this):	
+	this.fscommand("event", "end")
 	this.stop()
 	
-def func_17(this, fscommand):	
-	fscommand("callback", "mode_in_end")
-	fscommand("event", "end")
+def func_17(this):	
+	this.fscommand("callback", "mode_in_end")
+	this.fscommand("event", "end")
 	this.stop()
 	
-def func_18(this, fscommand):
-	fscommand("callback", "cos_change")
+def func_18(this):
+	this.fscommand("callback", "cos_change")
 	pass
 
-def func_19(this, fscommand):	
-	fscommand("callback", "music_select_in_end")
+def func_19(this):	
+	this.fscommand("callback", "music_select_in_end")
 	this.stop()
 
-def func_20(this, fscommand):	
-	fscommand("callback", "music_select_out_end")
-	fscommand("event", "end")	
+def func_20(this):	
+	this.fscommand("callback", "music_select_out_end")
+	this.fscommand("event", "end")	
 	this.stop()	
 	
-def func_21(this, fscommand):
-	fscommand("sound", "don_step")
+def func_21(this):
+	this.fscommand("sound", "don_step")
 	pass
 	
-def func_22(this, fscommand):
-	fscommand("sound", "don_step")
-	fscommand("event", "end")
+def func_22(this):
+	this.fscommand("sound", "don_step")
+	this.fscommand("event", "end")
 	this.stop()	
 	
-def func_23(this, fscommand):	
+def func_23(this):	
 	this.gotoAndPlay("idling_0")
 
-def func_24(this, fscommand):
+def func_24(this):
 	this.gotoAndPlay("idling_4")	
 	
-def func_25(this, fscommand):	
+def func_25(this):	
 	this.gotoAndPlay(0)
 
-def func_26(this, fscommand):		
-	fscommand("sound", "don_hand")
+def func_26(this):		
+	this.fscommand("sound", "don_hand")
 	pass
 	
 	

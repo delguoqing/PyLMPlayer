@@ -63,15 +63,6 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
-		
-def fscommand(event, data):
-	global cur_menu
-	print event, data
-	if event == "callback":
-		if data == "update_menu_matsu_sbopen_l_b":
-			movieclips[cur_menu].menu_top.gotoAndPlay("open")
-		elif data == "update_menu_matsu_sbopen_r_b":
-			movieclips[cur_menu].menu_top.gotoAndPlay("open")
 	
 def on_draw(dt):
 	global movieclips
@@ -123,7 +114,6 @@ def load_movie(filename, translate=(0, 0)):
 	
 	filename = os.path.join(lm_root, filename)
 	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
-	ctx.fscommand = fscommand
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
 	movieclip = char_tag.instantiate(inst_id, depth, parent=None)

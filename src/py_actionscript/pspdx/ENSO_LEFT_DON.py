@@ -1,4 +1,4 @@
-def func_0(this, fscommand):
+def func_0(this):
 	this.stop()
 	
 DATA = (

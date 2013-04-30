@@ -1,10 +1,10 @@
-def func_0(this, fscommand):
+def func_0(this):
 	this.stop()
 	
-def func_1(this, fscommand):
+def func_1(this):
 	this.gotoAndPlay("Fever")
 	
-def func_2(this, fscommand):
+def func_2(this):
 	this.gotoAndPlay("fever")	
 
 DATA = (

@@ -184,9 +184,6 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
-		
-def fscommand(event, data):
-	print "fscommand(%s, %s)" % (event, data)
 	
 ###################################
 # Rendering
@@ -239,7 +236,6 @@ def load_movie(filename, translate=(0, 0)):
 	
 	filename = os.path.join(lm_root, filename)
 	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
-	ctx.fscommand = fscommand
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
 	movieclip = char_tag.instantiate(inst_id, depth, parent=None)

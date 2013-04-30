@@ -230,3 +230,6 @@ class CObj(lm_drawable_container.CDrawable):
 		self._as_tween_only = True
 		
 	_rotation = property(_get_rotation, _set_rotation)
+	
+	def fscommand(self, event, data):
+		pass

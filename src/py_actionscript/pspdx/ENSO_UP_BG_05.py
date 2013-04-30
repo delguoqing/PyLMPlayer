@@ -1,4 +1,4 @@
-def func_0(this, fscommand):
+def func_0(this):
 	def onEnterFrame(_this):
 		bg = _this
 		bg._x -= 0.5
@@ -6,19 +6,19 @@ def func_0(this, fscommand):
 			bg._x = 0
 	this.onEnterFrame = onEnterFrame
 
-def func_1(this, fscommand):
+def func_1(this):
 	pass
 	
-def func_2(this, fscommand):
+def func_2(this):
 	this.stop()
 	
-def func_3(this, fscommand):
+def func_3(this):
 	this.gotoAndPlay("fever")
 
-def func_4(this, fscommand):
+def func_4(this):
 	this.gotoAndPlay("miss")
 	
-def func_5(this, fscommand):
+def func_5(this):
 	this.gotoAndPlay("normal")
 			
 DATA = (

@@ -1,71 +1,71 @@
 	
-def func_0(this, fscommand):
+def func_0(this):
 	this.stop()
 
-def func_1(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen")
-	fscommand("callback", "update_menu_take_sb4")
+def func_1(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen")
+	this.fscommand("callback", "update_menu_take_sb4")
 	this.stop()
 		
-def func_2(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sb4")
+def func_2(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
-def func_3(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen_l")
-	fscommand("callback", "update_menu_take_sb4")
+def func_3(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen_l")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
-def func_4(this, fscommand):
-	fscommand("callback", "update_menu_left")
-	fscommand("callback", "update_menu_take_normal_b")
-	fscommand("callback", "update_menu_take_sbopen_l_b")
+def func_4(this):
+	this.fscommand("callback", "update_menu_left")
+	this.fscommand("callback", "update_menu_take_normal_b")
+	this.fscommand("callback", "update_menu_take_sbopen_l_b")
 	this.stop()
 
-def func_5(this, fscommand):	
-	fscommand("callback", "update_menu_left")
-	fscommand("callback", "update_menu_take_normal_b")
-	fscommand("callback", "update_menu_take_sbopen_l")
-	fscommand("callback", "update_menu_take_sb3")
+def func_5(this):	
+	this.fscommand("callback", "update_menu_left")
+	this.fscommand("callback", "update_menu_take_normal_b")
+	this.fscommand("callback", "update_menu_take_sbopen_l")
+	this.fscommand("callback", "update_menu_take_sb3")
 	this.stop()
 
-def func_6(this, fscommand):
-	fscommand("callback", "update_menu_take_normal_b")
-	fscommand("callback", "update_menu_take_sbopen_r")
-	fscommand("callback", "update_menu_take_sb3")
+def func_6(this):
+	this.fscommand("callback", "update_menu_take_normal_b")
+	this.fscommand("callback", "update_menu_take_sbopen_r")
+	this.fscommand("callback", "update_menu_take_sb3")
 	
-def func_7(this, fscommand):	
-	fscommand("callback", "update_menu_right")
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen_r_b")
+def func_7(this):	
+	this.fscommand("callback", "update_menu_right")
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen_r_b")
 	this.stop()
 	
-def func_8(this, fscommand):
-	fscommand("callback", "update_menu_right")
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen_r")
-	fscommand("callback", "update_menu_take_sb4")
+def func_8(this):
+	this.fscommand("callback", "update_menu_right")
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen_r")
+	this.fscommand("callback", "update_menu_take_sb4")
 	this.stop()
 	
-def func_9(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sb4")
+def func_9(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
-def func_10(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen")
-	fscommand("callback", "update_menu_take_sb4")
+def func_10(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
-def func_11(this, fscommand):
-	fscommand("callback", "update_menu_sort")
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sbopen")
-	fscommand("callback", "update_menu_take_sb4")
+def func_11(this):
+	this.fscommand("callback", "update_menu_sort")
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sbopen")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
-def func_12(this, fscommand):
-	fscommand("callback", "update_menu_take_normal")
-	fscommand("callback", "update_menu_take_sb4")
+def func_12(this):
+	this.fscommand("callback", "update_menu_take_normal")
+	this.fscommand("callback", "update_menu_take_sb4")
 	
 DATA = (
 	func_0,

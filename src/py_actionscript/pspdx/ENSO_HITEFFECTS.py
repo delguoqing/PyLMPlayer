@@ -1,7 +1,7 @@
-def func_0(this, fscommand):
+def func_0(this):
 	this.stop()
 	
-def func_1(this, fscommand):
+def func_1(this):
 	this.stop()
 	
 DATA = (
