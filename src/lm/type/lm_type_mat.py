@@ -88,5 +88,3 @@ class CType(object):
 	# Unset OpenGL state
 	def unset(self):
 		glPopMatrix()
-		
-null_mat = CType()

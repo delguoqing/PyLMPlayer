@@ -29,6 +29,9 @@ fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 ###################################
 cur_combo = 0	# current combo
 cur_score = 0	# current score
+cur_dancer = -1	# current dancer
+first_unsync_dancer = -1 # current unsync_dancer
+last_unsync_dancer = -1 # last unsync_dancer
 
 def set_combo(combo):
 
@@ -128,7 +131,45 @@ def set_score(score):
 	score >= 10000000 and mc.num_10000000.gotoAndPlay("number_%d" % num_10000000)
 	
 	cur_score = score
+
+def add_dancer():
+	global cur_dancer, movieclips
+	if cur_dancer == -1:
+		cur_dancer = DANCER1
+	elif cur_dancer > DANCER5:
+		cur_dancer -= 1
+	else:
+		return
 	
+	# add `cur_dancer`
+	movieclips[cur_dancer].gotoAndPlay("in")
+	
+def remove_dancer():
+	global cur_dancer
+	if cur_dancer <= DANCER1:
+		# remove `cur_dancer`
+		movieclips[cur_dancer].gotoAndPlay("out")
+		cur_dancer += 1
+
+def on_dancer_in_end(dancer):
+	global first_unsync_dancer, last_unsync_dancer, movieclips
+	if dancer == DANCER1:	# if it is the first dancer, then start dance at once
+		movieclips[dancer].gotoAndPlay("dance")
+	else:
+		if first_unsync_dancer == -1:
+			first_unsync_dancer = dancer
+		last_unsync_dancer = dancer
+
+def on_dancer_sync(dancer):
+	global first_unsync_dancer, last_unsync_dancer, movieclips
+	if first_unsync_dancer != -1:
+		sync_to = movieclips[dancer].dancer._play_head
+		a, b = first_unsync_dancer, last_unsync_dancer
+		first_unsync_dancer = -1
+		for dancer in xrange(b, a + 1):
+			movieclips[dancer].gotoAndPlay("dance")
+			movieclips[dancer].dancer.gotoAndPlay(sync_to)
+			
 @window.event
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
@@ -157,20 +198,25 @@ def on_key_press(symbol, modifiers):
 		movieclips[GAUGE].gotoAndPlay("gage_50")
 		movieclips[DANCE_BG].gotoAndPlay("normal_fever")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
+		movieclips[FEVER].fever.gotoAndPlay("fever_start")
 	elif symbol == pyglet.window.key.BRACKETRIGHT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
 		movieclips[GAUGE].gotoAndPlay("gage_47")
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
+		movieclips[FEVER].fever.gotoAndPlay("fever_end")		
 	elif symbol == pyglet.window.key.ENTER:		
 		movieclips[FULLCOMBO].gotoAndPlay("run")
-			
+
+		
 	elif symbol == pyglet.window.key.UP:
 		movieclips[BUNKI].play()
 		movieclips[BUNKI_MOJI].play()
+		add_dancer()		
 		
 	elif symbol == pyglet.window.key.DOWN:
 		movieclips[DON].play()
+		remove_dancer()
 		
 	elif symbol == pyglet.window.key.NUM_ADD:
 		set_combo(cur_combo + 1)
@@ -215,9 +261,9 @@ def on_draw(dt):
 	render_state.end()
 			
 	# Draw fps
-	glScalef(1.0, -1.0, 1.0)
-	glTranslatef(0.0, -64.0, 1.0)
-	fps_display.draw()
+#	glScalef(1.0, -1.0, 1.0)
+#	glTranslatef(0.0, -64.0, 1.0)
+#	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -249,25 +295,33 @@ def load_movie(filename, translate=(0, 0)):
 render_state = lm_render_state.CObj()
 
 # global texture bin
-texture_bin = pyglet.image.atlas.TextureBin(2048, 2048)
+texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 22
+NUM_MOVIECLIP = 28
 (
 #######################
-# Lower Part!
+# BG Part!
 # Some dance bg is such made that its elements can move event to the top,
 # which should be hidden by the enso up bg.
 #######################
+# Dance BG
 DANCE_BG, 
-
-########################
-# Upper Part!
-########################
-
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG, 
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI,
+
+# ===========> renda effects <==============
+# Dancers: (Appear in the  following order)
+# 4    2    1    3    5
+DANCER5,
+DANCER4,
+DANCER3,
+DANCER2,
+DANCER1,
+# Fever(Appear when tamashii gauge is full.)
+FEVER,
+
 # Course icon. not affected by sabi effect.
 COURSE, 
 # Character don.
@@ -278,8 +332,8 @@ GAUGE,
 # ====> Chibis <======
 
 ########################
-# Middle Part!
-# Middle parts rules.hit judge effect can be the most top.
+# Enso Part!
+# Enso parts rules.hit judge effect can be the most top.
 # The onp_fly animation is on top of the gauge and something else
 ########################
 LANE, 
@@ -290,14 +344,21 @@ BUNKI_MOJI,
 MATO, 
 FULLCOMBO,
 
+# =========> onps <====================
+
 # The taiko.
 TAIKO, 
 # Left/Right Don/Kats.
 LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS, 
 # Combo number and Cherry(every 100 combo).
 COMBO,
+
+# =========> onp_fly <===============
+# =========> hit judges <============
 # Hit judge text and effect(which covers part of the taiko).
 HITJUDGE, 
+
+
 
 #######################
 # HUD Part!
@@ -305,7 +366,12 @@ HITJUDGE,
 # Scores.
 # Score Add: How many score is added in the last hit
 # Score Main: The total score.
+# Renda Num: The current hit of the renda onp
+# Combo Num: The current combo(every 10 combo)
+#RENDA_NUM, COMBO_NUM,
 SCORE_ADD, SCORE_MAIN,
+
+# =========> score add <==================
 
 # To be layout correctly
 #SYOUSETSU,
@@ -347,7 +413,7 @@ SCORE_ADD, SCORE_MAIN,
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_IDOL.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_04.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
@@ -369,11 +435,20 @@ movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 42))
 movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
 movieclips[SCORE_ADD] = load_movie("ENSO_SCORE_ADD.LM")
+movieclips[FEVER] = load_movie("FEVER_IDOL.LM")
+movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", (240, 270))
+movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", (150, 270))
+movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", (330, 270))
+movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", (60, 270))
+movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", (420, 270))
 
-# Thus we use shader to do cxform, this is not needed
+for dancer in xrange(DANCER1, DANCER1 - 5, -1):
+	mc = movieclips[dancer]
+	mc.ctx.register_callback("in_end", on_dancer_in_end, dancer)
+	mc.ctx.register_callback("dance_sync", on_dancer_sync, dancer)
+	
+# Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-
-glEnable(GL_BLEND)
 
 # Turn off texture filter
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)

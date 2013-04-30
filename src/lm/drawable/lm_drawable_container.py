@@ -22,7 +22,6 @@ class CDrawable(lm_drawable.CDrawable):
 	def remove_drawable(self, depth):
 		self._drawables[depth] = None
 
-	
 	def update(self, render_state, operation=0x3):
 		raise NotImplementedError
 			

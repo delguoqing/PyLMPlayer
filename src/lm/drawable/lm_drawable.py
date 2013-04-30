@@ -10,7 +10,7 @@ class CDrawable(object):
 	def __init__(self, inst_id, depth, parent=None):
 		self.color_add = None
 		self.color_mul = None
-		self.matrix = None
+		self.matrix = lm_glb.null_mat
 		self.blend_mode = None
 		self.clip_depth = 0
 

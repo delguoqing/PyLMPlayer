@@ -2,8 +2,7 @@ import math
 from lm.drawable import lm_drawable_container
 from pyglet.gl import *
 from lm.type import lm_type_mat
-
-
+from lm import lm_glb
 
 class CObj(lm_drawable_container.CDrawable):
 	
@@ -77,15 +76,14 @@ class CObj(lm_drawable_container.CDrawable):
 	# The Action script stuff
 	# -------------------------	
 	# Play mode: jump!
-	# if the new
 	def goto_frame(self, frame_id):
-		if frame_id == 0:
-			key_frame = self._frame_tags[0]
-		else:	
-			for key_frame_tag in self._key_frame_tags:
-				if key_frame_tag.get_frame_id() == frame_id:
-					key_frame = key_frame_tag
-					break
+		key_frame = None
+		for key_frame_tag in self._key_frame_tags:
+			if key_frame_tag.get_frame_id() == frame_id:
+				key_frame = key_frame_tag
+				break
+		if key_frame is None:
+			key_frame = self._frame_tags[frame_id]
 		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
 		key_frame.execute(target=self)
 		
@@ -230,6 +228,3 @@ class CObj(lm_drawable_container.CDrawable):
 		self._as_tween_only = True
 		
 	_rotation = property(_get_rotation, _set_rotation)
-	
-	def fscommand(self, event, data):
-		pass

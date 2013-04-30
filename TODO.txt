@@ -13,8 +13,12 @@ http://ericlin2.tripod.com/
 #32. try to arrange the order of LM files.(For best performance)
 #33. adjust clip depth implementation.
 #34. create several score add movieclips and Reuse them.
-#35.
+#35. implement movie clip pool object
 #36.
+#37.
+
+
+#10000. optimize(Never do this when not neccesary!)
 
 # DONE
 # 8. try wii version. 
