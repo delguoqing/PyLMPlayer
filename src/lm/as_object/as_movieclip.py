@@ -89,6 +89,15 @@ class CObj(lm_drawable_container.CDrawable):
 		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
 		key_frame.execute(target=self)
 		
+		# Remove those not existed frame
+		to_remove = []
+		for drawable in self:
+			if drawable.depth not in key_frame._allowed_depth:
+				to_remove.append(drawable.depth)
+		for depth in to_remove:
+			self.remove_drawable(depth)	
+#			self.log("remove out of key frame %d" % depth)
+			
 	# Play mode: Normal!
 	def update(self, render_state, operation=0x3):
 		
@@ -104,7 +113,7 @@ class CObj(lm_drawable_container.CDrawable):
 			# if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
-				self.log("playing %d" % self._play_head)
+#				self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
 					self.init()
 				else:
@@ -124,7 +133,7 @@ class CObj(lm_drawable_container.CDrawable):
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):
-		self.log("init!!!!======>")
+#		self.log("init!!!!======>")
 		# Remove all
 		to_remove = []
 		for drawable in self:
@@ -133,7 +142,9 @@ class CObj(lm_drawable_container.CDrawable):
 
 		for depth in to_remove:
 			self.remove_drawable(depth)	
+			
 		# Warning: The following set up may be changed by as
+		# Update: exactly what the official flash player does
 		self._play_head = 0
 		self._is_playing = True
 		self._as_tween_only = False
@@ -153,13 +164,13 @@ class CObj(lm_drawable_container.CDrawable):
 			
 		self._is_playing = True
 		if frame_id == self._play_head:
-			self.log("already at that frame!")
+#			self.log("already at that frame!")
 			return
 		self._play_head = frame_id		
 		
 		self.goto_frame(frame_id)
 		
-		self.log("After gotoAndPlay, play_head = %d" % self._play_head)
+#		self.log("After gotoAndPlay, play_head = %d" % self._play_head)
 		
 	def gotoAndStop(self, frame_id):
 		if isinstance(frame_id, str):
@@ -172,7 +183,7 @@ class CObj(lm_drawable_container.CDrawable):
 		
 		self.goto_frame(frame_id)
 
-		self.log("After gotoAndStop, play_head = %d" % self._play_head)
+#		self.log("After gotoAndStop, play_head = %d" % self._play_head)
 			
 	def play(self):
 		self._is_playing = True

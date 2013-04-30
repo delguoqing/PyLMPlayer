@@ -116,7 +116,7 @@ def on_draw(dt):
 	
 pyglet.clock.schedule(on_draw)
 
-cur_combo = 998
+cur_combo = 9
 def set_combo(combo):
 	global movieclips, cur_combo
 	if combo < 10:
@@ -255,7 +255,7 @@ SCORE_ADD, SCORE_MAIN,
 # Build up scene
 movieclips = [None] * NUM_MOVIECLIP
 
-movieclips[DANCE_BG] = load_movie("DANCE_BG_14.LM")
+movieclips[DANCE_BG] = load_movie("DANCE_BG_04.LM")
 movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_04.LM")
 movieclips[COURSE] = load_movie("COURSE_ONI.LM")
 movieclips[LANE] = load_movie("ENSO_LANE.LM")
@@ -289,5 +289,4 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 
-gc.disable()	
 pyglet.app.run()

@@ -1,5 +1,8 @@
 import lm_tag_base
+import lm_tag_place_obj
+
 from lm import lm_consts
+
 
 class CTag(lm_tag_base.CTag):
 	
@@ -10,6 +13,7 @@ class CTag(lm_tag_base.CTag):
 		self._frame_id = d["frame_id"]
 		self._cmd_cnt = d["cmd_cnt"]
 		self._ctrl_tags = []
+		self._allowed_depth = []
 		
 	# 0 based frame id
 	def get_frame_id(self):
@@ -17,10 +21,17 @@ class CTag(lm_tag_base.CTag):
 		
 	def add_sub_tag(self, tag):
 		self._ctrl_tags.append(tag)
-		
+		if len(self._ctrl_tags) == self.get_sub_tag_cnt():
+			self._calc_allowed_depth()
+			
 	def get_sub_tag_cnt(self):
 		return self._cmd_cnt
 		
+	def _calc_allowed_depth(self):
+		for tag in self._ctrl_tags:
+			if isinstance(tag, lm_tag_place_obj.CTag):
+				self._allowed_depth.append(tag._depth)
+				
 	# Execute tags
 	# First non-actionscripts
 	# Second actionscripts

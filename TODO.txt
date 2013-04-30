@@ -6,7 +6,6 @@ http://ericlin2.tripod.com/
 #21. support property _visible, _parent, _root
 #25. Use vertex array to do batch while avoid a fixed-length vbo.
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
-#29. combo not set correctly
 #30. onp moji has no lm file.handle those text specially.
 #31. DON_GEKI_1P.LM has not implemented tag!
 	0x0007: Button2,
@@ -92,3 +91,4 @@ i can do drawing in the same visit.
 	Don't need z-value for a tex_coord.
 #27. fix rotation bug.
 #28. fix sabi effect area not correct bug.
+#29. combo not set correctly
