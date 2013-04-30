@@ -94,7 +94,7 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-#	glClearColor(1, 1, 0, 1)
+#	glClearColor(0, 0, 0, 1)
 #	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
@@ -103,8 +103,6 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
-#		if movieclip != movieclips[COMBO]:
-#			continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -116,7 +114,7 @@ def on_draw(dt):
 	
 pyglet.clock.schedule(on_draw)
 
-cur_combo = 9
+cur_combo = 98
 def set_combo(combo):
 	global movieclips, cur_combo
 	if combo < 10:
@@ -204,10 +202,16 @@ MATO_GOGO,
 BUNKI_MOJI, 
 MATO, 
 FULLCOMBO,
+
+# The taiko.
 TAIKO, 
-HITJUDGE, 
+# Left/Right Don/Kats.
 LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS, 
+# Combo number and Cherry(every 100 combo).
 COMBO,
+# Hit judge text and effect(which covers part of the taiko).
+HITJUDGE, 
+
 GAUGE,
 SCORE_ADD, SCORE_MAIN,
 
