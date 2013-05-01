@@ -184,16 +184,16 @@ def set_renda(renda):
 	
 	if num100 != 0:
 		mc.renda_hukidashi.gotoAndPlay("renda_hit_100")
-		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndPlay("number_%d" % num10)
-		mc.renda_hukidashi.geki_num_100.gotoAndPlay("number_%d" % num100)
+		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
+		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
+		mc.renda_hukidashi.geki_num_100.gotoAndStop("number_%d" % num100)
 	elif num10 != 0:
 		mc.renda_hukidashi.gotoAndPlay("renda_hit_10")
-		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndPlay("number_%d" % num10)
+		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
+		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
 	else:
 		mc.renda_hukidashi.gotoAndPlay("renda_hit_00")
-		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
 	cur_renda = renda
 	
 @window.event
@@ -393,10 +393,11 @@ HITJUDGE,
 # Scores.
 # Score Add: How many score is added in the last hit
 # Score Main: The total score.
-# Renda Num: The current hit of the renda onp
 # Combo Num: The current combo(every 10 combo)
-RENDA_NUM, 
+# Renda Num: The current hit of the renda onp
+
 #COMBO_NUM,
+RENDA_NUM, 
 SCORE_ADD, SCORE_MAIN,
 
 # =========> score add <==================
