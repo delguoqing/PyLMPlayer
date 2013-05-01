@@ -3,6 +3,7 @@ from lm.drawable import lm_drawable_container
 from pyglet.gl import *
 from lm.type import lm_type_mat
 from lm import lm_glb
+from lm import lm_consts
 
 class CObj(lm_drawable_container.CDrawable):
 	
@@ -16,6 +17,7 @@ class CObj(lm_drawable_container.CDrawable):
 		
 		# Playing control
 		self._play_head = 0	# 0-based frame id	
+#		self.log("play head inited!")
 		self._total_frame = len(self._frame_tags)		
 		self._is_playing = True	
 		self._init_frame = False
@@ -87,6 +89,7 @@ class CObj(lm_drawable_container.CDrawable):
 		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
 		key_frame.execute(target=self)
 		
+#		self.log("Goto frame %d" % frame_id)
 		# Remove those not existed frame
 		to_remove = []
 		for drawable in self:
@@ -97,21 +100,24 @@ class CObj(lm_drawable_container.CDrawable):
 #			self.log("remove out of key frame %d" % depth)
 			
 	# Play mode: Normal!
-	def update(self, render_state, operation=0x3):
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		
 		if self._init_frame:
-			operation &= 0x2
+			operation &= lm_consts.MASK_NO_UPDATE
 			self._init_frame = False
 		
-		if operation & 1:
+		if not self._visible:
+			operation &= lm_consts.MASK_NO_DRAW
+			
+		if operation & lm_consts.MASK_UPDATE:
 			# what ever, should do the onEnterFrame
 			if self.onEnterFrame:
-				self.onEnterFrame(self)
+				self.onEnterFrame(self, None)
 	
 			# if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
-#				self.log("playing %d" % self._play_head)
+				self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
 					self.init()
 				else:
@@ -131,6 +137,8 @@ class CObj(lm_drawable_container.CDrawable):
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):
+		if self._init_frame: return
+		
 #		self.log("init!!!!======>")
 		# Remove all
 		to_remove = []
@@ -144,6 +152,8 @@ class CObj(lm_drawable_container.CDrawable):
 		# Warning: The following set up may be changed by as
 		# Update: exactly what the official flash player does
 		self._play_head = 0
+#		self.log("play head inited ??")
+
 		self._is_playing = True
 		self._as_tween_only = False
 		self._init_frame = True

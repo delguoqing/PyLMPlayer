@@ -1,7 +1,7 @@
-def func_0(this):
+def func_0(this, _global):
 	this.gotoAndPlay("silver_loop")
 
-def func_1(this):
+def func_1(this, _global):
 	this.gotoAndPlay("gold_loop")	
 	
 DATA = (

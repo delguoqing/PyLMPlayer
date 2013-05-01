@@ -23,6 +23,7 @@ class CContex(object):
 		self._super_tag_stack = []
 		
 		self._callbacks = {}
+		self._global = {}
 		
 	def set_img_root(self, root):
 		self.img_root = root
@@ -70,6 +71,9 @@ class CContex(object):
 	
 	def register_callback(self, event, func, cbdata):
 		self._callbacks[event] = (func, cbdata)
+		
+	def set_global(self, name, val):
+		self._global[name] = val
 		
 	def fscommand(self, type, event):
 		if type == "callback" and event in self._callbacks:

@@ -2,6 +2,7 @@ from lm.type import lm_type_color
 import lm_drawable
 
 from pyglet.gl import *
+from lm import lm_consts
 
 class CDrawable(lm_drawable.CDrawable):
 		
@@ -10,8 +11,8 @@ class CDrawable(lm_drawable.CDrawable):
 		self._rect = rect
 		self._vertex_lists = vertex_lists
 		
-	def update(self, render_state, operation=0x3):
-		if (operation & 0x2) == 0:
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if (operation & lm_consts.MASK_DRAW) == 0:
 			return
 			
 		render_state.push_matrix(self.matrix)

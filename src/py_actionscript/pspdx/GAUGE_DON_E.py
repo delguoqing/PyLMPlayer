@@ -1,10 +1,10 @@
-def func_0(this):
+def func_0(this, _global):
 	this.stop()
 	
-def func_1(this):
+def func_1(this, _global):
 	this.gotoAndPlay("Fever")
 	
-def func_2(this):
+def func_2(this, _global):
 	this.gotoAndPlay("fever")	
 
 DATA = (

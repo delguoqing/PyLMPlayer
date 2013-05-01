@@ -1,5 +1,5 @@
-def func_0(this):
-	def onEnterFrame(_this):
+def func_0(this, _global):
+	def onEnterFrame(_this, _global):
 		candy01 = _this.candy01
 		candy02 = _this.candy02
 		candy03 = _this.candy03
@@ -27,7 +27,7 @@ def func_0(this):
 			
 	this.onEnterFrame = onEnterFrame
 	
-def func_1(this):
+def func_1(this, _global):
 	this.stop()
 
 DATA = (

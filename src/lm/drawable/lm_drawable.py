@@ -2,6 +2,7 @@ from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
 from lm.type import lm_type_mat
 from lm import lm_glb
+from lm import lm_consts
 
 import pyglet
 
@@ -14,11 +15,12 @@ class CDrawable(object):
 		self.blend_mode = None
 		self.clip_depth = 0
 
-		self.parent = parent
+		self._parent = parent
 		self.inst_id = inst_id
 
 		self.depth = depth
 		self._as_tween_only = False
+		self._visible = True
 	
 	def is_movieclip(self):
 		return False
@@ -30,11 +32,11 @@ class CDrawable(object):
 	def init(self, fully=False):
 		pass
 			
-	def update(self, render_state, operation=0x3):
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		raise NotImplementedError
 	
 	def log(self, str):
-		if self.char_id == 5:
+		if self.inst_id == 233:
 			print str
 				
 	def set_cxform(self, cadd, cmul):
@@ -73,7 +75,7 @@ class CDrawable(object):
 		self.color_mul = None
 		self.matrix = None
 		self.blend_mode = None
-		self.parent = None
+		self._parent = None
 		
 	def clear(self):
 		pass

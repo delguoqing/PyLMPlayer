@@ -4,6 +4,7 @@ import lm_drawable
 
 from ctypes import *
 from pyglet.gl import *
+from lm import lm_consts
 
 
 class CDrawable(lm_drawable.CDrawable):
@@ -22,7 +23,7 @@ class CDrawable(lm_drawable.CDrawable):
 	def remove_drawable(self, depth):
 		self._drawables[depth] = None
 
-	def update(self, render_state, operation=0x3):
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		raise NotImplementedError
 			
 	def __iter__(self):

@@ -1,15 +1,15 @@
-def func_0(this):
-	def onEnterFrame(_this):
+def func_0(this, _global):
+	def onEnterFrame(_this, _global):
 		bg = _this.bg
 		bg._x -= 0.5
 		if bg._x <= -360:
 			bg._x = 0
 	this.onEnterFrame = onEnterFrame
 
-def func_1(this):
+def func_1(this, _global):
 	this.stop()
 	
-def func_2(this):
+def func_2(this, _global):
 	pass
 
 DATA = (

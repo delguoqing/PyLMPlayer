@@ -29,6 +29,8 @@ fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 cur_combo = 0	# current combo
 cur_renda = 0	# current renda
 cur_score = 0	# current score
+max_balloon = -1 # hits needed to break to balloon
+cur_balloon = 0 # current balloon
 cur_dancer = -1	# current dancer
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
@@ -224,9 +226,87 @@ def set_renda(renda):
 	cur_renda = renda
 	
 def swap_depth(depth1, depth2):
+
 	global movieclips
 	movieclips[depth1], movieclips[depth2] = movieclips[depth2], movieclips[depth1]
 	
+#	print "swap_depth"
+	
+def set_max_balloon(balloon):
+	global max_balloon, cur_balloon
+	
+	# when the last balloon is not over
+	if max_balloon != -1: return
+	# max balloon hit can't be zero
+	if max_balloon == 0: return
+
+	# This goes first
+	mc = movieclips[BALLOON]
+	mc._visible = True	
+	mc.gotoAndPlay("geki_hit")
+	
+	swap_depth(DON, DON2)		
+	max_balloon = balloon
+	set_balloon(balloon)
+	
+def set_balloon(balloon):
+	global cur_balloon, movieclips, max_balloon
+	
+	if balloon < 0: return
+	if balloon == cur_balloon: return
+	
+#	print "set_balloon %d" % balloon
+	mc = movieclips[BALLOON]
+	
+	if balloon == 0:
+		movieclips[DON2].gotoAndPlay("balloon_succsess")
+		mc.gotoAndPlay("geki_break")
+		return
+		
+	# in case of overflow	
+	if balloon >= 1000: balloon = 999
+
+	num100 = balloon // 100
+	num10 = (balloon - num100 * 100) // 10
+	num1 = balloon - num100 * 100 - num10 * 10
+	
+	mc_geki_num = mc.geki_num
+	if balloon < 10:
+#		print "set_num0 %d" % num1	
+		mc_geki_num.gotoAndPlay("num_0")
+		mc_geki_num.geki_num_00.gotoAndPlay("number_%d" % num1)
+	elif balloon < 100:
+		mc.geki_num.gotoAndPlay("num_00")
+		mc_geki_num.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.geki_num_10.gotoAndPlay("number_%d" % num10)
+	elif balloon < 1000:
+		mc.geki_num.gotoAndPlay("num_000")	
+		mc_geki_num.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.geki_num_10.gotoAndPlay("number_%d" % num10)		
+		mc_geki_num.geki_num_100.gotoAndPlay("number_%d" % num100)		
+	
+	# 6 level in total
+	progress = (max_balloon - balloon) * 6 / max_balloon + 1
+	mc.geki_don.gotoAndPlay("geki_0%d" % progress)
+	
+	if progress == 6:
+		movieclips[DON2].gotoAndPlay("balloon_6")
+	else:
+		movieclips[DON2].gotoAndPlay("balloon_1")
+	movieclips[DON2].matrix.translate = (128.0, 128.0)
+	movieclips[DON2].don.gotoAndPlay(0)
+		
+	cur_balloon = balloon
+
+def on_balloon_success_end(data):
+	global max_balloon, cur_balloon
+	swap_depth(DON, DON2)
+	# should gotoAndPlay old animation
+	max_balloon = -1
+	cur_balloon = 0
+	movieclips[DON].gotoAndPlay("normal")
+	movieclips[DON].matrix.translate = (64.0, 42.0)
+		
 @window.event
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
@@ -283,6 +363,7 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
+#		movieclips[DON].gotoAndPlay("balloon_succsess")
 		
 	elif symbol == pyglet.window.key._0:
 		render_state.enable_statistic(2000)		
@@ -291,11 +372,12 @@ def on_key_press(symbol, modifiers):
 		pyglet.clock.unschedule(on_draw)
 		
 	elif symbol == pyglet.window.key.SPACE:
-		swap_depth(DON, DON2)
-		if movieclips[DON2]:		
-			movieclips[DON2].gotoAndPlay("balloon_1")
+		global cur_balloon, max_balloon
+#		print "max_balloon = %d" % max_balloon
+		if max_balloon <= 0:
+			set_max_balloon(random.randint(1, 200))
 		else:
-			movieclips[DON].gotoAndPlay("normal")		
+			set_balloon(cur_balloon - 1)
 	
 ###################################
 # Rendering
@@ -313,8 +395,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-#	glClearColor(0, 0, 0, 1)
-#	window.clear()
+	glClearColor(0, 0, 0, 1)
+	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -323,14 +405,15 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
+#		if movieclip not in (movieclips[DON], movieclips[DON2], movieclips[BALLOON], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
 			
 	# Draw fps
-#	glScalef(1.0, -1.0, 1.0)
-#	glTranslatef(0.0, -64.0, 1.0)
-#	fps_display.draw()
+	glScalef(1.0, -1.0, 1.0)
+	glTranslatef(0.0, -64.0, 1.0)
+	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -514,11 +597,17 @@ movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", (60, 270))
 movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", (420, 270))
 movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
+movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
 	mc.ctx.register_callback("in_end", on_dancer_in_end, dancer)
 	mc.ctx.register_callback("dance_sync", on_dancer_sync, dancer)
+
+movieclips[DON].ctx.register_callback("baloon_success_end", on_balloon_success_end, None)
+	
+movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
+movieclips[BALLOON]._visible = False
 	
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

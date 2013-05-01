@@ -3,19 +3,17 @@ http://ericlin2.tripod.com/
 
 # TODO:
 # 9. implement font, static text, edit text, button, etc.
-#21. support property _visible, _parent, _root
+#21. support property _root
 #25. Use vertex array to do batch while avoid a fixed-length vbo.
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
 #30. onp moji has no lm file.handle those text specially.
-#31. DON_GEKI_1P.LM has not implemented tag!
-	0x0007: Button2,
-	0xF018: Button Record.
 #32. try to arrange the order of LM files.(For best performance)
 #33. adjust clip depth implementation.
 #34. create several score add movieclips and Reuse them.
 #35. implement movie clip pool object
-#36.
+#36. dump texture packs into separate folders to avoid filename conflicts.
 #37.
+#38.
 
 
 #10000. optimize(Never do this when not neccesary!)
@@ -98,3 +96,7 @@ i can do drawing in the same visit.
 #27. fix rotation bug.
 #28. fix sabi effect area not correct bug.
 #29. combo not set correctly
+#31. DON_GEKI_1P.LM has not implemented tag!
+	0x0007: Button2,
+	0xF018: Button Record.
+	Not needed.button is not used in that lm file.
