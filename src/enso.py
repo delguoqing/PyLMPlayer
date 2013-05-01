@@ -19,15 +19,15 @@ from lm.type import lm_type_mat
 from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
 
-# standard resolution for wii? May be I should start with pspdx, which has simpler actionscript
+# standard resolution for psp
 window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
-# one frame movieclip can be drawn as a display_list
 
 ###################################
 # Game Logic
 ###################################
 cur_combo = 0	# current combo
+cur_renda = 0	# current renda
 cur_score = 0	# current score
 cur_dancer = -1	# current dancer
 first_unsync_dancer = -1 # current unsync_dancer
@@ -170,6 +170,32 @@ def on_dancer_sync(dancer):
 			movieclips[dancer].gotoAndPlay("dance")
 			movieclips[dancer].dancer.gotoAndPlay(sync_to)
 			
+def set_renda(renda):
+	global movieclips, cur_renda
+	mc = movieclips[RENDA_NUM]
+	
+	if renda == cur_renda: return
+	if renda == 0: mc.gotoAndPlay("renda_out"); return
+	if cur_renda == 0: mc.gotoAndPlay("renda_hit")
+	
+	num100 = renda // 100
+	num10 = (renda - num100 * 100) // 10
+	num1 = renda - num100 * 100 - num10 * 10
+	
+	if num100 != 0:
+		mc.renda_hukidashi.gotoAndPlay("renda_hit_100")
+		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc.renda_hukidashi.geki_num_10.gotoAndPlay("number_%d" % num10)
+		mc.renda_hukidashi.geki_num_100.gotoAndPlay("number_%d" % num100)
+	elif num10 != 0:
+		mc.renda_hukidashi.gotoAndPlay("renda_hit_10")
+		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc.renda_hukidashi.geki_num_10.gotoAndPlay("number_%d" % num10)
+	else:
+		mc.renda_hukidashi.gotoAndPlay("renda_hit_00")
+		mc.renda_hukidashi.geki_num_00.gotoAndPlay("number_%d" % num1)
+	cur_renda = renda
+	
 @window.event
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
@@ -221,6 +247,7 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key.NUM_ADD:
 		set_combo(cur_combo + 1)
 		add_score(random.randint(500, 2000))
+		set_renda(cur_renda + 1)
 		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
@@ -297,7 +324,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 28
+NUM_MOVIECLIP = 29
 (
 #######################
 # BG Part!
@@ -354,8 +381,8 @@ LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS,
 COMBO,
 
 # =========> onp_fly <===============
-# =========> hit judges <============
-# Hit judge text and effect(which covers part of the taiko).
+
+# Hitjudge
 HITJUDGE, 
 
 
@@ -368,7 +395,8 @@ HITJUDGE,
 # Score Main: The total score.
 # Renda Num: The current hit of the renda onp
 # Combo Num: The current combo(every 10 combo)
-#RENDA_NUM, COMBO_NUM,
+RENDA_NUM, 
+#COMBO_NUM,
 SCORE_ADD, SCORE_MAIN,
 
 # =========> score add <==================
@@ -441,6 +469,7 @@ movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", (150, 270))
 movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", (330, 270))
 movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", (60, 270))
 movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", (420, 270))
+movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
