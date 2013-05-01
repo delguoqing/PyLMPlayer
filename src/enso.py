@@ -36,33 +36,30 @@ last_unsync_dancer = -1 # last unsync_dancer
 def set_combo(combo):
 
 	global movieclips, cur_combo
+	
+	num1000 = combo // 1000
+	num100 = (combo - num1000 * 1000) // 100
+	num10 = (combo - num1000 * 1000 - num100 * 100) // 10
+	num1 = combo - num1000 * 1000 - num100 * 100 - num10 * 10	
+
+	_num1000 = cur_combo // 1000
+	_num100 = (cur_combo - _num1000 * 1000) // 100
+	_num10 = (cur_combo - _num1000 * 1000 - _num100 * 100) // 10
+			
 	if combo < 10:
 		movieclips[COMBO].enso_combo.gotoAndPlay("combo0-9")
 	elif combo < 100:
-		num10 = combo // 10
-		num1 = combo - num10 * 10
 		movieclips[COMBO].enso_combo.gotoAndPlay("combo10-99")		
 		movieclips[COMBO].enso_combo.num1.gotoAndPlay("number_%d" % num1)
 		movieclips[COMBO].enso_combo.num10.gotoAndPlay("number_%d" % num10)
 		
 	elif combo < 1000:
-		num100 = combo // 100
-		num10 = (combo - num100 * 100) // 10
-		num1 = combo - num100 * 100 - num10 * 10
-		
 		movieclips[COMBO].enso_combo.gotoAndPlay("combo100-999color")
 		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
 		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
 		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)		
-		
-		_num100 = cur_combo // 100
-		if _num100 != num100:
-			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+			
 	elif combo < 10000:
-		num1000 = combo // 1000
-		num100 = (combo - num1000 * 1000) // 100
-		num10 = (combo - num1000 * 1000 - num100 * 100) // 10
-		num1 = combo - num1000 * 1000 - num100 * 100 - num10 * 10
 		
 		movieclips[COMBO].enso_combo.gotoAndPlay("combo1000-9999color")
 		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
@@ -70,14 +67,44 @@ def set_combo(combo):
 		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)
 		movieclips[COMBO].enso_combo.num1000color.gotoAndPlay("number_%d" % num1000)
 
-		_num1000 = cur_combo // 1000
-		_num100 = (cur_combo - _num1000 * 1000) // 100
-
-		if _num100 != num100:
-			movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
-					
+	if _num100 != num100 and num100 != 0:
+		movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+		set_fukidashi_combo(num1000, num100, num10)
+	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
+		set_fukidashi_combo(num1000, num100, num10)	
+		
 	cur_combo = combo
 	
+def set_fukidashi_combo(num1000, num100, num10):
+	global movieclips
+	
+	num1 = 0
+	
+	mc = movieclips[FUKIDASHI]
+	mc.gotoAndPlay("combo")
+	
+	first = False
+
+	if num1000 != 0:	
+		mc.combo_num_1000.gotoAndStop("number_%d" % num1000)
+		first = True
+	else:
+		mc.combo_num_1000.gotoAndStop("start_number")
+
+	if num100 != 0 or first:	
+		mc.combo_num_100.gotoAndStop("number_%d" % num100)
+		first = True
+	else:
+		mc.combo_num_100.gotoAndStop("start_number")
+		
+	if num10 != 0 or first:	
+		mc.combo_num_10.gotoAndStop("number_%d" % num10)
+		first = True
+	else:
+		mc.combo_num_10.gotoAndStop("start_number")
+		
+	mc.combo_num_1.gotoAndStop("number_%d" % num1)
+		
 def add_score(score):
 	set_score(cur_score + score)
 	_s = score
@@ -239,10 +266,12 @@ def on_key_press(symbol, modifiers):
 		movieclips[BUNKI].play()
 		movieclips[BUNKI_MOJI].play()
 		add_dancer()		
+		movieclips[FUKIDASHI].gotoAndPlay("level_up")		
 		
 	elif symbol == pyglet.window.key.DOWN:
 		movieclips[DON].play()
 		remove_dancer()
+		movieclips[FUKIDASHI].gotoAndPlay("level_down")
 		
 	elif symbol == pyglet.window.key.NUM_ADD:
 		set_combo(cur_combo + 1)
@@ -324,7 +353,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 29
+NUM_MOVIECLIP = 30
 (
 #######################
 # BG Part!
@@ -393,10 +422,9 @@ HITJUDGE,
 # Scores.
 # Score Add: How many score is added in the last hit
 # Score Main: The total score.
-# Combo Num: The current combo(every 10 combo)
+# Fukidashi: The current combo(every 10 combo), Level up, Level down, Miss
 # Renda Num: The current hit of the renda onp
-
-#COMBO_NUM,
+FUKIDASHI,
 RENDA_NUM, 
 SCORE_ADD, SCORE_MAIN,
 
@@ -471,6 +499,7 @@ movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", (330, 270))
 movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", (60, 270))
 movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", (420, 270))
 movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
+movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
