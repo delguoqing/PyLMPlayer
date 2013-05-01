@@ -223,6 +223,10 @@ def set_renda(renda):
 		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
 	cur_renda = renda
 	
+def swap_depth(depth1, depth2):
+	global movieclips
+	movieclips[depth1], movieclips[depth2] = movieclips[depth2], movieclips[depth1]
+	
 @window.event
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
@@ -261,7 +265,6 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key.ENTER:		
 		movieclips[FULLCOMBO].gotoAndPlay("run")
 
-		
 	elif symbol == pyglet.window.key.UP:
 		movieclips[BUNKI].play()
 		movieclips[BUNKI_MOJI].play()
@@ -286,6 +289,13 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
+		
+	elif symbol == pyglet.window.key.SPACE:
+		swap_depth(DON, DON2)
+		if movieclips[DON2]:		
+			movieclips[DON2].gotoAndPlay("balloon_1")
+		else:
+			movieclips[DON].gotoAndPlay("normal")		
 	
 ###################################
 # Rendering
@@ -312,6 +322,7 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
+		if movieclip is None: continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -353,7 +364,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 30
+NUM_MOVIECLIP = 32
 (
 #######################
 # BG Part!
@@ -380,7 +391,7 @@ FEVER,
 
 # Course icon. not affected by sabi effect.
 COURSE, 
-# Character don.
+# Character don.(At normal states)
 DON,
 # The tamashi gauge
 GAUGE,
@@ -414,7 +425,10 @@ COMBO,
 # Hitjudge
 HITJUDGE, 
 
-
+# Don chan will go above the enso lane at certain scenes.
+# when player hits a balloon or a imo
+DON2,
+BALLOON,
 
 #######################
 # HUD Part!
