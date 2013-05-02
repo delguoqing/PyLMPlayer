@@ -31,13 +31,17 @@ cur_renda = 0	# current renda
 cur_score = 0	# current score
 max_balloon = -1 # hits needed to break to balloon
 cur_balloon = 0 # current balloon
+max_imo = -1
+cur_imo = 0
 cur_dancer = -1	# current dancer
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
+donchan_free = True
 
 # Don Pos
 DON_POS_NORMAL = (64, 42)
 DON_POS_BALLOON = (128, 128)
+DON_POS_IMO = (185, 132)
 
 # Dancer Pos
 DANCER1_POS = (240, 270)
@@ -237,26 +241,26 @@ def set_renda(renda):
 	cur_renda = renda
 	
 def swap_depth(depth1, depth2):
-
 	global movieclips
 	movieclips[depth1], movieclips[depth2] = movieclips[depth2], movieclips[depth1]
-	
-#	print "swap_depth"
-	
+		
 def set_max_balloon(balloon):
-	global max_balloon, cur_balloon
-	
-	# when the last balloon is not over
-	if max_balloon != -1: return
-	# max balloon hit can't be zero
-	if max_balloon == 0: return
+	global max_balloon, cur_balloon, donchan_free
 
+	# if donchan is busy	
+	if not donchan_free: return
+	# max balloon hit can't be zero
+	if balloon == 0: return
+
+	donchan_free = False
 	# This goes first
 	mc = movieclips[BALLOON]
 	mc._visible = True	
 	mc.gotoAndPlay("geki_hit")
 	
-	swap_depth(DON, DON2)		
+	swap_depth(DON, DON2)
+	movieclips[DON2].matrix.translate = DON_POS_BALLOON
+		
 	max_balloon = balloon
 	set_balloon(balloon)
 	
@@ -266,7 +270,6 @@ def set_balloon(balloon):
 	if balloon < 0: return
 	if balloon == cur_balloon: return
 	
-#	print "set_balloon %d" % balloon
 	mc = movieclips[BALLOON]
 	
 	if balloon == 0:
@@ -283,7 +286,6 @@ def set_balloon(balloon):
 	
 	mc_geki_num = mc.geki_num
 	if balloon < 10:
-#		print "set_num0 %d" % num1	
 		mc_geki_num.gotoAndPlay("num_0")
 		mc_geki_num.geki_num_00.gotoAndPlay("number_%d" % num1)
 	elif balloon < 100:
@@ -304,19 +306,101 @@ def set_balloon(balloon):
 		movieclips[DON2].gotoAndPlay("balloon_6")
 	else:
 		movieclips[DON2].gotoAndPlay("balloon_1")
-	movieclips[DON2].matrix.translate = DON_POS_BALLOON
 	movieclips[DON2].don.gotoAndPlay(0)
 		
 	cur_balloon = balloon
 
 def on_balloon_success_end(data):
-	global max_balloon, cur_balloon
+	global max_balloon, cur_balloon, donchan_free
 	swap_depth(DON, DON2)
 	# should gotoAndPlay old animation
 	max_balloon = -1
 	cur_balloon = 0
+	donchan_free = True
 	movieclips[DON].gotoAndPlay("normal")
 	movieclips[DON].matrix.translate = DON_POS_NORMAL
+		
+def set_max_imo(imo):
+	global max_imo, cur_imo, donchan_free
+	
+	if not donchan_free: return
+	if imo <= 0: return
+	
+	donchan_free = False
+	
+	mc = movieclips[IMO]
+	mc.gotoAndPlay("imo_start")
+	
+	swap_depth(DON, DON2)
+	movieclips[DON2].matrix.translate = DON_POS_IMO
+	movieclips[DON2].gotoAndPlay("imo_in")
+	
+	max_imo = imo
+	set_imo(imo)
+	
+def set_imo(imo):
+	global cur_imo, movieclips, max_imo
+	
+	if imo < 0: return
+	if imo == cur_imo: return
+	
+	mc = movieclips[IMO]
+	
+	if imo == 0:
+		movieclips[DON2].gotoAndPlay("imo_break_high")
+		mc.gotoAndPlay("imo_break_high")
+		return
+		
+	# in case of overflow	
+	if imo >= 1000: imo = 999
+
+	num100 = imo // 100
+	num10 = (imo - num100 * 100) // 10
+	num1 = imo - num100 * 100 - num10 * 10
+	
+	if imo == max_imo: # not event begin to eat
+		cur_imo = imo
+		return
+	elif cur_imo == max_imo: # the first bite
+		mc.gotoAndPlay("imo_hit")
+		movieclips[DON2].gotoAndPlay("imo_eat")
+	
+	cur_imo = imo
+	
+	mc_geki_num = mc.imo_num_100
+	if imo < 10:
+		mc_geki_num.gotoAndPlay("1digit")
+		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
+	elif imo < 100:
+		mc_geki_num.gotoAndPlay("2digit")
+		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.num_Layer2_num_2.gotoAndPlay("number_%d" % num10)
+	elif imo < 1000:
+		mc_geki_num.gotoAndPlay("3digit")	
+		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.num_Layer2_num_2.gotoAndPlay("number_%d" % num10)		
+		mc_geki_num.num_Layer2_num_3.gotoAndPlay("number_%d" % num100)		
+	
+	# 6 level in total
+	progress = (max_imo - imo) * 6 / max_imo + 1
+	mc.imo_don.gotoAndPlay("geki_0%d" % progress)
+	
+	movieclips[DON2].don.gotoAndPlay(0)
+	
+def on_imo_break_end(data):
+	global max_imo, cur_imo, donchan_free
+	swap_depth(DON, DON2)
+	# should gotoAndPlay old animation
+	max_imo = -1
+	cur_imo = 0
+	donchan_free = True
+	movieclips[DON].gotoAndPlay("normal")
+	movieclips[DON].matrix.translate = DON_POS_NORMAL
+	
+def on_imo_in_end(data):
+	global movieclips
+	
+	movieclips[DON2].gotoAndPlay("imo_eat")
 		
 @window.event
 def on_key_press(symbol, modifiers):
@@ -353,7 +437,7 @@ def on_key_press(symbol, modifiers):
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
 		movieclips[FEVER].fever.gotoAndPlay("fever_end")		
-	elif symbol == pyglet.window.key.ENTER:		
+	elif symbol == pyglet.window.key.SPACE:
 		movieclips[FULLCOMBO].gotoAndPlay("run")
 
 	elif symbol == pyglet.window.key.UP:
@@ -382,13 +466,20 @@ def on_key_press(symbol, modifiers):
 	elif symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
 		
-	elif symbol == pyglet.window.key.SPACE:
+	elif symbol == pyglet.window.key.ENTER:
 		global cur_balloon, max_balloon
-#		print "max_balloon = %d" % max_balloon
 		if max_balloon <= 0:
 			set_max_balloon(random.randint(1, 20))
 		else:
 			set_balloon(cur_balloon - 1)
+			
+	elif symbol == pyglet.window.key.I: # Imo
+		global cur_imo, max_imo
+		if max_imo <= 0:
+			set_max_imo(random.randint(10, 20))
+		else:
+			set_imo(cur_imo - 1)
+			
 	
 ###################################
 # Rendering
@@ -458,7 +549,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 32
+NUM_MOVIECLIP = 33
 (
 #######################
 # BG Part!
@@ -523,6 +614,7 @@ HITJUDGE,
 # when player hits a balloon or a imo
 DON2,
 BALLOON,
+IMO,
 
 #######################
 # HUD Part!
@@ -609,6 +701,7 @@ movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", DANCER5_POS)
 movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
+movieclips[IMO] = load_movie("IMO.LM")
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
@@ -616,6 +709,8 @@ for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc.ctx.register_callback("dance_sync", on_dancer_sync, dancer)
 
 movieclips[DON].ctx.register_callback("baloon_success_end", on_balloon_success_end, None)
+movieclips[DON].ctx.register_callback("imo_break_end", on_imo_break_end, None)
+movieclips[DON].ctx.register_callback("imo_in_end", on_imo_in_end, None)
 	
 movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 movieclips[BALLOON]._visible = False
