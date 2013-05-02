@@ -35,6 +35,17 @@ cur_dancer = -1	# current dancer
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 
+# Don Pos
+DON_POS_NORMAL = (64, 42)
+DON_POS_BALLOON = (128, 128)
+
+# Dancer Pos
+DANCER1_POS = (240, 270)
+DANCER2_POS = (150, 270)
+DANCER3_POS = (330, 270)
+DANCER4_POS = (60, 270)
+DANCER5_POS = (420, 270)
+
 def set_combo(combo):
 
 	global movieclips, cur_combo
@@ -293,7 +304,7 @@ def set_balloon(balloon):
 		movieclips[DON2].gotoAndPlay("balloon_6")
 	else:
 		movieclips[DON2].gotoAndPlay("balloon_1")
-	movieclips[DON2].matrix.translate = (128.0, 128.0)
+	movieclips[DON2].matrix.translate = DON_POS_BALLOON
 	movieclips[DON2].don.gotoAndPlay(0)
 		
 	cur_balloon = balloon
@@ -305,7 +316,7 @@ def on_balloon_success_end(data):
 	max_balloon = -1
 	cur_balloon = 0
 	movieclips[DON].gotoAndPlay("normal")
-	movieclips[DON].matrix.translate = (64.0, 42.0)
+	movieclips[DON].matrix.translate = DON_POS_NORMAL
 		
 @window.event
 def on_key_press(symbol, modifiers):
@@ -375,7 +386,7 @@ def on_key_press(symbol, modifiers):
 		global cur_balloon, max_balloon
 #		print "max_balloon = %d" % max_balloon
 		if max_balloon <= 0:
-			set_max_balloon(random.randint(1, 200))
+			set_max_balloon(random.randint(1, 20))
 		else:
 			set_balloon(cur_balloon - 1)
 	
@@ -395,8 +406,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	glClearColor(0, 0, 0, 1)
-	window.clear()
+	#glClearColor(0, 0, 0, 1)
+	#window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -411,9 +422,9 @@ def on_draw(dt):
 	render_state.end()
 			
 	# Draw fps
-	glScalef(1.0, -1.0, 1.0)
-	glTranslatef(0.0, -64.0, 1.0)
-	fps_display.draw()
+#	glScalef(1.0, -1.0, 1.0)
+#	glTranslatef(0.0, -64.0, 1.0)
+#	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -586,15 +597,15 @@ movieclips[BUNKI] = load_movie("ENSO_BUNKI.LM")
 movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
 movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
-movieclips[DON] = load_movie("DON_COS00_DIET.LM", (64, 42))
+movieclips[DON] = load_movie("DON_COS00_DIET.LM", DON_POS_NORMAL)
 movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
 movieclips[SCORE_ADD] = load_movie("ENSO_SCORE_ADD.LM")
 movieclips[FEVER] = load_movie("FEVER_IDOL.LM")
-movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", (240, 270))
-movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", (150, 270))
-movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", (330, 270))
-movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", (60, 270))
-movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", (420, 270))
+movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", DANCER1_POS)
+movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", DANCER2_POS)
+movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", DANCER3_POS)
+movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", DANCER4_POS)
+movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", DANCER5_POS)
 movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
