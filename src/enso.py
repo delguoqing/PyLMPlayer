@@ -139,8 +139,8 @@ def add_score(score):
 	num_1 = _s // 1
 	_s -= num_1 * 1	
 	
-	mc = movieclips[SCORE_ADD].alloc()
-	mc.gotoAndPlay("score")
+	mc = movieclips[SCORE_ADD].alloc(INDEX_SCORE_ADD)
+	if mc is not None: mc.gotoAndPlay("score")
 	
 	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
 	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
@@ -415,24 +415,42 @@ def on_key_press(symbol, modifiers):
 		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
 		movieclips[HITEFFECTS].gotoAndPlay("don_s")
 		
-		chibi = movieclips[CHIBI].alloc()
-		chibi.gotoAndPlay(0)
+		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
+		if chibi is not None: chibi.gotoAndPlay(0)
+
+		onp_fly_don = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
+		onp_fly_don.gotoAndPlay("don_hit")
 		
 	elif symbol == pyglet.window.key.J:
 		movieclips[RIGHT_DON].gotoAndPlay("right_don")
 		movieclips[MATO].gotoAndPlay("hit_ka")		
 		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
 		movieclips[HITEFFECTS].gotoAndPlay("don_b")
+		
+		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+		if chibi is not None: chibi.gotoAndPlay(0)
+
+		onp_fly_kats = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
+		onp_fly_kats.gotoAndPlay("katsu_hit")
+						
 	elif symbol == pyglet.window.key.R:
 		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
 		movieclips[MATO].gotoAndPlay("hit_dai_ryo")		
 		movieclips[HITEFFECTS].gotoAndPlay("katsu_s")
 		movieclips[HITJUDGE].gotoAndPlay("hit_ryo_big")
+		
+		onp_fly_geki = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
+		onp_fly_geki.gotoAndPlay("geki_hit")		
+		
 	elif symbol == pyglet.window.key.U:
 		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
 		movieclips[MATO].gotoAndPlay("hit_dai_ka")
 		movieclips[HITJUDGE].gotoAndPlay("hit_ka_big")
 		movieclips[HITEFFECTS].gotoAndPlay("katsu_b")		
+		
+		onp_fly_don_dai = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
+		onp_fly_don_dai.gotoAndPlay("don_d_hit")
+		
 	elif symbol == pyglet.window.key.BRACKETLEFT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
 		movieclips[GAUGE].gotoAndPlay("gage_50")
@@ -578,7 +596,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 34
+NUM_MOVIECLIP = 35
 (
 #######################
 # BG Part!
@@ -634,6 +652,7 @@ LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS,
 # Combo number and Cherry(every 100 combo).
 COMBO,
 
+ONP_FLY,
 # =========> onp_fly <===============
 
 # Hitjudge
@@ -661,21 +680,7 @@ SCORE_ADD, SCORE_MAIN,
 
 # To be layout correctly
 #SYOUSETSU,
-#FEVER,
 #RENDA_EFFECT,
-#RENDA_NUM,
-#CHIBI1,
-#CHIBI2,
-#CHIBI3,
-#CHIBI4,
-#CHIBI5,
-#CHIBI6,
-#CHIBI_MISS,
-#DANDER1,
-#DANDER2,
-#DANDER3,
-#DANDER4,
-#DANDER5,
 #ONP_DON,
 #ONP_KATS,
 #ONP_DON_DAI,
@@ -688,12 +693,6 @@ SCORE_ADD, SCORE_MAIN,
 #ONP_RENDA3_DAI,
 #ONP_IMO,
 #ONP_BALLOON,
-#ONP_FLY_DON,
-#ONP_FLY_DON_DAI,
-#ONP_FLY_KATS,
-#ONP_FLY_KATS_DAI,
-#ONP_FLY_BALLOON,
-#IMO,
 ) = range(NUM_MOVIECLIP)
 
 # Build up scene
@@ -730,13 +729,26 @@ movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
 movieclips[IMO] = load_movie("IMO.LM")
+
 movieclips[SCORE_ADD] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-movieclips[SCORE_ADD].register(load_multi_movie("ENSO_SCORE_ADD.LM", 30))
+INDEX_SCORE_ADD = movieclips[SCORE_ADD].register(load_multi_movie("ENSO_SCORE_ADD.LM", 30))
+
 movieclips[CHIBI] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_01.LM", 10))
-movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_02.LM", 10))
-movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_03.LM", 10))
-movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_04.LM", 10))
+INDEX_CHIBI_HIT = movieclips[CHIBI].register(
+	load_multi_movie("CHIBI_1P_IDOL_01.LM", 10) \
+	+ load_multi_movie("CHIBI_1P_IDOL_02.LM", 10) \
+	+ load_multi_movie("CHIBI_1P_IDOL_03.LM", 10) \
+	+ load_multi_movie("CHIBI_1P_IDOL_04.LM", 10))
+INDEX_CHIBI_MISS = movieclips[CHIBI].register(
+	load_multi_movie("CHIBI_TAMA_01.LM", 40)
+)
+
+movieclips[ONP_FLY] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+INDEX_ONP_FLY_DON = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON.LM", 30))
+INDEX_ONP_FLY_DON_DAI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON_D.LM", 30))
+INDEX_ONP_FLY_KATS = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_KATSU.LM", 30))
+INDEX_ONP_FLY_KATS_DAI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_KATSU_D.LM", 30))
+INDEX_ONP_FLY_GEKI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_GEKI.LM", 10))
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
@@ -749,7 +761,7 @@ movieclips[DON].ctx.register_callback("imo_in_end", on_imo_in_end, None)
 	
 movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 movieclips[BALLOON]._visible = False
-	
+
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
