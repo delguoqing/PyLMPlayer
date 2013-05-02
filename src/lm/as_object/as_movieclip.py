@@ -237,4 +237,4 @@ class CObj(lm_drawable_container.CDrawable):
 		self.matrix.scale = (cos, cos)
 		self._as_tween_only = True
 		
-	_rotation = property(_get_rotation, _set_rotation)
+	_rotation = property(_get_rotation, _set_rotation)	

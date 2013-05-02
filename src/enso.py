@@ -18,6 +18,7 @@ from lm.type import lm_type_mat
 
 from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
+from lm.as_object import as_movieclip_pool
 
 # standard resolution for psp
 window = pyglet.window.Window(480, 272)
@@ -123,6 +124,8 @@ def set_fukidashi_combo(num1000, num100, num10):
 	mc.combo_num_1.gotoAndStop("number_%d" % num1)
 		
 def add_score(score):
+	global SCORE_ADD_INDEX
+	
 	set_score(cur_score + score)
 	_s = score
 	num_10000 = _s // 10000
@@ -135,8 +138,9 @@ def add_score(score):
 	_s -= num_10 * 10	
 	num_1 = _s // 1
 	_s -= num_1 * 1	
-	mc = movieclips[SCORE_ADD]
-	mc.gotoAndPlay(0)
+	
+	mc = movieclips[SCORE_ADD].alloc()
+	mc.gotoAndPlay("score")
 	
 	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
 	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
@@ -410,6 +414,10 @@ def on_key_press(symbol, modifiers):
 		movieclips[MATO].gotoAndPlay("hit_ryo")
 		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
 		movieclips[HITEFFECTS].gotoAndPlay("don_s")
+		
+		chibi = movieclips[CHIBI].alloc()
+		chibi.gotoAndPlay(0)
+		
 	elif symbol == pyglet.window.key.J:
 		movieclips[RIGHT_DON].gotoAndPlay("right_don")
 		movieclips[MATO].gotoAndPlay("hit_ka")		
@@ -453,7 +461,7 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.NUM_ADD:
 		set_combo(cur_combo + 1)
-		add_score(random.randint(500, 2000))
+		add_score(1500)
 		set_renda(cur_renda + 1)
 		
 	elif symbol == pyglet.window.key._1:
@@ -513,9 +521,9 @@ def on_draw(dt):
 	render_state.end()
 			
 	# Draw fps
-#	glScalef(1.0, -1.0, 1.0)
-#	glTranslatef(0.0, -64.0, 1.0)
-#	fps_display.draw()
+	glScalef(1.0, -1.0, 1.0)
+	glTranslatef(0.0, -64.0, 1.0)
+	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -543,13 +551,34 @@ def load_movie(filename, translate=(0, 0)):
 	movieclip.ctx = ctx
 	return movieclip
 
+def load_multi_movie(filename, count, translate=(0, 0)):
+	global texture_bin
+	
+	mcs = []
+	
+	filename = os.path.join(lm_root, filename)
+	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
+	char_id = ctx.stage_info.start_character_id
+	char_tag = ctx.get_character(char_id)
+	
+	for i in xrange(count):
+		movieclip = char_tag.instantiate(inst_id, depth, parent=None)
+		movieclip.char_id = char_id
+		movieclip.init()
+		movieclip.set_matrix(lm_type_mat.CType(translate))
+		movieclip.ctx = ctx
+		mcs.append(movieclip)
+		
+	return mcs
+	
+		
 # global render state control
 render_state = lm_render_state.CObj()
 
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 33
+NUM_MOVIECLIP = 34
 (
 #######################
 # BG Part!
@@ -581,7 +610,7 @@ DON,
 # The tamashi gauge
 GAUGE,
 
-# ====> Chibis <======
+CHIBI,
 
 ########################
 # Enso Part!
@@ -691,7 +720,6 @@ movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
 movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
 movieclips[DON] = load_movie("DON_COS00_DIET.LM", DON_POS_NORMAL)
 movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
-movieclips[SCORE_ADD] = load_movie("ENSO_SCORE_ADD.LM")
 movieclips[FEVER] = load_movie("FEVER_IDOL.LM")
 movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", DANCER1_POS)
 movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", DANCER2_POS)
@@ -702,6 +730,13 @@ movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
 movieclips[IMO] = load_movie("IMO.LM")
+movieclips[SCORE_ADD] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+movieclips[SCORE_ADD].register(load_multi_movie("ENSO_SCORE_ADD.LM", 30))
+movieclips[CHIBI] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_01.LM", 10))
+movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_02.LM", 10))
+movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_03.LM", 10))
+movieclips[CHIBI].register(load_multi_movie("CHIBI_1P_IDOL_04.LM", 10))
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
