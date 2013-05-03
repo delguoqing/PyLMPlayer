@@ -146,6 +146,9 @@ sdist
 develop-eggs
 .installed.cfg
 cython
+*.png
+*.LM
+*.DAT
 
 # Installer logs
 pip-log.txt

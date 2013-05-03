@@ -6,6 +6,7 @@ import cProfile
 import pyglet
 import gc
 import random
+import enso_cfg
 
 from pyglet.gl import *
 from ctypes import *
@@ -567,10 +568,12 @@ inst_id = 999
 depth = 0
 
 # Load a LM file and instantiate the default character
-def load_movie(filename, translate=(0, 0)):
+def load_movie(path, translate=(0, 0)):
 	global texture_bin
 	
-	filename = os.path.join(lm_root, filename)
+	filename = path
+	img_root = os.path.split(filename)[0]
+	
 	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
@@ -582,12 +585,14 @@ def load_movie(filename, translate=(0, 0)):
 	return movieclip
 
 # Load several movieclips sharing the same contex file.
-def load_multi_movie(filename, count, translate=(0, 0)):
+def load_multi_movie(path, count, translate=(0, 0)):
 	global texture_bin
 	
 	mcs = []
 	
-	filename = os.path.join(lm_root, filename)
+	filename = path
+	img_root = os.path.split(filename)[0]
+
 	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
 	char_id = ctx.stage_info.start_character_id
 	char_tag = ctx.get_character(char_id)
@@ -690,8 +695,6 @@ FUKIDASHI,
 RENDA_NUM, 
 SCORE_ADD, SCORE_MAIN,
 
-# =========> score add <==================
-
 # To be layout correctly
 #SYOUSETSU,
 #ONP_DON,
@@ -709,82 +712,95 @@ SCORE_ADD, SCORE_MAIN,
 ) = range(NUM_MOVIECLIP)
 
 # Build up scene
-movieclips = [None] * NUM_MOVIECLIP
-
-movieclips[DANCE_BG] = load_movie("DANCE_BG_IDOL.LM")
-movieclips[ENSO_UP_BG] = load_movie("ENSO_UP_BG_04.LM")
-movieclips[COURSE] = load_movie("COURSE_ONI.LM")
-movieclips[LANE] = load_movie("ENSO_LANE.LM")
-movieclips[HITEFFECTS] = load_movie("ENSO_HITEFFECTS.LM")
-movieclips[TAIKO] = load_movie("ENSO_TAIKO.LM")
-movieclips[COMBO] = load_movie("ENSO_COMBO.LM")
-movieclips[MATO_GOGO] = load_movie("ENSO_MATO_GOGO.LM")
-movieclips[MATO] = load_movie("ENSO_MATO.LM")
-movieclips[HITJUDGE] = load_movie("ENSO_HITJUDGE.LM")
-movieclips[LEFT_DON] = load_movie("ENSO_LEFT_DON.LM")
-movieclips[LEFT_KATS] = load_movie("ENSO_LEFT_KATS.LM")
-movieclips[RIGHT_DON] = load_movie("ENSO_RIGHT_DON.LM")
-movieclips[RIGHT_KATS] = load_movie("ENSO_RIGHT_KATS.LM")
-movieclips[GAUGE] = load_movie("GAUGE_DON_E.LM")
-movieclips[BUNKI] = load_movie("ENSO_BUNKI.LM")
-movieclips[BUNKI_MOJI] = load_movie("ENSO_BUNKI_MOJI.LM")
-movieclips[FULLCOMBO] = load_movie("ENSO_FULLCOMBO.LM")
-movieclips[BG_SAB_EFFECTI] = load_movie("BG_SAB_EFFECTI.LM")
-movieclips[DON] = load_movie("DON_COS00_DIET.LM", DON_POS_NORMAL)
-movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
-movieclips[FEVER] = load_movie("FEVER_IDOL.LM")
-movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", DANCER1_POS)
-movieclips[DANCER1].speed = 1.46
-movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", DANCER2_POS)
-movieclips[DANCER2].speed = 1.46
-movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", DANCER3_POS)
-movieclips[DANCER3].speed = 1.46
-movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", DANCER4_POS)
-movieclips[DANCER4].speed = 1.46
-movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", DANCER5_POS)
-movieclips[DANCER5].speed = 1.46
-movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
-movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
-movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
-movieclips[IMO] = load_movie("IMO.LM")
-
-movieclips[SCORE_ADD] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-INDEX_SCORE_ADD = movieclips[SCORE_ADD].register(load_multi_movie("ENSO_SCORE_ADD.LM", 30))
-
-movieclips[CHIBI] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-INDEX_CHIBI_HIT = movieclips[CHIBI].register(
-	load_multi_movie("CHIBI_1P_IDOL_01.LM", 10) \
-	+ load_multi_movie("CHIBI_1P_IDOL_02.LM", 10) \
-	+ load_multi_movie("CHIBI_1P_IDOL_03.LM", 10) \
-	+ load_multi_movie("CHIBI_1P_IDOL_04.LM", 10))
-INDEX_CHIBI_MISS = movieclips[CHIBI].register(
-	load_multi_movie("CHIBI_TAMA_01.LM", 40)
-)
-movieclips[CHIBI].speed = 1.46
-
-movieclips[RENDA_EFFECT] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-INDEX_RENDA_EFFECT = movieclips[RENDA_EFFECT].register(
-	load_multi_movie("RENDA_EFFECT_HAMACHIDORI.LM", 30, RENDA_EFFECT_POS_BASE)
-)
-
-movieclips[ONP_FLY] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-INDEX_ONP_FLY_DON = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON.LM", 30))
-INDEX_ONP_FLY_DON_DAI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON_D.LM", 30))
-INDEX_ONP_FLY_KATS = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_KATSU.LM", 30))
-INDEX_ONP_FLY_KATS_DAI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_KATSU_D.LM", 30))
-INDEX_ONP_FLY_GEKI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_GEKI.LM", 10))
-
-for dancer in xrange(DANCER1, DANCER1 - 5, -1):
-	mc = movieclips[dancer]
-	mc.register_callback("in_end", on_dancer_in_end, dancer)
-	mc.register_callback("dance_sync", on_dancer_sync, dancer)
-
-movieclips[DON].register_callback("baloon_success_end", on_balloon_success_end, None)
-movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
-movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
+def build_scene(cfg):
+	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
+	global INDEX_RENDA_EFFECT
+	global INDEX_SCORE_ADD
+	global INDEX_ONP_FLY_DON, INDEX_ONP_FLY_DON_DAI
+	global INDEX_ONP_FLY_KATS, INDEX_ONP_FLY_KATS_DAI
+	global INDEX_ONP_FLY_GEKI
 	
-movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
-movieclips[BALLOON]._visible = False
+	_j = os.path.join
+	_r = cfg.LM_PACK_ROOT
+	
+	movieclips = [None] * NUM_MOVIECLIP
+	movieclips[DANCE_BG] = load_movie(_j(_r, cfg.DANCE_BG))
+	movieclips[ENSO_UP_BG] = load_movie(_j(_r, cfg.ENSO_UP_BG))
+	movieclips[COURSE] = load_movie(_j(_r, cfg.COURSE))
+	movieclips[LANE] = load_movie(_j(_r, cfg.LANE))
+	movieclips[HITEFFECTS] = load_movie(_j(_r, cfg.HITEFFECTS))
+	movieclips[TAIKO] = load_movie(_j(_r, cfg.TAIKO))
+	movieclips[COMBO] = load_movie(_j(_r, cfg.COMBO))
+	movieclips[MATO_GOGO] = load_movie(_j(_r, cfg.MATO_GOGO))
+	movieclips[MATO] = load_movie(_j(_r, cfg.MATO))
+	movieclips[HITJUDGE] = load_movie(_j(_r, cfg.HITJUDGE))
+	movieclips[LEFT_DON] = load_movie(_j(_r, cfg.LEFT_DON))
+	movieclips[LEFT_KATS] = load_movie(_j(_r, cfg.LEFT_KATS))
+	movieclips[RIGHT_DON] = load_movie(_j(_r, cfg.RIGHT_DON))
+	movieclips[RIGHT_KATS] = load_movie(_j(_r, cfg.RIGHT_KATS))
+	movieclips[GAUGE] = load_movie(_j(_r, cfg.GAUGE))
+	movieclips[BUNKI] = load_movie(_j(_r, cfg.BUNKI))
+	movieclips[BUNKI_MOJI] = load_movie(_j(_r, cfg.BUNKI_MOJI))
+	movieclips[FULLCOMBO] = load_movie(_j(_r, cfg.FULLCOMBO))
+	movieclips[BG_SAB_EFFECTI] = load_movie(_j(_r, cfg.BG_SAB_EFFECTI))
+	movieclips[DON] = load_movie(_j(_r, cfg.DON), DON_POS_NORMAL)
+	movieclips[SCORE_MAIN] = load_movie(_j(_r, cfg.SCORE_MAIN))
+	movieclips[FEVER] = load_movie(_j(_r, cfg.FEVER))
+	movieclips[DANCER1] = load_movie(_j(_r, cfg.DANCER1), DANCER1_POS)
+	movieclips[DANCER1].speed = 1.46
+	movieclips[DANCER2] = load_movie(_j(_r, cfg.DANCER2), DANCER2_POS)
+	movieclips[DANCER2].speed = 1.46
+	movieclips[DANCER3] = load_movie(_j(_r, cfg.DANCER3), DANCER3_POS)
+	movieclips[DANCER3].speed = 1.46
+	movieclips[DANCER4] = load_movie(_j(_r, cfg.DANCER4), DANCER4_POS)
+	movieclips[DANCER4].speed = 1.46
+	movieclips[DANCER5] = load_movie(_j(_r, cfg.DANCER5), DANCER5_POS)
+	movieclips[DANCER5].speed = 1.46
+	movieclips[RENDA_NUM] = load_movie(_j(_r, cfg.RENDA_NUM))
+	movieclips[FUKIDASHI] = load_movie(_j(_r, cfg.FUKIDASHI))
+	movieclips[BALLOON] = load_movie(_j(_r, cfg.BALLOON))
+	movieclips[IMO] = load_movie(_j(_r, cfg.IMO))
+	
+	movieclips[SCORE_ADD] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+	INDEX_SCORE_ADD = movieclips[SCORE_ADD].register(load_multi_movie(_j(_r, cfg.SCORE_ADD), 30))
+	
+	movieclips[CHIBI] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+	
+	chibi_mcs = []
+	for chibi_lm in cfg.CHIBI:
+		chibi_mcs += load_multi_movie(_j(_r, chibi_lm), 40 / len(cfg.CHIBI))
+	INDEX_CHIBI_HIT = movieclips[CHIBI].register(chibi_mcs)
+	INDEX_CHIBI_MISS = movieclips[CHIBI].register(
+		load_multi_movie(_j(_r, cfg.CHIBI_MISS), 40)
+	)
+	movieclips[CHIBI].speed = 1.46
+	
+	movieclips[RENDA_EFFECT] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+	INDEX_RENDA_EFFECT = movieclips[RENDA_EFFECT].register(
+		load_multi_movie(_j(_r, cfg.RENDA_EFFECT), 30, RENDA_EFFECT_POS_BASE)
+	)
+	
+	movieclips[ONP_FLY] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+	INDEX_ONP_FLY_DON = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[0]), 30))
+	INDEX_ONP_FLY_DON_DAI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[1]), 30))
+	INDEX_ONP_FLY_KATS = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[2]), 30))
+	INDEX_ONP_FLY_KATS_DAI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[3]), 30))
+	INDEX_ONP_FLY_GEKI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[4]), 10))
+	
+	for dancer in xrange(DANCER1, DANCER1 - 5, -1):
+		mc = movieclips[dancer]
+		mc.register_callback("in_end", on_dancer_in_end, dancer)
+		mc.register_callback("dance_sync", on_dancer_sync, dancer)
+	
+	movieclips[DON].register_callback("baloon_success_end", on_balloon_success_end, None)
+	movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
+	movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
+		
+	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
+	movieclips[BALLOON]._visible = False
+	return movieclips
+
+movieclips = build_scene(enso_cfg)
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
