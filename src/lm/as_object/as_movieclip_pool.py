@@ -12,11 +12,14 @@ class CDrawable(lm_drawable.CDrawable):
 		super(CDrawable, self).__init__(inst_id, depth, parent=parent)
 		self._pools = []
 		self._active_mc = collections.deque()
-		
+		self.speed = 1
+		self._frames = 0
 		self._to_recycle = set()
 		
 	def on_movieclip_end(self, mc, data):
-		self._to_recycle.add(id(mc))
+		obj_id = id(mc)
+		assert obj_id not in self._to_recycle
+		self._to_recycle.add(obj_id)
 		
 #		self.log("self._to_recycle id %d" % id(mc))
 		
@@ -44,6 +47,19 @@ class CDrawable(lm_drawable.CDrawable):
 		return ret
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if self.speed != 1:
+			self._frames += self.speed
+			if self._frames < 1: return
+			if self._frames > 1:
+				n = int(self._frames)
+				for i in xrange(n - 1):
+					self._update(render_state, operation & lm_consts.MASK_NO_DRAW)
+				self._frames -= n
+				
+		# Normal Update
+		self._update(render_state, operation)
+				
+	def _update(self, render_state, operation=lm_consts.MASK_ALL):
 		# recycle old mc
 		while self._active_mc:
 			mc = self._active_mc[0]
@@ -63,4 +79,4 @@ class CDrawable(lm_drawable.CDrawable):
 		for mc in self._active_mc:
 			mc.update(render_state, operation)
 		
-		if len(self._active_mc): self.log("remaining! %d: %d" % (len(self._pools), len(self._active_mc)))
+#		if len(self._active_mc): self.log("remaining! %d: %d" % (len(self._pools), len(self._active_mc)))

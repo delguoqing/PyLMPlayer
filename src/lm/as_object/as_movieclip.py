@@ -21,9 +21,6 @@ class CObj(lm_drawable_container.CDrawable):
 		self._total_frame = len(self._frame_tags)		
 		self._is_playing = True	
 		self._init_frame = False
-		self._active = True
-		
-
 		
 		# The `clip actions`
 		# support onEnterFrame only
@@ -37,6 +34,8 @@ class CObj(lm_drawable_container.CDrawable):
 		# property root
 		self._root = (self._parent and self._parent._root) or self
 
+		self.speed = 1
+		self._frames = 0
 		# Character instance cache
 		# All the characters that will be used along the timeline at depth `d`
 		# will be cached in self._pool[d]
@@ -105,9 +104,22 @@ class CObj(lm_drawable_container.CDrawable):
 		for depth in to_remove:
 			self.remove_drawable(depth)	
 #			self.log("remove out of key frame %d" % depth)
+		
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if self.speed != 1:
+			self._frames += self.speed
+			if self._frames < 1: return
+			if self._frames > 1:
+				n = int(self._frames)
+				for i in xrange(n - 1):
+					self._update(render_state, operation & lm_consts.MASK_NO_DRAW)
+				self._frames -= n
+				
+		# Normal Update
+		self._update(render_state, operation)
 			
 	# Play mode: Normal!
-	def update(self, render_state, operation=lm_consts.MASK_ALL):
+	def _update(self, render_state, operation=lm_consts.MASK_ALL):
 		
 		if self._init_frame:
 			operation &= lm_consts.MASK_NO_UPDATE
@@ -131,16 +143,18 @@ class CObj(lm_drawable_container.CDrawable):
 					self._frame_tags[self._play_head].execute(target=self)
 
 		# Update & Render
-		render_state.push_matrix(self.matrix)
-		render_state.push_cxform(self.color_add, self.color_mul)
-		render_state.push_blend_mode(self.blend_mode)
+		if operation & lm_consts.MASK_DRAW:
+			render_state.push_matrix(self.matrix)
+			render_state.push_cxform(self.color_add, self.color_mul)
+			render_state.push_blend_mode(self.blend_mode)
 		
 		for drawable in self:
 			drawable.update(render_state, operation)
 			
-		render_state.pop_matrix()
-		render_state.pop_cxform()
-		render_state.pop_blend_mode()
+		if operation & lm_consts.MASK_DRAW:
+			render_state.pop_matrix()
+			render_state.pop_cxform()
+			render_state.pop_blend_mode()
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):

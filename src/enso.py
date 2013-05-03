@@ -427,7 +427,6 @@ def on_key_press(symbol, modifiers):
 		global cur_renda_effect
 		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
 		if renda_effect: 
-			renda_effect.gotoAndPlay(0)
 			renda_effect.p1.gotoAndStop("dori_0%d" % cur_renda_effect)
 			renda_effect.p1.object.gotoAndPlay(0)
 			cur_renda_effect += 1
@@ -735,10 +734,15 @@ movieclips[DON] = load_movie("DON_COS00_DIET.LM", DON_POS_NORMAL)
 movieclips[SCORE_MAIN] = load_movie("ENSO_SCORE_MAIN.LM")
 movieclips[FEVER] = load_movie("FEVER_IDOL.LM")
 movieclips[DANCER1] = load_movie("DANCE_IDOL_HARUKA.LM", DANCER1_POS)
+movieclips[DANCER1].speed = 1.46
 movieclips[DANCER2] = load_movie("DANCE_IDOL_HIBIKI.LM", DANCER2_POS)
+movieclips[DANCER2].speed = 1.46
 movieclips[DANCER3] = load_movie("DANCE_IDOL_TAKANE.LM", DANCER3_POS)
+movieclips[DANCER3].speed = 1.46
 movieclips[DANCER4] = load_movie("DANCE_IDOL_MIKI.LM", DANCER4_POS)
+movieclips[DANCER4].speed = 1.46
 movieclips[DANCER5] = load_movie("DANCE_IDOL_MAMI.LM", DANCER5_POS)
+movieclips[DANCER5].speed = 1.46
 movieclips[RENDA_NUM] = load_movie("RENDA_NUM.LM")
 movieclips[FUKIDASHI] = load_movie("DON_1P_FUKIDASHI.LM")
 movieclips[BALLOON] = load_movie("DON_GEKI_1P.LM")
@@ -756,6 +760,7 @@ INDEX_CHIBI_HIT = movieclips[CHIBI].register(
 INDEX_CHIBI_MISS = movieclips[CHIBI].register(
 	load_multi_movie("CHIBI_TAMA_01.LM", 40)
 )
+movieclips[CHIBI].speed = 1.46
 
 movieclips[RENDA_EFFECT] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
 INDEX_RENDA_EFFECT = movieclips[RENDA_EFFECT].register(
