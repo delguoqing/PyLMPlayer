@@ -16,8 +16,6 @@ class CDrawable(lm_drawable.CDrawable):
 		self._to_recycle = set()
 		
 	def on_movieclip_end(self, mc, data):
-		if id(mc) in self._to_recycle:
-			raise Exception("readded!!!")
 		self._to_recycle.add(id(mc))
 		
 #		self.log("self._to_recycle id %d" % id(mc))
@@ -65,4 +63,4 @@ class CDrawable(lm_drawable.CDrawable):
 		for mc in self._active_mc:
 			mc.update(render_state, operation)
 		
-		if len(self._active_mc): self.log("remaining! %d" % len(self._pools))
+		if len(self._active_mc): self.log("remaining! %d: %d" % (len(self._pools), len(self._active_mc)))

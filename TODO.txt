@@ -12,7 +12,6 @@ http://ericlin2.tripod.com/
 #38. use "package.lumen" to access a lumen file.
 	texture root for that lumen file is exactly the same folder.
 	py_actionscript is also placed in that folder. hence, move to `resouce` folder.
-#39. pool leak!
 #40.
 #41.
 
@@ -107,3 +106,4 @@ i can do drawing in the same visit.
 	done.
 #34. create several score add movieclips and Reuse them.
 #21. support property _root
+#39. pool leak!

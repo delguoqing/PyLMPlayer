@@ -429,6 +429,7 @@ def on_key_press(symbol, modifiers):
 		if renda_effect: 
 			renda_effect.gotoAndPlay(0)
 			renda_effect.p1.gotoAndStop("dori_0%d" % cur_renda_effect)
+			renda_effect.p1.object.gotoAndPlay(0)
 			cur_renda_effect += 1
 			if cur_renda_effect >= 6: cur_renda_effect = 1
 			
@@ -694,7 +695,6 @@ SCORE_ADD, SCORE_MAIN,
 
 # To be layout correctly
 #SYOUSETSU,
-#RENDA_EFFECT,
 #ONP_DON,
 #ONP_KATS,
 #ONP_DON_DAI,
