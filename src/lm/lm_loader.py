@@ -157,3 +157,4 @@ def load(filename, root, platform, texture_bin):
 		
 	f.close()
 	return ctx
+	
