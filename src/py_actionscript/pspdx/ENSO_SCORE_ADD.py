@@ -2,7 +2,8 @@ def func_0(this, _global):
 	this.stop()
 
 def func_1(this, _global):
-	this.fscommand("event", "end")
+	print "score add end"
+	this._root.fscommand("event", "end")
 	this.stop()	
 	
 DATA = (

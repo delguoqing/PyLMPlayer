@@ -35,6 +35,7 @@ cur_balloon = 0 # current balloon
 max_imo = -1
 cur_imo = 0
 cur_dancer = -1	# current dancer
+cur_renda_effect = 1 # current renda_effect id
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
@@ -50,6 +51,8 @@ DANCER2_POS = (150, 270)
 DANCER3_POS = (330, 270)
 DANCER4_POS = (60, 270)
 DANCER5_POS = (420, 270)
+
+RENDA_EFFECT_POS_BASE = (-30, 200)
 
 def set_combo(combo):
 
@@ -199,7 +202,7 @@ def remove_dancer():
 		movieclips[cur_dancer].gotoAndPlay("out")
 		cur_dancer += 1
 
-def on_dancer_in_end(dancer):
+def on_dancer_in_end(mc, dancer):
 	global first_unsync_dancer, last_unsync_dancer, movieclips
 	if dancer == DANCER1:	# if it is the first dancer, then start dance at once
 		movieclips[dancer].gotoAndPlay("dance")
@@ -208,7 +211,7 @@ def on_dancer_in_end(dancer):
 			first_unsync_dancer = dancer
 		last_unsync_dancer = dancer
 
-def on_dancer_sync(dancer):
+def on_dancer_sync(mc, dancer):
 	global first_unsync_dancer, last_unsync_dancer, movieclips
 	if first_unsync_dancer != -1:
 		sync_to = movieclips[dancer].dancer._play_head
@@ -314,7 +317,7 @@ def set_balloon(balloon):
 		
 	cur_balloon = balloon
 
-def on_balloon_success_end(data):
+def on_balloon_success_end(mc, data):
 	global max_balloon, cur_balloon, donchan_free
 	swap_depth(DON, DON2)
 	# should gotoAndPlay old animation
@@ -391,7 +394,7 @@ def set_imo(imo):
 	
 	movieclips[DON2].don.gotoAndPlay(0)
 	
-def on_imo_break_end(data):
+def on_imo_break_end(mc, data):
 	global max_imo, cur_imo, donchan_free
 	swap_depth(DON, DON2)
 	# should gotoAndPlay old animation
@@ -401,7 +404,7 @@ def on_imo_break_end(data):
 	movieclips[DON].gotoAndPlay("normal")
 	movieclips[DON].matrix.translate = DON_POS_NORMAL
 	
-def on_imo_in_end(data):
+def on_imo_in_end(mc, data):
 	global movieclips
 	
 	movieclips[DON2].gotoAndPlay("imo_eat")
@@ -421,6 +424,14 @@ def on_key_press(symbol, modifiers):
 		onp_fly_don = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
 		onp_fly_don.gotoAndPlay("don_hit")
 		
+		global cur_renda_effect
+		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
+		if renda_effect: 
+			renda_effect.gotoAndPlay(0)
+			renda_effect.p1.gotoAndStop("dori_0%d" % cur_renda_effect)
+			cur_renda_effect += 1
+			if cur_renda_effect >= 6: cur_renda_effect = 1
+			
 	elif symbol == pyglet.window.key.J:
 		movieclips[RIGHT_DON].gotoAndPlay("right_don")
 		movieclips[MATO].gotoAndPlay("hit_ka")		
@@ -533,7 +544,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-#		if movieclip not in (movieclips[DON], movieclips[DON2], movieclips[BALLOON], ): continue
+		#if movieclip not in (movieclips[RENDA_EFFECT], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -555,6 +566,7 @@ lm_root = "../../LMDumper/lm/pspdx/"
 inst_id = 999
 depth = 0
 
+# Load a LM file and instantiate the default character
 def load_movie(filename, translate=(0, 0)):
 	global texture_bin
 	
@@ -569,6 +581,7 @@ def load_movie(filename, translate=(0, 0)):
 	movieclip.ctx = ctx
 	return movieclip
 
+# Load several movieclips sharing the same contex file.
 def load_multi_movie(filename, count, translate=(0, 0)):
 	global texture_bin
 	
@@ -596,7 +609,7 @@ render_state = lm_render_state.CObj()
 # global texture bin
 texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
-NUM_MOVIECLIP = 35
+NUM_MOVIECLIP = 36
 (
 #######################
 # BG Part!
@@ -610,7 +623,9 @@ ENSO_UP_BG,
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI,
 
-# ===========> renda effects <==============
+# Renda effect, 
+RENDA_EFFECT,
+
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
 DANCER5,
@@ -653,7 +668,6 @@ LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS,
 COMBO,
 
 ONP_FLY,
-# =========> onp_fly <===============
 
 # Hitjudge
 HITJUDGE, 
@@ -743,6 +757,11 @@ INDEX_CHIBI_MISS = movieclips[CHIBI].register(
 	load_multi_movie("CHIBI_TAMA_01.LM", 40)
 )
 
+movieclips[RENDA_EFFECT] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
+INDEX_RENDA_EFFECT = movieclips[RENDA_EFFECT].register(
+	load_multi_movie("RENDA_EFFECT_HAMACHIDORI.LM", 30, RENDA_EFFECT_POS_BASE)
+)
+
 movieclips[ONP_FLY] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
 INDEX_ONP_FLY_DON = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON.LM", 30))
 INDEX_ONP_FLY_DON_DAI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_DON_D.LM", 30))
@@ -752,12 +771,12 @@ INDEX_ONP_FLY_GEKI = movieclips[ONP_FLY].register(load_multi_movie("ONP_FLY_GEKI
 
 for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 	mc = movieclips[dancer]
-	mc.ctx.register_callback("in_end", on_dancer_in_end, dancer)
-	mc.ctx.register_callback("dance_sync", on_dancer_sync, dancer)
+	mc.register_callback("in_end", on_dancer_in_end, dancer)
+	mc.register_callback("dance_sync", on_dancer_sync, dancer)
 
-movieclips[DON].ctx.register_callback("baloon_success_end", on_balloon_success_end, None)
-movieclips[DON].ctx.register_callback("imo_break_end", on_imo_break_end, None)
-movieclips[DON].ctx.register_callback("imo_in_end", on_imo_in_end, None)
+movieclips[DON].register_callback("baloon_success_end", on_balloon_success_end, None)
+movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
+movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
 	
 movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 movieclips[BALLOON]._visible = False

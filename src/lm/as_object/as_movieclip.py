@@ -22,7 +22,9 @@ class CObj(lm_drawable_container.CDrawable):
 		self._is_playing = True	
 		self._init_frame = False
 		self._active = True
+		
 
+		
 		# The `clip actions`
 		# support onEnterFrame only
 		self.onEnterFrame = None
@@ -32,7 +34,9 @@ class CObj(lm_drawable_container.CDrawable):
 		self.__rotation = None
 		# ---- direct access
 		self._name = ""
-		
+		# property root
+		self._root = (self._parent and self._parent._root) or self
+
 		# Character instance cache
 		# All the characters that will be used along the timeline at depth `d`
 		# will be cached in self._pool[d]
@@ -40,7 +44,10 @@ class CObj(lm_drawable_container.CDrawable):
 		# If a timeline advances in normal order, find a cached character will
 		# be super efficient!
 		self._pool =[[]] * self._max_depth
-				
+			
+		self._handlers = {}
+		self._callbacks = {}
+			
 	# Allocate a cached drawable from pool
 	def alloc_drawable(self, depth, inst_id):
 		_cache = self._pool[depth]
@@ -117,7 +124,7 @@ class CObj(lm_drawable_container.CDrawable):
 			# if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
-				self.log("playing %d" % self._play_head)
+#				self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
 					self.init()
 				else:
@@ -238,3 +245,21 @@ class CObj(lm_drawable_container.CDrawable):
 		self._as_tween_only = True
 		
 	_rotation = property(_get_rotation, _set_rotation)	
+	
+	def fscommand(self, type, event):
+		if type == "callback" and event in self._callbacks:
+
+			func, cbdata = self._callbacks[event]
+			func(self, cbdata)
+			
+		elif type == "event" and event in self._handlers:
+
+			func, cbdata = self._handlers[event]
+			func(self, cbdata)
+		
+	def register_callback(self, event, func, cbdata):
+		self._callbacks[event] = (func, cbdata)
+		
+	def register_event(self, event, func, cbdata):
+		self._handlers[event] = (func, cbdata)
+		

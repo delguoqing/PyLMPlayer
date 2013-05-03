@@ -1,13 +1,13 @@
 def func_0(this, _global):
-	this.fscommand("callback", "in_end")
+	this._root.fscommand("callback", "in_end")
 	this.stop()
 
 def func_1(this, _global):
-	this.fscommand("callback", "dance_sync")
-	this.fscommand("callback", "in_start")
+	this._root.fscommand("callback", "dance_sync")
+	this._root.fscommand("callback", "in_start")
 
 def func_2(this, _global):
-	this.fscommand("callback", "out_end")
+	this._root.fscommand("callback", "out_end")
 	this.stop()
 	
 def func_3(this, _global):

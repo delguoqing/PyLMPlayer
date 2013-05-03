@@ -3,17 +3,18 @@ http://ericlin2.tripod.com/
 
 # TODO:
 # 9. implement font, static text, edit text, button, etc.
-#21. support property _root
 #25. Use vertex array to do batch while avoid a fixed-length vbo.
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
 #30. onp moji has no lm file.handle those text specially.
 #32. try to arrange the order of LM files.(For best performance)
 #33. adjust clip depth implementation.
-#34. create several score add movieclips and Reuse them.
-#35. implement movie clip pool object
-#36. dump texture packs into separate folders to avoid filename conflicts.
-#37.
-#38.
+#37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
+#38. use "package.lumen" to access a lumen file.
+	texture root for that lumen file is exactly the same folder.
+	py_actionscript is also placed in that folder. hence, move to `resouce` folder.
+#39. pool leak!
+#40.
+#41.
 
 
 #10000. optimize(Never do this when not neccesary!)
@@ -100,3 +101,9 @@ i can do drawing in the same visit.
 	0x0007: Button2,
 	0xF018: Button Record.
 	Not needed.button is not used in that lm file.
+#36. dump texture packs into separate folders to avoid filename conflicts.
+	done. Download seprate packages from 115.
+#35. implement movie clip pool object
+	done.
+#34. create several score add movieclips and Reuse them.
+#21. support property _root

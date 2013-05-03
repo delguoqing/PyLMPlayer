@@ -22,7 +22,6 @@ class CContex(object):
 	
 		self._super_tag_stack = []
 		
-		self._callbacks = {}
 		self._global = {}
 		
 	def set_img_root(self, root):
@@ -68,18 +67,9 @@ class CContex(object):
 			callback(super_tag)
 		else:
 			self._super_tag_stack.append((super_tag, sub_cnt, callback))
-	
-	def register_callback(self, event, func, cbdata):
-		self._callbacks[event] = (func, cbdata)
 		
 	def set_global(self, name, val):
 		self._global[name] = val
-		
-	def fscommand(self, type, event):
-		if type == "callback" and event in self._callbacks:
-
-			func, cbdata = self._callbacks[event]
-			func(cbdata)
 			
 def load(filename, root, platform, texture_bin):
 	# read LM file data

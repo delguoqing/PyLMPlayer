@@ -1,20 +1,20 @@
 def func_0(this, _global):
-	this.fscommand("callback", "combo_end")
+	this._root.fscommand("callback", "combo_end")
 	this.stop()
 
 def func_1(this, _global):
 	this.stop()	
 	
 def func_2(this, _global):
-	this.fscommand("callback", "baloon_success_end")
+	this._root.fscommand("callback", "baloon_success_end")
 	this.stop()
 	
 def func_3(this, _global):
-	this.fscommand("callback", "balloon_miss_end")
+	this._root.fscommand("callback", "balloon_miss_end")
 	this.stop()
 	
 def func_4(this, _global):
-	this.fscommand("callback", "miss1_end")
+	this._root.fscommand("callback", "miss1_end")
 	this.stop()
 	
 def func_5(this, _global):
@@ -23,74 +23,74 @@ def func_5(this, _global):
 	pass
 	
 def func_6(this, _global):
-	this.fscommand("callback", "miss2_end")
+	this._root.fscommand("callback", "miss2_end")
 	this.stop()
 	
 def func_7(this, _global):	
-	this.fscommand("callback", "miss_anim_end")	
+	this._root.fscommand("callback", "miss_anim_end")	
 	this.stop()
 	
 def func_8(this, _global):
-	this.fscommand("callback", "miss_normal_start_end")
+	this._root.fscommand("callback", "miss_normal_start_end")
 	this.stop()	
 
 def func_9(this, _global):	
-	this.fscommand("callback", "norma_up_end")
+	this._root.fscommand("callback", "norma_up_end")
 	this.stop()
 		
 def func_10(this, _global):	
-	this.fscommand("callback", "norma_down_end")
+	this._root.fscommand("callback", "norma_down_end")
 	this.stop()
 	
 def func_11(this, _global):
-	this.fscommand("callback", "normal_down_end")
+	this._root.fscommand("callback", "normal_down_end")
 	this.stop()
 		
 def func_12(this, _global):	
-	this.fscommand("callback", "full_gauge_start_end")
+	this._root.fscommand("callback", "full_gauge_start_end")
 	this.stop()
 		
 def func_13(this, _global):	
-	this.fscommand("callback", "imo_in_end")
+	this._root.fscommand("callback", "imo_in_end")
 	this.stop()
 		
 def func_14(this, _global):	
-	this.fscommand("callback", "imo_break_end")
+	this._root.fscommand("callback", "imo_break_end")
 	this.stop()
 		
 def func_15(this, _global):	
-	this.fscommand("callback", "imo_miss_end")
+	this._root.fscommand("callback", "imo_miss_end")
 	this.stop()
 		
 def func_16(this, _global):	
-	this.fscommand("event", "end")
+	this._root.fscommand("event", "end")
 	this.stop()
 	
 def func_17(this, _global):	
-	this.fscommand("callback", "mode_in_end")
-	this.fscommand("event", "end")
+	this._root.fscommand("callback", "mode_in_end")
+	this._root.fscommand("event", "end")
 	this.stop()
 	
 def func_18(this, _global):
-	this.fscommand("callback", "cos_change")
+	this._root.fscommand("callback", "cos_change")
 	pass
 
 def func_19(this, _global):	
-	this.fscommand("callback", "music_select_in_end")
+	this._root.fscommand("callback", "music_select_in_end")
 	this.stop()
 
 def func_20(this, _global):	
-	this.fscommand("callback", "music_select_out_end")
-	this.fscommand("event", "end")	
+	this._root.fscommand("callback", "music_select_out_end")
+	this._root.fscommand("event", "end")	
 	this.stop()	
 	
 def func_21(this, _global):
-	this.fscommand("sound", "don_step")
+	this._root.fscommand("sound", "don_step")
 	pass
 	
 def func_22(this, _global):
-	this.fscommand("sound", "don_step")
-	this.fscommand("event", "end")
+	this._root.fscommand("sound", "don_step")
+	this._root.fscommand("event", "end")
 	this.stop()	
 	
 def func_23(this, _global):	
@@ -103,7 +103,7 @@ def func_25(this, _global):
 	this.gotoAndPlay(0)
 
 def func_26(this, _global):		
-	this.fscommand("sound", "don_hand")
+	this._root.fscommand("sound", "don_hand")
 	pass
 	
 	
