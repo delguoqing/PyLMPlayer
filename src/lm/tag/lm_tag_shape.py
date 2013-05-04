@@ -17,8 +17,17 @@ class CTag(lm_tag_base.CTag):
 		y_min = min(d["y0"], d["y1"], d["y2"], d["y3"])
 		y_max = max(d["y0"], d["y1"], d["y2"], d["y3"])
 		
+		# Prepare for 
+		_is_replace = True
+		for i in xrange(4):
+			if d["u%d" % i] != -1.0: _is_replace = False; break
+			if d["u%d" % i] != -1.0: _is_replace = False; break
+		if _is_replace:
+			d["u0"], d["v0"], d["u1"], d["v1"], d["u2"], d["v2"], d["u3"], d["v3"] = 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
+						
 		self._rect = lm_type_rect.CType(x_min, y_min, x_max, y_max)
 				
+		self.origin_fill_style = d["fill_style"]
 		self.fill_style = d["fill_style"]
 		self.fill_idx = d["fill_idx"]
 		
@@ -34,6 +43,14 @@ class CTag(lm_tag_base.CTag):
 			
 		self.tex_coords = None
 		self.vertices = None			
+		self.create_vertex_list()
+		
+	def set_texture(self, texture):
+		self.texture = texture
+		self.base_tex_coords = texture.tex_coords
+		
+		self.tex_coords = None
+		self.vertices = None
 		self.create_vertex_list()
 		
 	# fake a solid color texture
@@ -64,6 +81,7 @@ class CTag(lm_tag_base.CTag):
 			_tx_base + max(0.0, min(1.0, d["u3"])) * _tx_len, 
 			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len, ]
 			
+#			print "recalc!"
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
 			_vertices = []
 			_tex_coords = []

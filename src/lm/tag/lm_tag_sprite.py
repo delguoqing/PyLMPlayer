@@ -35,13 +35,8 @@ class CTag(lm_tag_base.CTag):
 		_vertex_lists = []
 		
 		for shape_tag in self._shape_tags:
-			vertices, tex_coords, texture = \
-				shape_tag.create_vertex_list()
-			if _vertex_lists and _vertex_lists[-1][2] == texture:
-				_vertex_lists[-1][0].extend(vertices)
-				_vertex_lists[-1][1].extend(tex_coords)
-			else:
-				_vertex_lists.append((vertices, tex_coords, texture))
+			shape_tag.create_vertex_list()
+			_vertex_lists.append(shape_tag)
 
 		self._vertex_lists = _vertex_lists
 			

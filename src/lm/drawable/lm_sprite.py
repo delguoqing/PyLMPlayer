@@ -19,8 +19,8 @@ class CDrawable(lm_drawable.CDrawable):
 		render_state.push_cxform(self.color_add, self.color_mul)
 		render_state.push_blend_mode(self.blend_mode)
 
-		for vertices, tex_coords, texture in self._vertex_lists:
-			render_state.draw_image(texture, vertices, tex_coords)
+		for shape_tag in self._vertex_lists:
+			render_state.draw_image(shape_tag.texture, shape_tag.vertices, shape_tag.tex_coords)
 				
 		render_state.pop_matrix()
 		render_state.pop_cxform()

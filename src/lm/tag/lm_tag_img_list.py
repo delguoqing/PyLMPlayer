@@ -40,6 +40,11 @@ class CTag(lm_tag_base.CTag):
 			except IOError:
 				fullpath = os.path.join(self.ctx.img_root, def_filename)
 				image_data = pyglet.image.load(fullpath)
-				
 			texture = bin.add(image_data)
 			self._data.append(texture)
+			
+	# memory leak!!!!
+	def replace_texture(self, idx, filename, bin):
+		image_data = pyglet.image.load(filename)
+		self._data[idx] = bin.add(image_data)
+		return self._data[idx]

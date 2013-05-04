@@ -9,10 +9,7 @@ http://ericlin2.tripod.com/
 #32. try to arrange the order of LM files.(For best performance)
 #33. adjust clip depth implementation.
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
-#38. use "package.lumen" to access a lumen file.
-	texture root for that lumen file is exactly the same folder.
-	py_actionscript is also placed in that folder. hence, move to `resouce` folder.
-#40.
+#40. implement don cos feature.(custom texture class, and just replace that instance in runtime)
 #41.
 
 
@@ -107,3 +104,7 @@ i can do drawing in the same visit.
 #34. create several score add movieclips and Reuse them.
 #21. support property _root
 #39. pool leak!
+#38. use "package.lumen" to access a lumen file.
+	texture root for that lumen file is exactly the same folder.
+	py_actionscript is also placed in that folder. hence, move to `resouce` folder.
+	done! all resource files are now compact and clean!

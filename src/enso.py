@@ -497,7 +497,7 @@ def on_key_press(symbol, modifiers):
 #		movieclips[DON].gotoAndPlay("balloon_succsess")
 		
 	elif symbol == pyglet.window.key._0:
-		render_state.enable_statistic(2000)		
+		movieclips[DON].ctx.replace_texture(0, r"C:\Users\delguoqing\Documents\GitHub\PyLMPlayer\packages\pack319\cos_17_karada_01b.png")
 		
 	elif symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
@@ -514,8 +514,7 @@ def on_key_press(symbol, modifiers):
 		if max_imo <= 0:
 			set_max_imo(random.randint(10, 20))
 		else:
-			set_imo(cur_imo - 1)
-			
+			set_imo(cur_imo - 1)	
 	
 ###################################
 # Rendering
@@ -533,8 +532,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	#glClearColor(0, 0, 0, 1)
-	#window.clear()
+	glClearColor(0, 0, 0, 1)
+	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -543,15 +542,15 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		#if movieclip not in (movieclips[RENDA_EFFECT], ): continue
+#		if movieclip not in (movieclips[DON], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
 			
 	# Draw fps
-	glScalef(1.0, -1.0, 1.0)
-	glTranslatef(0.0, -64.0, 1.0)
-	fps_display.draw()
+#	glScalef(1.0, -1.0, 1.0)
+#	glTranslatef(0.0, -64.0, 1.0)
+#	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -746,6 +745,61 @@ def build_scene(cfg):
 		
 	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 	movieclips[BALLOON]._visible = False
+	
+	DON_KARADA_MAPPING = (
+		(0, "karada_01b"),
+		(3, "karada_01a"),
+		(6, "karada_02b"),
+		(9, "karada_02a"),
+		(13, "karada_03b"),
+		(16, "karada_03a"),
+		(26, "karada_04b"),
+		(29, "karada_04a"),
+		(35, "karada_09b"),
+		(38, "karada_09a"),
+
+		(44, "karada_06b"),
+		(47, "karada_06a"),
+		(50, "karada_07b"),
+		(53, "karada_07a"),
+		
+		(55, "karada_05b"),
+		(58, "karada_05a"),
+		(60, "karada_08b"),
+		(63, "karada_08a"),
+	)
+	DON_ATAMA_MAPPING = (
+		(1, "atama_01b"),
+		(4, "atama_01a"),
+		(7, "atama_02b"),
+		(10, "atama_02a"),
+		(14, "atama_03b"),
+		(17, "atama_03a"),
+		(27, "atama_04b"),
+		(30, "atama_04a"),
+		(36, "atama_09b"),
+		(39, "atama_09a"),
+
+		(43, "atama_06b"),
+		(46, "atama_06a"),
+		(49, "atama_07b"),
+		(52, "atama_07a"),
+		
+		(56, "atama_05b"),
+		(59, "atama_05a"),
+		(61, "atama_08b"),
+		(64, "atama_08a"),
+		
+		(20, "gum"),
+	)
+	
+	# Don change costume
+	_ctx = movieclips[DON].ctx
+	for idx, part in DON_KARADA_MAPPING:
+		_ctx.replace_texture(idx, os.path.join(cfg.DON_KARADA[0], "cos_%02d_%s.png" % (cfg.DON_KARADA[1], part)))
+	for idx, part in DON_ATAMA_MAPPING:
+		_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
+	
 	return movieclips
 
 movieclips = build_scene(enso_cfg)

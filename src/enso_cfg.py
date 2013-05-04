@@ -1,9 +1,11 @@
 LM_PACK_ROOT = r"../packages"
+DON_ATAMA = (r"../packages/pack287", 15)
+DON_KARADA = (r"../packages/pack304", 2)
 
 # Dance BG
-DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
+DANCE_BG = r"pack116/DANCE_BG_10.LM"
 # Enso up bg. Scrolling from left to right.
-ENSO_UP_BG = r"pack98/ENSO_UP_BG_02.LM"
+ENSO_UP_BG = r"pack99/ENSO_UP_BG_03.LM"
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI = r"pack97/BG_SAB_EFFECTI.LM"
 

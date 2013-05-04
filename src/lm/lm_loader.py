@@ -80,6 +80,8 @@ class CContex(object):
 		self.char_dict = {}
 		self.texture_bin = None
 	
+		self.shape_tags = []
+		
 		self._super_tag_stack = []
 		
 		self._global = {}
@@ -111,6 +113,10 @@ class CContex(object):
 	def add_movieclip(self, tag):
 		self.char_dict[tag.get_character_id()] = tag
 		
+	def add_shape_tag(self, tag):
+		self.shape_tags.append(tag)
+		self.add_sub_tag(tag)
+		
 	def get_character(self, character_id):
 		return self.char_dict.get(character_id)
 		
@@ -130,7 +136,13 @@ class CContex(object):
 		
 	def set_global(self, name, val):
 		self._global[name] = val
-			
+		
+	def replace_texture(self, idx, filename):
+		texture = self.img_list.replace_texture(idx, filename, self.texture_bin)
+		for shape_tag in self.shape_tags:
+			if shape_tag.fill_idx == idx and shape_tag.origin_fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
+				shape_tag.set_texture(texture)
+				
 def load(filename, root, platform, texture_bin):
 	# uniform resource root
 	res_root = root
@@ -200,7 +212,7 @@ def load(filename, root, platform, texture_bin):
 		elif tag_type == lm_consts.TAG_SPRITE:
 			ctx.add_super_tag(_t, _t.get_sub_tag_cnt(), ctx.add_sprite)
 		elif tag_type in (lm_consts.TAG_SHAPE, lm_consts.TAG_SHAPE2):
-			ctx.add_sub_tag(_t)
+			ctx.add_shape_tag(_t)
 		elif tag_type == lm_consts.TAG_PLACE_OBJ:
 			if _t.get_sub_tag_cnt() == 0:	# any clip action follows?
 				ctx.add_sub_tag(_t)
