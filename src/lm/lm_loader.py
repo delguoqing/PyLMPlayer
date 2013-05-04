@@ -1,12 +1,70 @@
 import os
 import sys
-
+import random
 import pyglet
+import lm_consts
 
 from lm.util import lm_tag_reader
 from lm.format import lm_format_map
-import lm_consts
+from lm.as_object import as_movieclip_pool
+from lm.type import lm_type_mat
 
+class CLoader(object):
+	
+	def __init__(self, platform, lm_root):
+		self.texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
+		self.platform = platform
+		self.lm_root = lm_root
+		
+	def load_movie(self, name, translate=(0, 0)):
+		
+		filename = os.path.join(self.lm_root, name)
+		img_root = os.path.split(filename)[0]
+		
+		ctx = load(filename, img_root, self.platform, self.texture_bin)
+		char_id = ctx.stage_info.start_character_id
+		char_tag = ctx.get_character(char_id)
+		movieclip = char_tag.instantiate(0, 0, parent=None)
+		movieclip.init()
+		movieclip.set_matrix(lm_type_mat.CType(translate))
+		movieclip.ctx = ctx
+		return movieclip
+		
+	# Load several movieclips sharing the same contex file.
+	def load_multi_movie(self, name, count, translate=(0, 0)):			
+		mcs = []
+		
+		filename = os.path.join(self.lm_root, name)
+		img_root = os.path.split(filename)[0]
+	
+		ctx = load(filename, img_root, self.platform, self.texture_bin)
+		char_id = ctx.stage_info.start_character_id
+		char_tag = ctx.get_character(char_id)
+		
+		for i in xrange(count):
+			movieclip = char_tag.instantiate(0, 0, parent=None)
+			movieclip.init()
+			movieclip.set_matrix(lm_type_mat.CType(translate))
+			movieclip.ctx = ctx
+			mcs.append(movieclip)
+			
+		return mcs		
+			
+	def load_movie_pool(self, defs):
+		pool = as_movieclip_pool.CDrawable(0, 0, parent=None)
+		for _def in defs:
+			mcs = []
+			for tuple in _def:
+				if len(tuple) == 2: 
+					name, count = tuple
+					translate = None
+				elif len(tuple) == 3: 
+					name, count, translate = tuple
+				mcs += self.load_multi_movie(name, count, translate)
+			if len(_def) > 1: random.shuffle(mcs)
+			pool.register(mcs)
+		return pool
+	
 class CContex(object):
 	
 	def __init__(self):
@@ -164,4 +222,3 @@ def load(filename, root, platform, texture_bin):
 		
 	f.close()
 	return ctx
-	

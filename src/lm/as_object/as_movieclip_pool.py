@@ -1,7 +1,6 @@
 import collections
 import random
 
-from lm import lm_loader
 from lm import lm_consts
 from lm.drawable import lm_drawable
 

@@ -17,9 +17,7 @@ from lm import lm_glb
 from lm.type import lm_type_color
 from lm.type import lm_type_mat
 
-from lm.drawable import lm_sprite
 from lm.drawable import lm_render_state
-from lm.as_object import as_movieclip_pool
 
 # standard resolution for psp
 window = pyglet.window.Window(480, 272)
@@ -561,58 +559,8 @@ pyglet.clock.schedule(on_draw)
 # Setup code
 ###################################
 
-img_root = "C:/png"
-platform = "pspdx"
-lm_root = "../../LMDumper/lm/pspdx/"
-inst_id = 999
-depth = 0
-
-# Load a LM file and instantiate the default character
-def load_movie(path, translate=(0, 0)):
-	global texture_bin
-	
-	filename = path
-	img_root = os.path.split(filename)[0]
-	
-	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
-	char_id = ctx.stage_info.start_character_id
-	char_tag = ctx.get_character(char_id)
-	movieclip = char_tag.instantiate(inst_id, depth, parent=None)
-	movieclip.char_id = char_id
-	movieclip.init()
-	movieclip.set_matrix(lm_type_mat.CType(translate))
-	movieclip.ctx = ctx
-	return movieclip
-
-# Load several movieclips sharing the same contex file.
-def load_multi_movie(path, count, translate=(0, 0)):
-	global texture_bin
-	
-	mcs = []
-	
-	filename = path
-	img_root = os.path.split(filename)[0]
-
-	ctx = lm_loader.load(filename, img_root, platform, texture_bin)
-	char_id = ctx.stage_info.start_character_id
-	char_tag = ctx.get_character(char_id)
-	
-	for i in xrange(count):
-		movieclip = char_tag.instantiate(inst_id, depth, parent=None)
-		movieclip.char_id = char_id
-		movieclip.init()
-		movieclip.set_matrix(lm_type_mat.CType(translate))
-		movieclip.ctx = ctx
-		mcs.append(movieclip)
-		
-	return mcs
-	
-		
 # global render state control
 render_state = lm_render_state.CObj()
-
-# global texture bin
-texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 
 NUM_MOVIECLIP = 36
 (
@@ -720,73 +668,73 @@ def build_scene(cfg):
 	global INDEX_ONP_FLY_KATS, INDEX_ONP_FLY_KATS_DAI
 	global INDEX_ONP_FLY_GEKI
 	
-	_j = os.path.join
-	_r = cfg.LM_PACK_ROOT
+	loader = lm_loader.CLoader("pspdx", cfg.LM_PACK_ROOT)
+	LMC = loader.load_movie
+	LMCS = loader.load_multi_movie
+	LMP = loader.load_movie_pool
 	
 	movieclips = [None] * NUM_MOVIECLIP
-	movieclips[DANCE_BG] = load_movie(_j(_r, cfg.DANCE_BG))
-	movieclips[ENSO_UP_BG] = load_movie(_j(_r, cfg.ENSO_UP_BG))
-	movieclips[COURSE] = load_movie(_j(_r, cfg.COURSE))
-	movieclips[LANE] = load_movie(_j(_r, cfg.LANE))
-	movieclips[HITEFFECTS] = load_movie(_j(_r, cfg.HITEFFECTS))
-	movieclips[TAIKO] = load_movie(_j(_r, cfg.TAIKO))
-	movieclips[COMBO] = load_movie(_j(_r, cfg.COMBO))
-	movieclips[MATO_GOGO] = load_movie(_j(_r, cfg.MATO_GOGO))
-	movieclips[MATO] = load_movie(_j(_r, cfg.MATO))
-	movieclips[HITJUDGE] = load_movie(_j(_r, cfg.HITJUDGE))
-	movieclips[LEFT_DON] = load_movie(_j(_r, cfg.LEFT_DON))
-	movieclips[LEFT_KATS] = load_movie(_j(_r, cfg.LEFT_KATS))
-	movieclips[RIGHT_DON] = load_movie(_j(_r, cfg.RIGHT_DON))
-	movieclips[RIGHT_KATS] = load_movie(_j(_r, cfg.RIGHT_KATS))
-	movieclips[GAUGE] = load_movie(_j(_r, cfg.GAUGE))
-	movieclips[BUNKI] = load_movie(_j(_r, cfg.BUNKI))
-	movieclips[BUNKI_MOJI] = load_movie(_j(_r, cfg.BUNKI_MOJI))
-	movieclips[FULLCOMBO] = load_movie(_j(_r, cfg.FULLCOMBO))
-	movieclips[BG_SAB_EFFECTI] = load_movie(_j(_r, cfg.BG_SAB_EFFECTI))
-	movieclips[DON] = load_movie(_j(_r, cfg.DON), DON_POS_NORMAL)
-	movieclips[SCORE_MAIN] = load_movie(_j(_r, cfg.SCORE_MAIN))
-	movieclips[FEVER] = load_movie(_j(_r, cfg.FEVER))
-	movieclips[DANCER1] = load_movie(_j(_r, cfg.DANCER1), DANCER1_POS)
+	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG)
+	movieclips[ENSO_UP_BG] = LMC(cfg.ENSO_UP_BG)
+	movieclips[COURSE] = LMC(cfg.COURSE)
+	movieclips[LANE] = LMC(cfg.LANE)
+	movieclips[HITEFFECTS] = LMC(cfg.HITEFFECTS)
+	movieclips[TAIKO] = LMC(cfg.TAIKO)
+	movieclips[COMBO] = LMC(cfg.COMBO)
+	movieclips[MATO_GOGO] = LMC(cfg.MATO_GOGO)
+	movieclips[MATO] = LMC(cfg.MATO)
+	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE)
+	movieclips[LEFT_DON] = LMC(cfg.LEFT_DON)
+	movieclips[LEFT_KATS] = LMC(cfg.LEFT_KATS)
+	movieclips[RIGHT_DON] = LMC(cfg.RIGHT_DON)
+	movieclips[RIGHT_KATS] = LMC(cfg.RIGHT_KATS)
+	movieclips[GAUGE] = LMC(cfg.GAUGE)
+	movieclips[BUNKI] = LMC(cfg.BUNKI)
+	movieclips[BUNKI_MOJI] = LMC(cfg.BUNKI_MOJI)
+	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO)
+	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI)
+	movieclips[DON] = LMC(cfg.DON, DON_POS_NORMAL)
+	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN)
+	movieclips[FEVER] = LMC(cfg.FEVER)
+	movieclips[DANCER1] = LMC(cfg.DANCER1, DANCER1_POS)
 	movieclips[DANCER1].speed = 1.46
-	movieclips[DANCER2] = load_movie(_j(_r, cfg.DANCER2), DANCER2_POS)
+	movieclips[DANCER2] = LMC(cfg.DANCER2, DANCER2_POS)
 	movieclips[DANCER2].speed = 1.46
-	movieclips[DANCER3] = load_movie(_j(_r, cfg.DANCER3), DANCER3_POS)
+	movieclips[DANCER3] = LMC(cfg.DANCER3, DANCER3_POS)
 	movieclips[DANCER3].speed = 1.46
-	movieclips[DANCER4] = load_movie(_j(_r, cfg.DANCER4), DANCER4_POS)
+	movieclips[DANCER4] = LMC(cfg.DANCER4, DANCER4_POS)
 	movieclips[DANCER4].speed = 1.46
-	movieclips[DANCER5] = load_movie(_j(_r, cfg.DANCER5), DANCER5_POS)
+	movieclips[DANCER5] = LMC(cfg.DANCER5, DANCER5_POS)
 	movieclips[DANCER5].speed = 1.46
-	movieclips[RENDA_NUM] = load_movie(_j(_r, cfg.RENDA_NUM))
-	movieclips[FUKIDASHI] = load_movie(_j(_r, cfg.FUKIDASHI))
-	movieclips[BALLOON] = load_movie(_j(_r, cfg.BALLOON))
-	movieclips[IMO] = load_movie(_j(_r, cfg.IMO))
+	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM)
+	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI)
+	movieclips[BALLOON] = LMC(cfg.BALLOON)
+	movieclips[IMO] = LMC(cfg.IMO)
 	
-	movieclips[SCORE_ADD] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-	INDEX_SCORE_ADD = movieclips[SCORE_ADD].register(load_multi_movie(_j(_r, cfg.SCORE_ADD), 30))
+	# Load score add
+	_def = (((cfg.SCORE_ADD, 30),),)
+	movieclips[SCORE_ADD] = LMP(_def)
+	INDEX_SCORE_ADD, = range(len(_def))
 	
-	movieclips[CHIBI] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-	
-	chibi_mcs = []
+	# Load chibi
+	_def = ([], ((cfg.CHIBI_MISS, 40),),)
 	for chibi_lm in cfg.CHIBI:
-		chibi_mcs += load_multi_movie(_j(_r, chibi_lm), 40 / len(cfg.CHIBI))
-	INDEX_CHIBI_HIT = movieclips[CHIBI].register(chibi_mcs)
-	INDEX_CHIBI_MISS = movieclips[CHIBI].register(
-		load_multi_movie(_j(_r, cfg.CHIBI_MISS), 40)
-	)
+		_def[0].append((chibi_lm, 40 / len(cfg.CHIBI)))
+	movieclips[CHIBI] = LMP(_def)
+	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
 	movieclips[CHIBI].speed = 1.46
 	
-	movieclips[RENDA_EFFECT] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-	INDEX_RENDA_EFFECT = movieclips[RENDA_EFFECT].register(
-		load_multi_movie(_j(_r, cfg.RENDA_EFFECT), 30, RENDA_EFFECT_POS_BASE)
-	)
+	# Load renda effect
+	_def = (((cfg.RENDA_EFFECT, 30),),)
+	movieclips[RENDA_EFFECT] = LMP(_def)
+	INDEX_RENDA_EFFECT, = range(len(_def))
 	
-	movieclips[ONP_FLY] = as_movieclip_pool.CDrawable(inst_id, depth, parent=None)
-	INDEX_ONP_FLY_DON = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[0]), 30))
-	INDEX_ONP_FLY_DON_DAI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[1]), 30))
-	INDEX_ONP_FLY_KATS = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[2]), 30))
-	INDEX_ONP_FLY_KATS_DAI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[3]), 30))
-	INDEX_ONP_FLY_GEKI = movieclips[ONP_FLY].register(load_multi_movie(_j(_r, cfg.ONP_FLY[4]), 10))
+	# Load onp fly
+	_def = (((cfg.ONP_FLY[0], 30),), ((cfg.ONP_FLY[1], 30),), ((cfg.ONP_FLY[2], 30),), ((cfg.ONP_FLY[3], 30),), ((cfg.ONP_FLY[4], 10),),)
+	movieclips[ONP_FLY] = LMP(_def)
+	INDEX_ONP_FLY_DON, INDEX_ONP_FLY_DON_DAI, INDEX_ONP_FLY_KATS, INDEX_ONP_FLY_KATS_DAI, INDEX_ONP_FLY_GEKI = range(len(_def))
 	
+	# Register callbacks
 	for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 		mc = movieclips[dancer]
 		mc.register_callback("in_end", on_dancer_in_end, dancer)
