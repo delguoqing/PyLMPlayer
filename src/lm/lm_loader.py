@@ -1,4 +1,6 @@
 import os
+import sys
+
 import pyglet
 
 from lm.util import lm_tag_reader
@@ -72,6 +74,9 @@ class CContex(object):
 		self._global[name] = val
 			
 def load(filename, root, platform, texture_bin):
+	# uniform resource root
+	res_root = root
+	
 	# read LM file data
 	f = open(filename, "rb")
 	data = f.read()
@@ -118,7 +123,9 @@ def load(filename, root, platform, texture_bin):
 			ctx.set_mat_list(_t)
 		elif tag_type == lm_consts.TAG_AS_LIST:
 			if _t.as_cnt > 0:
-				patch_module = __import__("py_actionscript.%s.%s" % (platform, os.path.splitext(os.path.split(filename)[1])[0]), fromlist=[["py_actionscript", platform]])
+				sys.path.append(res_root)
+				patch_module = __import__(os.path.splitext(os.path.split(filename)[1])[0])
+				sys.path.pop()
 				_t.patch_py_actionscript(patch_module.DATA)
 			ctx.set_as_list(_t)
 		elif tag_type == lm_consts.TAG_IMG_LIST:
