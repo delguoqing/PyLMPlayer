@@ -8,10 +8,10 @@ http://ericlin2.tripod.com/
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
 #30. onp moji has no lm file.handle those text specially.
 #32. try to arrange the order of LM files.(For best performance)
-#33. adjust clip depth implementation.
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
-#41.
-
+#41. fix renda effect position.
+#42. fix play speed of certain movies, which are affected by current BPM.
+#43.
 
 #10000. optimize(Never do this when not neccesary!)
 
@@ -109,3 +109,4 @@ i can do drawing in the same visit.
 	py_actionscript is also placed in that folder. hence, move to `resouce` folder.
 	done! all resource files are now compact and clean!
 #40. implement don cos feature.(custom texture class, and just replace that instance in runtime)
+#33. adjust clip depth implementation.

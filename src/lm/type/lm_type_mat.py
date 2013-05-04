@@ -64,27 +64,9 @@ class CType(object):
 		x1 = p[0] * self._s[0] + p[1] * self._r[1] + self._t[0]
 		y1 = p[0] * self._r[0] + p[1] * self._s[1] + self._t[1]
 		return x1, y1
-		
+	
 	# copy referrence of tuple, no problem
 	def copy_from(self, o):
 		self._r = o._r
 		self._s = o._s
 		self._t = o._t
-		
-	# Set up matrix transform in OpenGL
-	def set(self):
-		glPushMatrix()
-		
-		if self._r != (0.0, 0.0):
-			glMultMatrixf(self.get_ctype())
-		else:
-			_t = self._t
-			if _t != (0.0, 0.0):
-				glTranslatef(_t[0], _t[1], 0.0)
-			_s = self._s
-			if _s != (1.0, 1.0):
-				glScalef(_s[0], _s[1], 1.0)
-	
-	# Unset OpenGL state
-	def unset(self):
-		glPopMatrix()

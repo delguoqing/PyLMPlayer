@@ -141,15 +141,25 @@ class CObj(lm_drawable_container.CDrawable):
 					self.init()
 				else:
 					self._frame_tags[self._play_head].execute(target=self)
-
+			
 		# Update & Render
 		if operation & lm_consts.MASK_DRAW:
 			render_state.push_matrix(self.matrix)
 			render_state.push_cxform(self.color_add, self.color_mul)
 			render_state.push_blend_mode(self.blend_mode)
 		
+		clip_depth = 0
 		for drawable in self:
+			if drawable.clip_depth > 0:
+				render_state.set_mask(drawable)
+				clip_depth = drawable.clip_depth
+				continue
+				
 			drawable.update(render_state, operation)
+			
+			if clip_depth > 0 and drawable.depth == clip_depth:
+				render_state.set_mask(None)
+				clip_depth = 0
 			
 		if operation & lm_consts.MASK_DRAW:
 			render_state.pop_matrix()
@@ -200,6 +210,7 @@ class CObj(lm_drawable_container.CDrawable):
 		self.goto_frame(frame_id)
 		
 #		self.log("After gotoAndPlay, play_head = %d" % self._play_head)
+#		self.log("After gotoAndPlay, movie is playing = %r" % self._is_playing)
 		
 	def gotoAndStop(self, frame_id):
 		if isinstance(frame_id, str):

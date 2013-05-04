@@ -69,6 +69,7 @@ class CTag(lm_tag_base.CTag):
 			_ty_len = self.base_tex_coords[-5] - self.base_tex_coords[-8]
 			_tx_base = self.base_tex_coords[-3]
 			_ty_base = self.base_tex_coords[-5] 
+			
 			d = self._parsed_data
 			self.vertices = [d["x0"], d["y0"], d["x1"], d["y1"], d["x2"], d["y2"], d["x3"], d["y3"]]
 			self.tex_coords = [
@@ -76,10 +77,10 @@ class CTag(lm_tag_base.CTag):
 			_ty_base - max(0.0, min(1.0, d["v0"])) * _ty_len,
 			_tx_base + max(0.0, min(1.0, d["u1"])) * _tx_len, 
 			_ty_base - max(0.0, min(1.0, d["v1"])) * _ty_len,
-			_tx_base + max(0.0, min(1.0, d["u2"])) * _tx_len, 
+			_tx_base + max(0.0, min(1.0, d["u2"])) * _tx_len,
 			_ty_base - max(0.0, min(1.0, d["v2"])) * _ty_len,
 			_tx_base + max(0.0, min(1.0, d["u3"])) * _tx_len, 
-			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len, ]
+			_ty_base - max(0.0, min(1.0, d["v3"])) * _ty_len]
 			
 #			print "recalc!"
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:

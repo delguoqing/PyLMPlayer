@@ -40,6 +40,9 @@ class CObj(object):
 		self._vertex_list = pyglet.graphics.vertex_list(self._vertex_count, 
 			"v2f", "t2f", "c4f", "s3f")
 		self._vertex_idx = 0
+
+		# mask
+		self._mask_rect = None
 		
 		# statistic
 		self._draw_count = 0
@@ -166,22 +169,62 @@ class CObj(object):
 		t = s + n * 3
 		v.secondary_colors[s : t] = secondary_colors
 		
-		# append tex_coords
-		s = i * 2
-		t = s + n * 2
-		v.tex_coords[s : t] = tex_coords
-#		self.log("\ttex_coords = (%f, %f, %f), (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)" % tuple(v.tex_coords[s:s+12]))
-		
-		# transform and append vertices
-		s = i * 2
-		t = s + n * 2
-		for j in xrange(s, t, 2):
-			x, y = vertices[j - s], vertices[j - s + 1]
-			x1, y1 = m.transform_point((x, y))
-			v.vertices[j], v.vertices[j + 1] = x1, y1
-		
-#		self.log("\tvertices = (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f)" % tuple(v.vertices[s:s+8]))
-		
+		mask = self._mask_rect
+		if not mask:
+			# append tex_coords
+			s = i * 2
+			t = s + n * 2
+			v.tex_coords[s : t] = tex_coords
+
+			# transform and append vertices
+			for j in xrange(s, t, 2):
+				x, y = vertices[j - s], vertices[j - s + 1]
+				x1, y1 = m.transform_point((x, y))
+				v.vertices[j], v.vertices[j + 1] = x1, y1
+				
+		else:
+			s = i * 2
+			t = s + n * 2
+			for j in xrange(s, t, 8):
+				x0, y0, x1, y1, x2, y2, x3, y3 = vertices[j - s: j - s + 8]
+				u0, v0, u1, v1, u2, v2, u3, v3 = tex_coords[j - s: j - s + 8]
+				
+				x0, y0 = m.transform_point((x0, y0))
+				x1, y1 = m.transform_point((x1, y1))
+				x2, y2 = m.transform_point((x2, y2))
+				x3, y3 = m.transform_point((x3, y3))
+				
+				stride_u = abs(u0 - u1 or u1 - u2)
+				stride_v = abs(v0 - v1 or v1 - v2)
+				stride_x = abs(x0 - x1 or x1 - x2)
+				stride_y = abs(y0 - y1 or y1 - y2)
+				
+				_fix_x = stride_u / stride_x
+				_fix_y = stride_v / stride_y
+				
+				if x0 < mask[0]: u0 += (mask[0] - x0) * _fix_x; x0 = mask[0]
+				elif x0 > mask[1]: u0 -= (x0 - mask[1]) * _fix_x; x0 = mask[1]
+				if y0 < mask[2]: v0 -= (mask[2] - y0) * _fix_y; y0 = mask[2]
+				elif y0 > mask[3]: v0 += (y0 - mask[3]) * _fix_y; y0 = mask[3]
+
+				if x1 < mask[0]: u1 += (mask[0] - x1) * _fix_x; x1 = mask[0]
+				elif x1 > mask[1]: u1 -= (x1 - mask[1]) * _fix_x; x1 = mask[1]
+				if y1 < mask[2]: v1 -= (mask[2] - y1) * _fix_y; y1 = mask[2]
+				elif y1 > mask[3]: v1 += (y1 - mask[3]) * _fix_y; y1 = mask[3]
+				
+				if x2 < mask[0]: u2 += (mask[0] - x2) * _fix_x; x2 = mask[0]
+				elif x2 > mask[1]: u2 -= (x2 - mask[1]) * _fix_x; x2 = mask[1]
+				if y2 < mask[2]: v2 -= (mask[2] - y2) * _fix_y; y2 = mask[2]
+				elif y2 > mask[3]: v2 += (y2 - mask[3]) * _fix_y; y2 = mask[3]
+				
+				if x3 < mask[0]: u3 += (mask[0] - x3) * _fix_x; x3 = mask[0]
+				elif x3 > mask[1]: u3 -= (x3 - mask[1]) * _fix_x; x3 = mask[1]
+				if y3 < mask[2]: v3 -= (mask[2] - y3) * _fix_y; y3 = mask[2]
+				elif y3 > mask[3]: v3 += (y3 - mask[3]) * _fix_y; y3 = mask[3]
+				
+				v.vertices[j: j+8] = (x0, y0, x1, y1, x2, y2, x3, y3)
+				v.tex_coords[j: j+8] = (u0, v0, u1, v1, u2, v2, u3, v3)
+				
 		# n vertices added
 		self._vertex_idx += n
 		
@@ -254,6 +297,17 @@ class CObj(object):
 		if self._is_enable_statistic:
 			self._draw_count += 1
 					
+	def set_mask(self, drawable):
+		if not drawable:
+			self._mask_rect = None
+		else:
+
+			r = drawable._rect
+			m = self._matrix_stack[-1]
+			xmin, ymin = m.transform_point((r.xmin, r.ymin))
+			xmax, ymax = m.transform_point((r.xmax, r.ymax))
+			self._mask_rect = xmin, xmax, ymin, ymax
+		
 	def end(self):
 
 		# flush buffer anyway

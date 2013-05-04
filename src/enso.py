@@ -463,10 +463,10 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key.BRACKETLEFT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
-		movieclips[GAUGE].gotoAndPlay("gage_50")
 		movieclips[DANCE_BG].gotoAndPlay("normal_fever")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
 		movieclips[FEVER].fever.gotoAndPlay("fever_start")
+		movieclips[GAUGE].gotoAndStop("gage_50")
 	elif symbol == pyglet.window.key.BRACKETRIGHT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
 		movieclips[GAUGE].gotoAndPlay("gage_47")
@@ -494,10 +494,9 @@ def on_key_press(symbol, modifiers):
 		
 	elif symbol == pyglet.window.key._1:
 		render_state.enable_statistic(1)
-#		movieclips[DON].gotoAndPlay("balloon_succsess")
 		
 	elif symbol == pyglet.window.key._0:
-		movieclips[DON].ctx.replace_texture(0, r"C:\Users\delguoqing\Documents\GitHub\PyLMPlayer\packages\pack319\cos_17_karada_01b.png")
+		movieclips[GAUGE].gotoAndStop("gage_50")
 		
 	elif symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
@@ -532,8 +531,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	glClearColor(0, 0, 0, 1)
-	window.clear()
+#	glClearColor(1, 1, 1, 1)
+#	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -542,7 +541,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-#		if movieclip not in (movieclips[DON], ): continue
+#		if movieclip not in (movieclips[GAUGE], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
