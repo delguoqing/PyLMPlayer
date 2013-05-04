@@ -8,3 +8,6 @@ Note:
 How to play:
   Because it uses official resources from original game, i can't upload those fatasitic images and swfs.
   Ask me for a pack of resource and combine that unzipped folder with `packages` folder.
+
+Dependencies:
+  Pyglet.
