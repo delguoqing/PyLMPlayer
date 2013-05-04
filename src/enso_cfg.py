@@ -1,9 +1,9 @@
 LM_PACK_ROOT = r"../packages"
-DON_ATAMA = (r"../packages/pack287", 15)
-DON_KARADA = (r"../packages/pack304", 2)
+DON_ATAMA = (r"../packages/pack301", 29)
+DON_KARADA = (r"../packages/pack330", 29)
 
 # Dance BG
-DANCE_BG = r"pack116/DANCE_BG_10.LM"
+DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG = r"pack99/ENSO_UP_BG_03.LM"
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
@@ -27,7 +27,7 @@ COURSE = r"pack63/COURSE_ONI.LM"
 # Character don.(At normal states)
 DON = r"pack363/DON_COS00_DIET.LM"
 # The tamashi gauge
-GAUGE = r"pack69/GAUGE_DON_H.LM"
+GAUGE = r"pack66/GAUGE_DON_H.LM"
 
 CHIBI = (
 	r"pack85/CHIBI_1P_IDOL_01.LM",
