@@ -148,7 +148,10 @@ develop-eggs
 cython
 *.png
 *.LM
+<<<<<<< HEAD
 *.DAT
+=======
+>>>>>>> 549df7e10b3112e3238a8aac9fab00e070bca882
 
 # Installer logs
 pip-log.txt
