@@ -98,6 +98,7 @@ class CTag(lm_tag_base.CTag):
 			if _mat is None: _mat = old_inst.get_matrix()
 			if _cadd is None: _cadd = old_inst.get_color_add()
 			if _cmul is None: _cmul = old_inst.get_color_mul()
+			if not _blend_mode: _blend_mode = old_inst.get_blend_mode()
 		
 		# Place or Move?
 		if self._has_char:
