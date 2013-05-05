@@ -9,9 +9,8 @@ http://ericlin2.tripod.com/
 #30. onp moji has no lm file.handle those text specially.
 #32. try to arrange the order of LM files.(For best performance)
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
-#41. fix renda effect position.
 #42. fix play speed of certain movies, which are affected by current BPM.
-#43.
+#44.
 
 #10000. optimize(Never do this when not neccesary!)
 
@@ -110,3 +109,5 @@ i can do drawing in the same visit.
 	done! all resource files are now compact and clean!
 #40. implement don cos feature.(custom texture class, and just replace that instance in runtime)
 #33. adjust clip depth implementation.
+#41. fix renda effect position.
+#43. bug fix, DANCE_MIKU_02~05 not correct.
