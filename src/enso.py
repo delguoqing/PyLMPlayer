@@ -426,10 +426,12 @@ def on_key_press(symbol, modifiers):
 		global cur_renda_effect
 		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
 		if renda_effect: 
-			renda_effect.p1.gotoAndStop("dori_0%d" % cur_renda_effect)
-			renda_effect.p1.object.gotoAndPlay(0)
-			cur_renda_effect += 1
-			if cur_renda_effect >= 6: cur_renda_effect = 1
+			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
+			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
+			x = random.randint(x_range[0], x_range[1])
+			y = random.randint(y_range[0], y_range[1])
+			renda_effect.matrix.translate = (x, y)
+			enso_cfg.RENDA_EFFECT_FUNC(renda_effect, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
 			
 	elif symbol == pyglet.window.key.J:
 		movieclips[RIGHT_DON].gotoAndPlay("right_don")
@@ -469,7 +471,7 @@ def on_key_press(symbol, modifiers):
 		movieclips[GAUGE].gotoAndStop("gage_50")
 	elif symbol == pyglet.window.key.BRACKETRIGHT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
-		movieclips[GAUGE].gotoAndPlay("gage_47")
+		movieclips[GAUGE].gotoAndStop("gage_47")
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
 		movieclips[FEVER].fever.gotoAndPlay("fever_end")		
@@ -483,7 +485,6 @@ def on_key_press(symbol, modifiers):
 		movieclips[FUKIDASHI].gotoAndPlay("level_up")		
 		
 	elif symbol == pyglet.window.key.DOWN:
-		movieclips[DON].play()
 		remove_dancer()
 		movieclips[FUKIDASHI].gotoAndPlay("level_down")
 		
@@ -694,6 +695,7 @@ def build_scene(cfg):
 	movieclips[DON] = LMC(cfg.DON, DON_POS_NORMAL)
 	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN)
 	movieclips[FEVER] = LMC(cfg.FEVER)
+	movieclips[FEVER].speed = 2
 	movieclips[DANCER1] = LMC(cfg.DANCER1, DANCER1_POS)
 	movieclips[DANCER1].speed = 1.46
 	movieclips[DANCER2] = LMC(cfg.DANCER2, DANCER2_POS)

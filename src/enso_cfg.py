@@ -9,8 +9,38 @@ ENSO_UP_BG = r"pack99/ENSO_UP_BG_03.LM"
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI = r"pack97/BG_SAB_EFFECTI.LM"
 
-# Renda effect, 
-RENDA_EFFECT = r"pack90/RENDA_EFFECT_HAMACHIDORI.LM"
+# Renda effect,
+# This is really weird!!! Renda effects are not made in the same standard!
+def RENDA_EFFECT_FUNC0(mc, style):
+	mc.p1.gotoAndStop("dori_0%d" % style)
+	mc.p1.object.gotoAndPlay(0)
+	
+def RENDA_EFFECT_FUNC1(mc, style):
+	mc.p1.gotoAndStop("syuriken_0%d" % style)
+	mc.p1.object.gotoAndPlay(0)	
+	
+def RENDA_EFFECT_FUNC2(mc, style):
+	mc.gotoAndPlay("hamaya_start")
+
+# Renda Effect hamachidori
+	
+#RENDA_EFFECT = r"pack90/RENDA_EFFECT_HAMACHIDORI.LM"
+#RENDA_EFFECT_NUM = 6
+#RENDA_EFFECT_X_RANGE = (-10, 10)
+#RENDA_EFFECT_Y_RANGE = (200, 272)
+#RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC0
+
+#RENDA_EFFECT = r"pack92/RENDA_EFFECT_SYURIKEN.LM"
+#RENDA_EFFECT_NUM = 6
+#RENDA_EFFECT_X_RANGE = (0, 0)
+#RENDA_EFFECT_Y_RANGE = (0, 272)
+#RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC1
+
+RENDA_EFFECT = r"pack91/RENDA_EFFECT_HAMAYA.LM"
+RENDA_EFFECT_NUM = 1
+RENDA_EFFECT_X_RANGE = (-10, 10)
+RENDA_EFFECT_Y_RANGE = (200, 272)
+RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
 
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
