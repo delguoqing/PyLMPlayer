@@ -1,6 +1,6 @@
 LM_PACK_ROOT = r"../packages"
-DON_ATAMA = (r"../packages/pack301", 29)
-DON_KARADA = (r"../packages/pack330", 29)
+DON_ATAMA = (r"../packages/pack_cos52", 52)
+DON_KARADA = (r"../packages/pack_cos52", 52)
 
 # Dance BG
 DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
@@ -51,14 +51,26 @@ RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
 #DANCER2 = r"pack352/DANCE_IDOL_MIKI.LM"
 #DANCER1 = r"pack352/DANCE_IDOL_MAMI.LM"
 
-DANCER5 = r"pack355/DANCE_MIKU_05.LM"
-DANCER4 = r"pack355/DANCE_MIKU_04.LM"
-DANCER3 = r"pack355/DANCE_MIKU_03.LM"
-DANCER2 = r"pack355/DANCE_MIKU_02.LM"
-DANCER1 = r"pack355/DANCE_MIKU_01.LM"
+#DANCER5 = r"pack355/DANCE_MIKU_05.LM"
+#DANCER4 = r"pack355/DANCE_MIKU_04.LM"
+#DANCER3 = r"pack355/DANCE_MIKU_03.LM"
+#DANCER2 = r"pack355/DANCE_MIKU_02.LM"
+#DANCER1 = r"pack355/DANCE_MIKU_01.LM"
+
+#DANCER5 = r"pack_dancer25/DANCE_FRENESI_05.LM"
+#DANCER4 = r"pack_dancer25/DANCE_FRENESI_04.LM"
+#DANCER3 = r"pack_dancer25/DANCE_FRENESI_03.LM"
+#DANCER2 = r"pack_dancer25/DANCE_FRENESI_02.LM"
+#DANCER1 = r"pack_dancer25/DANCE_FRENESI_01.LM"
+
+DANCER5 = r"pack_dancer29/DANCE_GUMI_05.LM"
+DANCER4 = r"pack_dancer29/DANCE_GUMI_04.LM"
+DANCER3 = r"pack_dancer29/DANCE_GUMI_03.LM"
+DANCER2 = r"pack_dancer29/DANCE_GUMI_02.LM"
+DANCER1 = r"pack_dancer29/DANCE_GUMI_01.LM"
 
 # Fever(Appear when tamashii gauge is full.)
-FEVER = r"pack359/FEVER_IDOL.LM"
+FEVER = r"pack_fever29/FEVER_GUMI.LM"
 
 # Course icon. not affected by sabi effect.
 COURSE = r"pack63/COURSE_ONI.LM"

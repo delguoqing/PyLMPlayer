@@ -469,12 +469,16 @@ def on_key_press(symbol, modifiers):
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
 		movieclips[FEVER].fever.gotoAndPlay("fever_start")
 		movieclips[GAUGE].gotoAndStop("gage_50")
+		
+		movieclips[DON].gotoAndPlay("full_gage_idle")
 	elif symbol == pyglet.window.key.BRACKETRIGHT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
 		movieclips[GAUGE].gotoAndStop("gage_47")
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
 		movieclips[FEVER].fever.gotoAndPlay("fever_end")		
+
+		movieclips[DON].gotoAndPlay("normal")		
 	elif symbol == pyglet.window.key.SPACE:
 		movieclips[FULLCOMBO].gotoAndPlay("run")
 
