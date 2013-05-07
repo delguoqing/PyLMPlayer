@@ -20,7 +20,7 @@ from lm.type import lm_type_mat
 from lm.drawable import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(480 * 2, 272 * 2)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 ###################################
@@ -799,11 +799,12 @@ def build_scene(cfg):
 	)
 	
 	# Don change costume
-	_ctx = movieclips[DON].ctx
-	for idx, part in DON_KARADA_MAPPING:
-		_ctx.replace_texture(idx, os.path.join(cfg.DON_KARADA[0], "cos_%02d_%s.png" % (cfg.DON_KARADA[1], part)))
-	for idx, part in DON_ATAMA_MAPPING:
-		_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
+	if cfg.DON_COS:
+		_ctx = movieclips[DON].ctx
+		for idx, part in DON_KARADA_MAPPING:
+			_ctx.replace_texture(idx, os.path.join(cfg.DON_KARADA[0], "cos_%02d_%s.png" % (cfg.DON_KARADA[1], part)))
+		for idx, part in DON_ATAMA_MAPPING:
+			_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
 	
 	return movieclips
 

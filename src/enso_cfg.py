@@ -1,6 +1,7 @@
 LM_PACK_ROOT = r"../packages"
-DON_ATAMA = (r"../packages/pack_cos52", 52)
-DON_KARADA = (r"../packages/pack_cos52", 52)
+DON_COS = True # use don cos or not
+DON_ATAMA = (r"../packages/pack_cos51", 51)
+DON_KARADA = (r"../packages/pack_cos51", 51)
 
 # Dance BG
 DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
