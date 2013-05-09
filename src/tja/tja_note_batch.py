@@ -1,3 +1,4 @@
+# A batch of note scrolling at the same speed
 class CNoteBatch(object):
 	
 	def __init__(self, offset, bpm, scroll):
@@ -5,6 +6,8 @@ class CNoteBatch(object):
 		self.bpm = bpm
 		self.scroll = scroll
 		
-	def read(self, fobj):
-		for line in fobj:
-			if line.startswith("#BPMCHANGE")
+		self.commands = []
+		self.notes = []
+		
+	def read(self, reader):
+		

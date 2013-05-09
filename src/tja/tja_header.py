@@ -38,33 +38,33 @@ class CData(object):
 
 	# Guessing encoding		
 	def _conv_unicode(self, str):
-	    try:
-	        ret1 = str.decode("gbk").encode("utf-8")
-	    except:
-	        ret1 = None
+		try:
+			ret1 = str.decode("gbk").encode("utf-8")
+		except:
+			ret1 = None
 	
-	    try:
-	        ret2 = str.decode("shift-jis").encode("utf-8")
-	    except:
-	        ret2 = None
+		try:
+			ret2 = str.decode("shift-jis").encode("utf-8")
+		except:
+			ret2 = None
 	
-	    try:
-	        ret3 = str.decode("big5").encode("utf-8")
-	    except:
-	        ret3 = None
-	    
-	    ret = []
-	    if ret1: ret.append(ret1)
-	    if ret2: ret.append(ret2)
-	    if ret3: ret.append(ret3)
-	    if not ret:
-	        return str
-	    else:
-	        ans = None
-	        for ret0 in ret:
-	            if ans is None or len(ret0) < len(ans):
-	                ans = ret0
-	        return ans.decode("utf-8")
+		try:
+			ret3 = str.decode("big5").encode("utf-8")
+		except:
+			ret3 = None
+		
+		ret = []
+		if ret1: ret.append(ret1)
+		if ret2: ret.append(ret2)
+		if ret3: ret.append(ret3)
+		if not ret:
+			return str
+		else:
+			ans = None
+			for ret0 in ret:
+				if ans is None or len(ret0) < len(ans):
+					ans = ret0
+			return ans.decode("utf-8")
 		
 	def _parse_int_list(self, str):
 		str_list = str.split(",")

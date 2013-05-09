@@ -55,7 +55,7 @@ class CReader(object):
 		
 	def read_command(self):
 		line = self.peek_line()
-		cmd_name = "#INVALID"
+		cmd_name = ""
 		args = ()
 		if line.startswith("#"):
 			parts = line.split(" ")
@@ -72,6 +72,9 @@ class CReader(object):
 		
 	def check_command(self, cmd):
 		return self.peek_line().split(" ")[0].strip() == cmd
+		
+	def check_commands(self, cmd):
+		return self.peek_line().split(" ")[0].strip() in cmd		
 		
 if __name__ == "__main__":
 	import tja_header
