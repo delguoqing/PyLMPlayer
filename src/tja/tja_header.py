@@ -7,26 +7,17 @@ class CData(object):
 		if init_data: 
 			self._dict.update(init_data)
 		
-	def read(self, fobj):
-		for line in fobj:
+	def read(self, reader):
+		while True:
 			# Start of fumen is end of header
-			if line.startswith("#START"):
+			if reader.check_command("#START"):
 				break
-			# contains no header
-			try:
-				colon_pos = line.index(":")
-			except ValueError:
-				continue
-			# remove comment
-			try:
-				comment_pos = line.index("//")
-			except ValueError:
-				comment_pos = len(line) + 1
-			# split into {Key: Value}
-			key = line[: colon_pos].strip()
-			val = line[colon_pos + 1: comment_pos].strip()
-			self._dict[key] = val
-	
+			
+			key, val = reader.read_header()
+			reader.skip_line()
+			if key:
+				self._dict[key] = val
+			
 	def _key_defs(self):
 		return {
 			"TITLE": (unicode, self._conv_unicode, u"UNTITLED"),
