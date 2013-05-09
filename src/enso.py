@@ -20,7 +20,7 @@ from lm.type import lm_type_mat
 from lm.drawable import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(480 * 2, 272 * 2)
+window = pyglet.window.Window(480, 272)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 ###################################
@@ -42,8 +42,9 @@ donchan_free = True
 # Don Pos
 DON_POS_NORMAL = (64, 42)
 DON_POS_BALLOON = (128, 128)
-DON_POS_IMO = (185, 132)
+#DON_POS_IMO = (185, 132)
 
+DON_POS_IMO = (187, 110)
 # Dancer Pos
 DANCER1_POS = (240, 270)
 DANCER2_POS = (150, 270)
@@ -470,7 +471,7 @@ def on_key_press(symbol, modifiers):
 		movieclips[FEVER].fever.gotoAndPlay("fever_start")
 		movieclips[GAUGE].gotoAndStop("gage_50")
 		
-		movieclips[DON].gotoAndPlay("full_gage_idle")
+		movieclips[DON].gotoAndPlay("full_sabi")
 	elif symbol == pyglet.window.key.BRACKETRIGHT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
 		movieclips[GAUGE].gotoAndStop("gage_47")
