@@ -8,7 +8,7 @@ class CReader(object):
 		if self._fobj:
 			self._fobj.close()
 		self._fobj = open(filename, "r")
-		self._fpos = 0
+		self._fpos = self._fobj.tell()
 		
 	def rem_comment(self, line):
 		try:
@@ -23,6 +23,7 @@ class CReader(object):
 		return line
 		
 	def skip_line(self):
+		self._fobj.seek(self._fpos)
 		line = self._fobj.readline()
 		self._fpos = self._fobj.tell()
 		
@@ -74,28 +75,26 @@ class CReader(object):
 		
 if __name__ == "__main__":
 	import tja_header
+	import sys
 	
 	reader = CReader()
-	reader.set_file(r"E:\jirofumen\data\100004\jiro.tja")
+	reader.set_file(sys.argv[1])
+
+	header = tja_header.CData()
+	header.read(reader)
+	header.refresh()
+	header.print_out()
 	
 	while True:
-		print reader.peek_line()
+		if reader.check_command("#END"):
+			break
+		notes = reader.read_notes()
+		cmd_name, args = reader.read_command()
+		if notes:
+			print "[NOTES]", notes
+		elif cmd_name:
+			print "[ CMD ]", cmd_name, args
+		else:
+			print "[EMPTY]"
 		reader.skip_line()
 		
-#	header = tja_header.CData()
-#	header.read(reader)
-#	header.refresh()
-#	header.print_out()
-#	
-#	while True:
-#		if reader.check_command("#END"):
-#			break
-#		notes = reader.read_notes()
-#		cmd_name, args = reader.read_command()
-#		if notes:
-#			print "[NOTES]", notes
-#		elif cmd_name:
-#			print "[ CMD ]", cmd_name, args
-#		else:
-#			print "[EMPTY]"
-#		reader.skip_line()
