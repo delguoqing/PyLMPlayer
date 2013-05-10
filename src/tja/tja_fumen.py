@@ -1,4 +1,6 @@
 import tja_note_section
+import tja_header
+import tja_enso_state
 
 SECTION_NORMAL = 2
 SECTION_EXPERT = 3
@@ -7,9 +9,16 @@ SECTION_MASTER = 4
 class CFumen(object):
 	
 	def __init__(self):
+		self.header = tja_header.CData()
 		self.sections = []
 
-	def read(self, reader):
+	def read_header(self, reader):
+		self.header.read(reader)
+		self.header.refresh()
+		
+	def read_fumen(self, reader):
+		state = tja_enso_state.CEnsoState(self.header)
+		
 		while not reader.check_command("#END"):
 			cmd_name, args = reader.read_command()
 			if cmd_name == "#BRANCHSTART":
@@ -39,17 +48,12 @@ class CFumen(object):
 				print "=====> NO BUNKI END"				
 			
 if __name__ == "__main__":
-	import tja_header
 	import tja_reader
 	import sys
 	
 	reader = tja_reader.CReader()
 	reader.set_file(sys.argv[1])
-
-	header = tja_header.CData()
-	header.read(reader)
-	header.refresh()
-	header.print_out()
 	
 	fumen = CFumen()
-	fumen.read(reader)
+	fumen.read_header(reader)
+	fumen.read_fumen(reader)
