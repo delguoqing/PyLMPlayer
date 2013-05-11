@@ -10,7 +10,8 @@ http://ericlin2.tripod.com/
 #32. try to arrange the order of LM files.(For best performance)
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
 #42. fix play speed of certain movies, which are affected by current BPM.
-#44.
+#44. fix multiple values for 'SCOREINIT'.
+#45.
 
 #10000. optimize(Never do this when not neccesary!)
 

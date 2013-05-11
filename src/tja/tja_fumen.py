@@ -1,3 +1,4 @@
+import copy
 import tja_note_section
 import tja_header
 import tja_enso_state
@@ -17,19 +18,24 @@ class CFumen(object):
 		self.header.refresh()
 		
 	def read_fumen(self, reader):
-		state = tja_enso_state.CEnsoState(self.header)
+		curr_state = tja_enso_state.CEnsoState(self.header)
+		next_state = None
 		
 		while not reader.check_command("#END"):
 			cmd_name, args = reader.read_command()
+			
 			if cmd_name == "#BRANCHSTART":
 				reader.skip_line()
+				if next_state:
+					curr_state, next_state = next_state, None
 				self.sections.append([True, args, None, None, None])
 				print "======> BRANCHSTART"
 			elif cmd_name in ("#N", "#E", "#M"):
 				print "<======> %s BEG" % cmd_name
 				reader.skip_line()
 				sec = tja_note_section.CNoteSection()
-				sec.read(reader)
+				next_state = copy.copy(curr_state)
+				sec.read(reader, next_state)
 				if cmd_name == "#N":
 					self.sections[-1][SECTION_NORMAL] = sec
 				elif cmd_name == "#E":
@@ -40,11 +46,13 @@ class CFumen(object):
 			elif cmd_name == "#BRANCHEND":
 				print "=====> BRANCHEND"
 				reader.skip_line()
+				if next_state:
+					curr_state, next_state = next_state, None
 			else:
 				print "=====> NO BUNKI BEG"
 				section = tja_note_section.CNoteSection()
 				self.sections.append([False, None, section, None, None])
-				section.read(reader)
+				section.read(reader, curr_state)
 				print "=====> NO BUNKI END"				
 			
 if __name__ == "__main__":

@@ -98,7 +98,10 @@ class CData(object):
 	def print_out(self):
 		print "\n".join(["%s:%r" % (k, v) for k, v in self._dict.iteritems()])
 #		print "%s,%s,%s" % (self._dict["TITLE"], self._dict["SUBTITLE"], self._dict["WAVE"])
-		
+	
+	def __getitem__(self, key):
+		return self._dict[key]
+	
 if __name__ == "__main__":
 	f = open(sys.argv[1], "r")
 	d = CData()

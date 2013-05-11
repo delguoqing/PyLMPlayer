@@ -40,6 +40,33 @@ class CReader(object):
 		return key, val
 
 	def read_notes(self):
+		notes = ""
+		tot_notes = 0
+		fpos = self._fpos
+		
+		while True:
+			notes_line = self._read_notes_line()
+			
+			# first read fail
+			if notes == "" and notes_line == "":
+				return "", 0
+			
+			self.skip_line()
+			# Only return the first notes line
+			if notes == "":
+				notes = notes_line
+			tot_notes += len(notes_line)
+			
+			# check if reaches end
+			if notes_line.endswith(","):
+				break
+		
+		self._fpos = fpos
+		self._fobj.seek(fpos)
+		
+		return notes, tot_notes - 1
+			
+	def _read_notes_line(self):
 		line = self.peek_line()
 		ripped = ""
 		for c in line:
@@ -52,13 +79,13 @@ class CReader(object):
 			# Else is invalid
 			else: return ""
 		return ripped
-		
+	
 	def read_command(self):
 		line = self.peek_line()
 		cmd_name = ""
 		args = ()
 		if line.startswith("#"):
-			parts = line.split(" ")
+			parts = line.split(" ", 1)
 			if len(parts) in (1, 2):
 				cmd_name = parts[0].strip()
 				if len(parts) == 1:
@@ -68,6 +95,7 @@ class CReader(object):
 					for str in parts[1].split(","):
 						args2.append(str.strip())
 					args = tuple(args2)
+		
 		return cmd_name, args
 		
 	def check_command(self, cmd):

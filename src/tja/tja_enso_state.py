@@ -9,3 +9,4 @@ class CEnsoState(object):
 		self.level = "normal"
 		self.offset = -header["OFFSET"] * 1000
 		self.balloons = header["BALLOON"]
+	
