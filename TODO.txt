@@ -11,7 +11,12 @@ http://ericlin2.tripod.com/
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
 #42. fix play speed of certain movies, which are affected by current BPM.
 #44. fix multiple values for 'SCOREINIT'.
-#45.
+#45. precalc offset for all notes
+#46. fix balloon count.
+#47. fix dancer bug. dancer can not be removed correctly.
+#48. makes a note sheet flow.
+#49. Move DON_POS_* constants to config file.
+#50.
 
 #10000. optimize(Never do this when not neccesary!)
 
