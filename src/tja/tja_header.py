@@ -76,11 +76,12 @@ class CData(object):
 	def _conv_course(self, str):
 		# Try using course name
 		try:
-			course = ("Easy", "Normal", "Hard", "Oni").index(str)
+			course = ["Easy", "Normal", "Hard", "Oni"].index(str)
 			return course
 		except ValueError:
 			pass
 		# Try using course index
+		print "use digit string %r" % str
 		return max(0, min(int(str), 3))
 		
 	def refresh(self):
@@ -91,7 +92,8 @@ class CData(object):
 			if not isinstance(value, value_type):
 				try:
 					self._dict[name] = converter(value)
-				except:
+				except Exception, e:
+					print e
 					print "%s convert failed! raw value=%s" % (name, value)
 					self._dict[name] = default
 	
