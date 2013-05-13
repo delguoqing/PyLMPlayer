@@ -3,6 +3,10 @@ This site is amazing:
 http://ericlin2.tripod.com/
 
 # TODO:
+
+# Priority Low
+#50. improve note batching method. Batching notes by not only bpm and scroll,
+		a slight speed change will not break the order.
 # 9. implement font, static text, edit text, button, etc.
 #25. Use vertex array to do batch while avoid a fixed-length vbo.
 #26. Use index to specify all the transformation(matrix, color, blend_mode, etc).And move the whole render code to C level.
@@ -11,12 +15,12 @@ http://ericlin2.tripod.com/
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
 #42. fix play speed of certain movies, which are affected by current BPM.
 #44. fix multiple values for 'SCOREINIT'.
-#45. precalc offset for all notes
-#46. fix balloon count.
+
+# Priority High
 #47. fix dancer bug. dancer can not be removed correctly.
 #48. makes a note sheet flow.
-#49. Move DON_POS_* constants to config file.
-#50.
+#51.
+#52.
 
 #10000. optimize(Never do this when not neccesary!)
 
@@ -117,3 +121,6 @@ i can do drawing in the same visit.
 #33. adjust clip depth implementation.
 #41. fix renda effect position.
 #43. bug fix, DANCE_MIKU_02~05 not correct.
+#45. precalc offset for all notes
+#49. Move DON_POS_* constants to config file.
+#46. fix balloon count.

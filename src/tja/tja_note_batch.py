@@ -1,18 +1,54 @@
 # A batch of note scrolling at the same speed
 class CNoteBatch(object):
 	
-	def __init__(self, sub_1stbar):
+	def __init__(self):
 		self.offset = None
 		self.bpm = None
 		self.scroll = None
 		
-		self.sub_1stbar = sub_1stbar
-		self.next_sub_1stbar = sub_1stbar
-		self.incomplete = False
-		
 		self.commands = []
+		
 		self.notes = []
-		self.balloons = []
+		
+	def append_notes(self, notes, tot_notes, state):
+		t_unit = (60000.0/state.bpm) * state.measure / tot_notes
+		
+		# Add Barline
+		if state.bar_offset == 0:
+			self.notes.append((state.offset, "B"))
+			print "ONP B @off=%f" % state.offset
+			
+		# Add Notes
+		for idx, note in enumerate(notes):
+			off = state.offset + t_unit * idx
+			if note == "0" or note == ",":
+				continue
+			elif note == "5":	# Renda
+				self.notes.append((off, note))
+				state.long_note = True
+				print "ONP %s @off=%f" % (note, off)
+			elif note == "7":	# Balloon Renda
+				if state.long_note:
+					continue
+				hit_count = state.balloons.pop(0)
+				self.notes.append((off, note, hit_count))
+				state.long_note = True				
+				print "ONP %s @off=%f, hitcount=%d" % (note, off, hit_count)
+			elif note == "9":	# Imo Renda
+				if not state.long_note:
+					hit_count = state.balloons.pop(0)
+					self.notes.append((off, note, hit_count))
+					state.long_note = True
+					print "ONP %s @off=%f, hitcount=%d" % (note, off, hit_count)
+				else:	# A == imo break high/low point
+					self.notes.append((off, "A"))
+					print "ONP A @off=%f" % off
+			elif note == "8":
+				state.long_note = False
+				print "ONP RENDA END"
+			else:
+				self.notes.append((off, note))
+				print "ONP %s @off=%f" % (note, off)
 		
 	def read(self, reader, state):
 		self.offset = state.offset
@@ -55,27 +91,22 @@ class CNoteBatch(object):
 			# handle notes
 			if notes:
 				if notes == ",": notes = "0,"
-				print "NOTES off=%d:\t%s" % (state.offset, notes)
+				print "NOTES off=%d:\t%s\tbar_off=%d" % (state.offset, notes, state.bar_offset)
 				num_notes = len(notes) - int(notes.endswith(","))
-				if len(self.notes) == 0 and self.sub_1stbar > 0:
-					tot_notes += self.sub_1stbar
-				if len(self.notes) > 0 and not self.notes[-1].endswith(","):
-					tot_notes += len(self.notes[-1])
-					self.notes[-1] += notes
-				else:
-					self.notes.append(notes)
-				delta = (60000.0/state.bpm) * state.measure * (num_notes / tot_notes)
-				print "delta %d %d" % (num_notes, tot_notes)
+				tot_notes += state.bar_offset
+				# set time for notes
+				self.append_notes(notes, tot_notes, state)
+				# offset advance
+				delta = (60000.0/state.bpm) * state.measure * num_notes / tot_notes
 				state.offset += (60000.0/state.bpm) * state.measure * num_notes / tot_notes
-				if not self.notes[-1].endswith(","):
-					self.next_sub_1stbar += len(self.notes[-1])
+				# record incomplete bar
+				if not notes.endswith(","):
+					state.bar_offset += len(self.notes[-1])
 				else:
-					self.next_sub_1stbar = 0
+					state.bar_offset = 0
 			elif cmd_name:	# Runtime commands
-				print "[ CMD ]", cmd_name, args
-				self.commands.append((cmd_name, args))
+				print "[ CMD ] ", cmd_name, args, "@off=%f" % state.offset
+				self.commands.append((state.offset, cmd_name, args))
 			else:
 				print
 			reader.skip_line()
-		
-		# Join all 
