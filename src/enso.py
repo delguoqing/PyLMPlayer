@@ -39,12 +39,7 @@ first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
 
-# Don Pos
-DON_POS_NORMAL = (64, 42)
-DON_POS_BALLOON = (128, 128)
-#DON_POS_IMO = (185, 132)
 
-DON_POS_IMO = (187, 110)
 # Dancer Pos
 DANCER1_POS = (240, 270)
 DANCER2_POS = (150, 270)
@@ -197,7 +192,7 @@ def add_dancer():
 	
 def remove_dancer():
 	global cur_dancer
-	if cur_dancer <= DANCER1:
+	if cur_dancer != -1 and cur_dancer <= DANCER1:
 		# remove `cur_dancer`
 		movieclips[cur_dancer].gotoAndPlay("out")
 		cur_dancer += 1
@@ -266,7 +261,7 @@ def set_max_balloon(balloon):
 	mc.gotoAndPlay("geki_hit")
 	
 	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = DON_POS_BALLOON
+	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_BALLOON
 		
 	max_balloon = balloon
 	set_balloon(balloon)
@@ -325,7 +320,7 @@ def on_balloon_success_end(mc, data):
 	cur_balloon = 0
 	donchan_free = True
 	movieclips[DON].gotoAndPlay("normal")
-	movieclips[DON].matrix.translate = DON_POS_NORMAL
+	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
 		
 def set_max_imo(imo):
 	global max_imo, cur_imo, donchan_free
@@ -339,7 +334,7 @@ def set_max_imo(imo):
 	mc.gotoAndPlay("imo_start")
 	
 	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = DON_POS_IMO
+	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_IMO
 	movieclips[DON2].gotoAndPlay("imo_in")
 	
 	max_imo = imo
@@ -402,7 +397,7 @@ def on_imo_break_end(mc, data):
 	cur_imo = 0
 	donchan_free = True
 	movieclips[DON].gotoAndPlay("normal")
-	movieclips[DON].matrix.translate = DON_POS_NORMAL
+	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
 	
 def on_imo_in_end(mc, data):
 	global movieclips
@@ -697,7 +692,7 @@ def build_scene(cfg):
 	movieclips[BUNKI_MOJI] = LMC(cfg.BUNKI_MOJI)
 	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO)
 	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI)
-	movieclips[DON] = LMC(cfg.DON, DON_POS_NORMAL)
+	movieclips[DON] = LMC(cfg.DON, cfg.DON_POS_NORMAL)
 	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN)
 	movieclips[FEVER] = LMC(cfg.FEVER)
 	movieclips[FEVER].speed = 2

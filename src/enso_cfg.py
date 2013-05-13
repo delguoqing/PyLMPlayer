@@ -1,11 +1,18 @@
 LM_PACK_ROOT = r"../packages"
+
+# Character don.(At normal states)
+#DON = r"pack363/DON_COS00_DIET.LM"
+DON = r"pack364/M_DON.LM"
+
 DON_COS = False # use don cos or not, turn this off if you use mecha don
 DON_ATAMA = (r"../packages/pack_cos51", 51)
 DON_KARADA = (r"../packages/pack_cos51", 51)
 
-DON_POS_NORMAL = ()
-DON_POS_BALLOON = ()
-DON_POS_IMO = ()
+# Don Pos
+DON_POS_NORMAL = (64, 42)
+DON_POS_BALLOON = (128, 128)
+#DON_POS_IMO = (185, 132)
+DON_POS_IMO = (187, 110)
 
 # Dance BG
 DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
@@ -79,9 +86,7 @@ FEVER = r"pack_fever29/FEVER_GUMI.LM"
 
 # Course icon. not affected by sabi effect.
 COURSE = r"pack63/COURSE_ONI.LM"
-# Character don.(At normal states)
-#DON = r"pack363/DON_COS00_DIET.LM"
-DON = r"pack364/M_DON.LM"
+
 # The tamashi gauge
 GAUGE = r"pack66/GAUGE_DON_H.LM"
 
