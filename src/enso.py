@@ -178,6 +178,9 @@ def set_score(score):
 	
 	cur_score = score
 
+def dancer_log(i, str):
+	print "[DANCER%d] %s" % (5 - i + DANCER5, str)
+
 def add_dancer():
 	global cur_dancer, movieclips
 	if cur_dancer == -1:
@@ -192,16 +195,17 @@ def add_dancer():
 	
 def remove_dancer():
 	global cur_dancer
-	if cur_dancer != -1 and cur_dancer <= DANCER1:
+	# DANCER1 will never be removed
+	if cur_dancer != -1 and cur_dancer < DANCER1:
 		# remove `cur_dancer`
 		movieclips[cur_dancer].gotoAndPlay("out")
 		cur_dancer += 1
-
+		
 def on_dancer_in_end(mc, dancer):
-	global first_unsync_dancer, last_unsync_dancer, movieclips
+	global movieclips, first_unsync_dancer, last_unsync_dancer
 	if dancer == DANCER1:	# if it is the first dancer, then start dance at once
 		movieclips[dancer].gotoAndPlay("dance")
-	else:
+	elif dancer >= cur_dancer:
 		if first_unsync_dancer == -1:
 			first_unsync_dancer = dancer
 		last_unsync_dancer = dancer
@@ -532,8 +536,8 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-#	glClearColor(1, 1, 1, 1)
-#	window.clear()
+	#glClearColor(1, 1, 1, 1)
+	#window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -542,7 +546,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-#		if movieclip not in (movieclips[GAUGE], ): continue
+		#if movieclip not in (movieclips[DANCER1], movieclips[DANCER2],): continue
 		movieclip.update(render_state)
 	
 	render_state.end()

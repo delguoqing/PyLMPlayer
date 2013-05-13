@@ -15,12 +15,13 @@ http://ericlin2.tripod.com/
 #37. provide a dummy interface of a movieclip when the movieclip pool is out of stock.
 #42. fix play speed of certain movies, which are affected by current BPM.
 #44. fix multiple values for 'SCOREINIT'.
+#53. fix bug. Dancer Sync bad key frame.
 
 # Priority High
-#47. fix dancer bug. dancer can not be removed correctly.
 #48. makes a note sheet flow.
 #51.
 #52.
+
 
 #10000. optimize(Never do this when not neccesary!)
 
@@ -124,3 +125,7 @@ i can do drawing in the same visit.
 #45. precalc offset for all notes
 #49. Move DON_POS_* constants to config file.
 #46. fix balloon count.
+#47. fix dancer bug. dancer can not be removed correctly.
+	DANCER_GUMI_01.LM ~ DANCER_GUMI_05.LM uses wrong callback!
+	should be "dancer_out_end" when "out" animation is end.
+	Can only fix it by hardcoding.

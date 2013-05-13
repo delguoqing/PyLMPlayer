@@ -136,7 +136,7 @@ class CObj(lm_drawable_container.CDrawable):
 			# if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
-#				self.log("playing %d" % self._play_head)
+				#self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
 					self.init()
 				else:
