@@ -43,6 +43,7 @@ class CObj(object):
 
 		# mask
 		self._mask_rect = None
+		self.time = 0
 		
 		# statistic
 		self._draw_count = 0

@@ -5,6 +5,7 @@ class CNoteBatch(object):
 		self.offset = None
 		self.bpm = None
 		self.scroll = None
+		self.speed = None
 		
 		self.commands = []
 		
@@ -110,3 +111,16 @@ class CNoteBatch(object):
 			else:
 				print
 			reader.skip_line()
+			
+			# note_dist = 26
+			# time = time_per_beat * 0.25
+			# speed = note_dist / time
+			self.speed = 26 / (60000.0 * 0.25 / bpm)
+			
+		def update(self, state, onps):
+			
+			for note_cfg in self.notes:
+				off, note = note_cfg[0], note_cfg[1]
+				if (off - state.offset) * self.speed
+				
+			

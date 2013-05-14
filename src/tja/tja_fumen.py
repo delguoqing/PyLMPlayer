@@ -12,7 +12,8 @@ class CFumen(object):
 	def __init__(self):
 		self.header = tja_header.CData()
 		self.sections = []
-
+		self._active_sections = []
+		
 	def read_header(self, reader):
 		self.header.read(reader)
 		self.header.refresh()
@@ -55,6 +56,33 @@ class CFumen(object):
 				section.read(reader, curr_state)
 				print "=====> NO BUNKI END"				
 			
+	def update(self, state, onps):
+		t = state.offset
+		
+		# check if new section will be activated
+		activated_idx = 0
+		for has_branch, cond, nfumen, efumen, mfumen in self.sections:
+			active = (nfumen and nfumen.is_active(state)) \
+				or (efumen and efumen.is_active(state)) \
+				or (mfumen and mfumen.is_active(state))
+			if not active:
+				break
+			activated_idx += 1
+			
+			if not has_branch:
+				self._active_sections.append(nfumen)
+			else:
+				assert False, "Branch not supported yet!"
+				
+		if activated_idx > 0:
+			self.sections = self.sections[activated_idx:]
+			
+		# execute command and render onps
+		for section in self._active_sections:
+		    section.update(self, state, onps)
+		
+		return t
+	
 if __name__ == "__main__":
 	import tja_reader
 	import sys
