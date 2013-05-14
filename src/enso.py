@@ -546,7 +546,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		#if movieclip not in (movieclips[DANCER1], movieclips[DANCER2],): continue
+		if movieclip not in (movieclips[MATO_GOGO], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()

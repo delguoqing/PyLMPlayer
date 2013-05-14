@@ -1,5 +1,9 @@
+import sys
+sys.path.append("..")
+
 import random
 import tja_enso_state
+from lm import lm_consts
 
 OPTION_SPD_2x = 1
 OPTION_SPD_3x = 2
@@ -52,6 +56,8 @@ class CMgr(object):
 		self._fumen = fumen
 		self._state = tja_enso_state.CEnsoState(self._fumen.header)
 		self._onps = []
+		self._onp_y = 107
+		self._onp_hit_x = 104
 		
 		self.set_option(options)
 		
@@ -82,7 +88,33 @@ class CMgr(object):
 		# apply options to fumen
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
-		self._state.offset = render_state.time
+		self._state.offset += 1000.0 / 60.0
+		self._onps = []
+		
+		if self._fumen.empty():
+			return False
+		
 		self._fumen.update(self._state, self._onps)
-			
-                
+		print "active onps: @off=%f" % self._state.offset
+		for onp_cfg in self._onps:
+			off, onp = onp_cfg[0], onp_cfg[1]
+			print "\tonp %s @off=%f" % (onp, off)
+		print
+		
+		return True
+		
+if __name__ == '__main__':
+	import tja_reader
+	import tja_fumen
+	import sys
+
+	reader = tja_reader.CReader()
+	reader.set_file(sys.argv[1])
+	
+	fumen = tja_fumen.CFumen()
+	fumen.read_header(reader)
+	fumen.read_fumen(reader)
+
+	onp_mgr = CMgr(fumen, options=0)
+	while onp_mgr.update(None):
+		pass

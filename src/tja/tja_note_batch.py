@@ -6,6 +6,8 @@ class CNoteBatch(object):
 		self.bpm = None
 		self.scroll = None
 		self.speed = None
+		self.in_off = None
+		self.out_off = None
 		
 		self.commands = []
 		
@@ -115,12 +117,42 @@ class CNoteBatch(object):
 			# note_dist = 26
 			# time = time_per_beat * 0.25
 			# speed = note_dist / time
-			self.speed = 26 / (60000.0 * 0.25 / bpm)
+			self.speed = 26 / (60000.0 * 0.25 / self.bpm)
 			
-		def update(self, state, onps):
+			# 104: hit pos x
+			# 480: screen border x
+			# 32: padding
+			self.in_off = (32 + 480 - 104) / self.speed
+			self.out_off = (32 + 104 - 80) / self.speed
 			
-			for note_cfg in self.notes:
-				off, note = note_cfg[0], note_cfg[1]
-				if (off - state.offset) * self.speed
-				
+	def update(self, state, onps):
+		
+		# checking for new notes
+		in_idx = 0
+		out_idx = 0
+		for note_cfg in self.notes:
+			off, note = note_cfg[0], note_cfg[1]
+			if state.offset - off > self.out_off:
+				out_idx += 1
+			elif off - state.offset > self.in_off:
+				break
+			in_idx += 1
 			
+			# append active onp to queue
+			onps.append(note_cfg)
+			
+		# remove outdated onps
+		if out_idx > 0:
+			self.notes = self.notes[out_idx:]
+		
+	def __cmp__(self, o):
+		return self.offset - self.in_off - (o.offset - o.in_off)
+	
+	def active(self, state):
+		return (self.offset - state.offset) <= self.in_off
+		
+	# TODO: also check for commands
+	def empty(self):
+		return len(self.notes) == 0
+		
+		

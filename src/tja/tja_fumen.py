@@ -62,9 +62,9 @@ class CFumen(object):
 		# check if new section will be activated
 		activated_idx = 0
 		for has_branch, cond, nfumen, efumen, mfumen in self.sections:
-			active = (nfumen and nfumen.is_active(state)) \
-				or (efumen and efumen.is_active(state)) \
-				or (mfumen and mfumen.is_active(state))
+			active = (nfumen and nfumen.active(state)) \
+				or (efumen and efumen.active(state)) \
+				or (mfumen and mfumen.active(state))
 			if not active:
 				break
 			activated_idx += 1
@@ -78,10 +78,19 @@ class CFumen(object):
 			self.sections = self.sections[activated_idx:]
 			
 		# execute command and render onps
+		out_idx = 0
 		for section in self._active_sections:
-		    section.update(self, state, onps)
+			if section.empty():
+				out_idx += 1
+			else:
+				section.update(state, onps)
+		if out_idx > 0:
+			self._active_sections = self._active_sections[out_idx:]
 		
 		return t
+
+	def empty(self):
+		return len(self.sections) == 0 and len(self._active_sections) == 0
 	
 if __name__ == "__main__":
 	import tja_reader
