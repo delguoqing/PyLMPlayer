@@ -10,6 +10,6 @@ class CEnsoState(object):
 		self.offset = -header["OFFSET"] * 1000
 		self.balloons = list(header["BALLOON"])
 		
-		self.long_note = False
+		self.long_note = None
 		self.bar_offset = 0
 		self.branch_bar = False	# is the next bar a start of new branch

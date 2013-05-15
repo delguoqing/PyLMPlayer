@@ -18,7 +18,12 @@ class CNoteBatch(object):
 		
 		# Add Barline
 		if state.bar_offset == 0:
-			self.notes.append((state.offset, "B"))
+			if state.branch_bar:
+				self.notes.append((state.offset, "C", 0, self.speed))
+				state.branch_bar = False
+			else:
+				self.notes.append((state.offset, "B", 0, self.speed))
+			
 			print "ONP B @off=%f" % state.offset
 			
 		# Add Notes
@@ -26,31 +31,23 @@ class CNoteBatch(object):
 			off = state.offset + t_unit * idx
 			if note == "0" or note == ",":
 				continue
-			elif note == "5":	# Renda
-				self.notes.append((off, note))
-				state.long_note = True
+			elif note == "5" or note == "6":	# Renda
+				self.notes.append((off, note, 0, self.speed))
+				state.long_note = note
 				print "ONP %s @off=%f" % (note, off)
-			elif note == "7":	# Balloon Renda
+			elif note == "7" or note == "9":	# Balloon Renda or Imo Renda
 				if state.long_note:
 					continue
 				hit_count = state.balloons.pop(0)
-				self.notes.append((off, note, hit_count))
-				state.long_note = True				
+				self.notes.append((off, note, hit_count, self.speed))
+				state.long_note = note
 				print "ONP %s @off=%f, hitcount=%d" % (note, off, hit_count)
-			elif note == "9":	# Imo Renda
-				if not state.long_note:
-					hit_count = state.balloons.pop(0)
-					self.notes.append((off, note, hit_count))
-					state.long_note = True
-					print "ONP %s @off=%f, hitcount=%d" % (note, off, hit_count)
-				else:	# A == imo break high/low point
-					self.notes.append((off, "A"))
-					print "ONP A @off=%f" % off
 			elif note == "8":
-				state.long_note = False
+				self.notes.append((off, state.long_note+"E", 0, self.speed))
+				state.long_note = None
 				print "ONP RENDA END"
 			else:
-				self.notes.append((off, note))
+				self.notes.append((off, note, 0, self.speed))
 				print "ONP %s @off=%f" % (note, off)
 		
 	def read(self, reader, state):

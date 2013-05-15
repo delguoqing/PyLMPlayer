@@ -29,6 +29,7 @@ class CFumen(object):
 				reader.skip_line()
 				if next_state:
 					curr_state, next_state = next_state, None
+				curr_state.branch_bar = True
 				self.sections.append([True, args, None, None, None])
 				print "======> BRANCHSTART"
 			elif cmd_name in ("#N", "#E", "#M"):
