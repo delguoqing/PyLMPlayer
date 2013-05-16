@@ -132,14 +132,13 @@ class CNoteBatch(object):
 		# checking for new notes
 		in_idx = 0
 		out_idx = 0
-		for note_cfg in self.notes:
+		for idx, note_cfg in enumerate(self.notes):
 			off, note = note_cfg[0], note_cfg[1]
-			if state.offset - off > self.out_off:
-				out_idx += 1
+			if state.offset - off > self.out_off \
+				and note not in ("5", "6", "7", "9"):
+				out_idx = idx + 1
 			elif off - state.offset > self.in_off:
 				break
-			in_idx += 1
-			
 			# append active onp to queue
 			onps.append(note_cfg)
 			
