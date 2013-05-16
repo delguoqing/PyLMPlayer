@@ -59,7 +59,7 @@ class CNoteSection(object):
 				break
 			activated_idx += 1
 			self._insert_active_batch(batch)
-			print "new batch activated! %d" % id(batch)
+			#print "new batch activated! %d" % id(batch)
 		if activated_idx > 0:
 			self.note_batches = self.note_batches[activated_idx:]
 			
@@ -74,6 +74,6 @@ class CNoteSection(object):
 				mark_last_empty = True
 				
 		if out_idx > 0:
-			print "empty batch removed!"
+			#print "empty batch removed!"
 			self._active_batch = self._active_batch[out_idx:]
 			

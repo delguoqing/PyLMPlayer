@@ -15,7 +15,7 @@ DON_POS_BALLOON = (128, 128)
 DON_POS_IMO = (187, 110)
 
 # Dance BG
-DANCE_BG = r"pack121/DANCE_BG_IDOL.LM"
+DANCE_BG = r"pack124/DANCE_BG_MIKU.LM"
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG = r"pack99/ENSO_UP_BG_03.LM"
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
@@ -48,11 +48,17 @@ def RENDA_EFFECT_FUNC2(mc, style):
 #RENDA_EFFECT_Y_RANGE = (0, 272)
 #RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC1
 
-RENDA_EFFECT = r"pack91/RENDA_EFFECT_HAMAYA.LM"
-RENDA_EFFECT_NUM = 1
+#RENDA_EFFECT = r"pack91/RENDA_EFFECT_HAMAYA.LM"
+#RENDA_EFFECT_NUM = 1
+#RENDA_EFFECT_X_RANGE = (-10, 10)
+#RENDA_EFFECT_Y_RANGE = (200, 272)
+#RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
+
+RENDA_EFFECT = r"pack95/RENDA_EFFECT_MIKU.LM"
+RENDA_EFFECT_NUM = 5
 RENDA_EFFECT_X_RANGE = (-10, 10)
 RENDA_EFFECT_Y_RANGE = (200, 272)
-RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
+RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC0
 
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
@@ -82,7 +88,7 @@ DANCER1 = r"pack355/DANCE_MIKU_01.LM"
 #DANCER1 = r"pack_dancer29/DANCE_GUMI_01.LM"
 
 # Fever(Appear when tamashii gauge is full.)
-FEVER = r"pack_fever29/FEVER_GUMI.LM"
+FEVER = r"pack362/FEVER_MIKU.LM"
 
 # Course icon. not affected by sabi effect.
 COURSE = r"pack63/COURSE_ONI.LM"
@@ -90,11 +96,15 @@ COURSE = r"pack63/COURSE_ONI.LM"
 # The tamashi gauge
 GAUGE = r"pack66/GAUGE_DON_H.LM"
 
+#CHIBI = (
+#	r"pack85/CHIBI_1P_IDOL_01.LM",
+#	r"pack85/CHIBI_1P_IDOL_02.LM",
+#	r"pack85/CHIBI_1P_IDOL_03.LM",
+#	r"pack85/CHIBI_1P_IDOL_04.LM",
+#)
+
 CHIBI = (
-	r"pack85/CHIBI_1P_IDOL_01.LM",
-	r"pack85/CHIBI_1P_IDOL_02.LM",
-	r"pack85/CHIBI_1P_IDOL_03.LM",
-	r"pack85/CHIBI_1P_IDOL_04.LM",
+	r"pack88/CHIBI_MIKU.LM",
 )
 
 CHIBI_MISS = r"pack84/CHIBI_TAMA_01.LM"
@@ -105,7 +115,8 @@ BUNKI = r"pack44/ENSO_BUNKI.LM"
 MATO_GOGO = r"pack44/ENSO_MATO_GOGO.LM"
 BUNKI_MOJI = r"pack44/ENSO_BUNKI_MOJI.LM"
 MATO = r"pack44/ENSO_MATO.LM"
-FULLCOMBO = r"pack45/ENSO_FULLCOMBO.LM"
+#FULLCOMBO = r"pack45/ENSO_FULLCOMBO.LM"
+FULLCOMBO = r"pack48/MIKU_FULLCOMBO.LM"
 
 ONPS = (
 	r"pack42/ONP_DON.LM",

@@ -124,7 +124,7 @@ class CMgr(object):
 		
 		self._fumen.update(self._state, self._onps)
 		
-		self.log_onps(self._onps)
+		#self.log_onps(self._onps)
 		
 		# draw from back to front
 		end_note = None
