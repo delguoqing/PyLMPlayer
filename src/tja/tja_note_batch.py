@@ -130,13 +130,18 @@ class CNoteBatch(object):
 	def update(self, state, onps):
 		
 		# checking for new notes
-		in_idx = 0
 		out_idx = 0
+		delay_removing = False
 		for idx, note_cfg in enumerate(self.notes):
 			off, note = note_cfg[0], note_cfg[1]
-			if state.offset - off > self.out_off \
-				and note not in ("5", "6", "7", "9"):
-				out_idx = idx + 1
+			if state.offset - off > self.out_off:
+				if note in ("5", "6", "7", "9"):
+					delay_removing = True
+				elif note.endswith("E"):
+					delay_removing = False
+					out_idx = idx + 1
+				elif not delay_removing:
+					out_idx = idx + 1
 			elif off - state.offset > self.in_off:
 				break
 			# append active onp to queue
@@ -144,6 +149,9 @@ class CNoteBatch(object):
 			
 		# remove outdated onps
 		if out_idx > 0:
+			for i in xrange(out_idx):
+				print "removing %s" % self.notes[i][1]
+			
 			self.notes = self.notes[out_idx:]
 		
 	def __cmp__(self, o):

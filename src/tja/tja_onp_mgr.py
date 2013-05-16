@@ -207,13 +207,13 @@ class CMgr(object):
 			end_note = None
 				
 	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):
-		lumen = self._onp_lumens[self.index]
+		lumen = self._onp_lumens[index]
 		if x > self._onp_hit_x:
 			lumen.matrix.translate = (x, self._onp_y)
 		elif end_x > self._onp_hit_x:
 			lumen.matrix.translate = (self._onp_hit_x, self._onp_y)
 		else:
-			lumen.matrix.translate = (end_x, self._onp_y)				
+			lumen.matrix.translate = (end_x, self._onp_y)
 		lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 	def draw_renda(self, render_state, operation, head, body, tail, x, end_x):
