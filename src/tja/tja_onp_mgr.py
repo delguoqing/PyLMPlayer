@@ -217,9 +217,11 @@ class CMgr(object):
 		lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 		lumen_head = self._onp_lumens[head]
+		lumen_head.matrix.translate = (x, self._onp_y)
 		lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 		lumen_tail = self._onp_lumens[tail]
+		lumen_tail.matrix.translate = (end_x, self._onp_y)
 		lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 	
 if __name__ == '__main__':
