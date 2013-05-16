@@ -167,6 +167,9 @@ pip-log.txt
 #############
 cython
 *.png
+*.jpg
+*.tja
 *.LM
 *.DAT
 *.komodoproject
+log.txt

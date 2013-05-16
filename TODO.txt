@@ -18,11 +18,11 @@ http://ericlin2.tripod.com/
 #53. fix bug. Dancer Sync bad key frame.
 
 # Priority High
-#48. makes a note sheet flow.
-#51.
-#52.
-
-
+#51. implement hit judge
+#52. implement fumen bunki
+#53. implement auto play
+#54
+#55.
 #10000. optimize(Never do this when not neccesary!)
 
 # DONE
@@ -129,3 +129,5 @@ i can do drawing in the same visit.
 	DANCER_GUMI_01.LM ~ DANCER_GUMI_05.LM uses wrong callback!
 	should be "dancer_out_end" when "out" animation is end.
 	Can only fix it by hardcoding.
+#48. makes a note sheet flow.
+	Tested all notes ok.(Except bunki syousetsu.)
