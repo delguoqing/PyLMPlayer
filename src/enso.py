@@ -440,6 +440,7 @@ def on_key_press(symbol, modifiers):
 		movieclips[MATO].gotoAndPlay("hit_ka")		
 		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
 		movieclips[HITEFFECTS].gotoAndPlay("don_b")
+		movieclips[COURSE].gotoAndPlay("hit")
 		
 		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
 		if chibi is not None: chibi.gotoAndPlay(0)
