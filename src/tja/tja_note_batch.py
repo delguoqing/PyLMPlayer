@@ -16,18 +16,18 @@ class CNoteBatch(object):
 	def append_notes(self, notes, tot_notes, state):
 		t_unit = (60000.0/state.bpm) * state.measure / tot_notes
 		
-		# Add Barline
-		if state.bar_offset == 0:
-			if state.branch_bar:
-				self.notes.append((state.offset, "C", 0, self.speed))
-				state.branch_bar = False
-			else:
-				self.notes.append((state.offset, "B", 0, self.speed))
-			
-			print "ONP B @off=%f" % state.offset
-			
 		# Add Notes
 		for idx, note in enumerate(notes):
+			# Add Barline after the frist note
+			if idx == 1 and state.bar_offset == 0:
+				if state.branch_bar:
+					self.notes.append((state.offset, "C", 0, self.speed))
+					state.branch_bar = False
+				else:
+					self.notes.append((state.offset, "B", 0, self.speed))
+				
+				print "ONP B @off=%f" % state.offset
+				
 			off = state.offset + t_unit * idx
 			if note == "0" or note == ",":
 				continue

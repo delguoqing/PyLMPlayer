@@ -63,11 +63,11 @@ RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
 #DANCER2 = r"pack352/DANCE_IDOL_MIKI.LM"
 #DANCER1 = r"pack352/DANCE_IDOL_MAMI.LM"
 
-#DANCER5 = r"pack355/DANCE_MIKU_05.LM"
-#DANCER4 = r"pack355/DANCE_MIKU_04.LM"
-#DANCER3 = r"pack355/DANCE_MIKU_03.LM"
-#DANCER2 = r"pack355/DANCE_MIKU_02.LM"
-#DANCER1 = r"pack355/DANCE_MIKU_01.LM"
+DANCER5 = r"pack355/DANCE_MIKU_05.LM"
+DANCER4 = r"pack355/DANCE_MIKU_04.LM"
+DANCER3 = r"pack355/DANCE_MIKU_03.LM"
+DANCER2 = r"pack355/DANCE_MIKU_02.LM"
+DANCER1 = r"pack355/DANCE_MIKU_01.LM"
 
 #DANCER5 = r"pack_dancer25/DANCE_FRENESI_05.LM"
 #DANCER4 = r"pack_dancer25/DANCE_FRENESI_04.LM"
@@ -75,11 +75,11 @@ RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
 #DANCER2 = r"pack_dancer25/DANCE_FRENESI_02.LM"
 #DANCER1 = r"pack_dancer25/DANCE_FRENESI_01.LM"
 
-DANCER5 = r"pack_dancer29/DANCE_GUMI_05.LM"
-DANCER4 = r"pack_dancer29/DANCE_GUMI_04.LM"
-DANCER3 = r"pack_dancer29/DANCE_GUMI_03.LM"
-DANCER2 = r"pack_dancer29/DANCE_GUMI_02.LM"
-DANCER1 = r"pack_dancer29/DANCE_GUMI_01.LM"
+#DANCER5 = r"pack_dancer29/DANCE_GUMI_05.LM"
+#DANCER4 = r"pack_dancer29/DANCE_GUMI_04.LM"
+#DANCER3 = r"pack_dancer29/DANCE_GUMI_03.LM"
+#DANCER2 = r"pack_dancer29/DANCE_GUMI_02.LM"
+#DANCER1 = r"pack_dancer29/DANCE_GUMI_01.LM"
 
 # Fever(Appear when tamashii gauge is full.)
 FEVER = r"pack_fever29/FEVER_GUMI.LM"
@@ -107,6 +107,21 @@ BUNKI_MOJI = r"pack44/ENSO_BUNKI_MOJI.LM"
 MATO = r"pack44/ENSO_MATO.LM"
 FULLCOMBO = r"pack45/ENSO_FULLCOMBO.LM"
 
+ONPS = (
+	r"pack42/ONP_DON.LM",
+	r"pack42/ONP_KATSU.LM",
+	r"pack42/ONP_DON_DAI.LM",
+	r"pack42/ONP_KATSU_DAI.LM",
+	r"pack42/ONP_RENDA01.LM",
+	r"pack42/ONP_RENDA02.LM",
+	r"pack42/ONP_RENDA03.LM",
+	r"pack42/ONP_D_RENDA01.LM",
+	r"pack42/ONP_D_RENDA02.LM",
+	r"pack42/ONP_D_RENDA03.LM",
+	r"pack42/ONP_GEKI.LM",
+	r"pack42/ONP_IMO.LM",
+	r"pack42/ENSO_SYOUSETSU.LM",
+)
 # =========> onps <====================
 
 # The taiko.

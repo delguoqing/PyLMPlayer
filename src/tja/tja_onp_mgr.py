@@ -76,9 +76,12 @@ class CMgr(object):
 		
 		self.set_option(options)
 		
-	def set_onp_lumen(self, lumens):
+	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
 	
+		self._onp_lumens[self.ONP_SYOUSETSU].gotoAndPlay("normal")
+		self._onp_lumens[self.ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
+		
 	def set_option(self, options):
 		self._auto = (options & OPTION_AUTO_MASK == OPTION_AUTO)
 		
@@ -136,6 +139,14 @@ class CMgr(object):
 				lumen = self._onp_lumens[self.ONP_KATSU_DAI]
 				lumen.matrix.translate = (x, self._onp_y)
 				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
+			elif onp == "B" and self._state.barline_on:
+				lumen = self._onp_lumens[self.ONP_SYOUSETSU]
+				lumen.matrix.translate = (x, self._onp_y)
+				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
+			elif onp == "C":
+				lumen = self._onp_lumens[self.ONP_SYOUSETSU_BUNKI]
+				lumen.matrix.translate = (x, self._onp_y)
+				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 			elif onp.endswith("E"):
 				end_note = (off, onp, hits, spd)
 			elif onp == "5":
@@ -170,11 +181,6 @@ class CMgr(object):
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 				self.draw_geki_or_imo(render_state, operation, self.ONP_IMO, x, end_x)
 				end_note = None
-				
-			elif onp == "B" and self._state.barline_on:
-				self._onp_lumens[self.ONP_SYOUSETSU].update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "C":
-				self._onp_lumens[self.ONP_SYOUSETSU_BUNKI].update(render_state, operation & lm_consts.MASK_DRAW)
 				
 		if end_note:
 			off, onp, hits, spd = end_note

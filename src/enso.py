@@ -8,6 +8,8 @@ import gc
 import random
 import enso_cfg
 
+from tja import tja_onp_mgr, tja_fumen, tja_reader
+from enso_layout import *
 from pyglet.gl import *
 from ctypes import *
 
@@ -546,7 +548,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		if movieclip not in (movieclips[MATO_GOGO], ): continue
+		#if movieclip not in (movieclips[MATO_GOGO], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -564,103 +566,6 @@ pyglet.clock.schedule(on_draw)
 
 # global render state control
 render_state = lm_render_state.CObj()
-
-NUM_MOVIECLIP = 36
-(
-#######################
-# BG Part!
-# Some dance bg is such made that its elements can move event to the top,
-# which should be hidden by the enso up bg.
-#######################
-# Dance BG
-DANCE_BG, 
-# Enso up bg. Scrolling from left to right.
-ENSO_UP_BG, 
-# sabi effect. When game enters gogotime. This is drawn on top of up bg.
-BG_SAB_EFFECTI,
-
-# Renda effect, 
-RENDA_EFFECT,
-
-# Dancers: (Appear in the  following order)
-# 4    2    1    3    5
-DANCER5,
-DANCER4,
-DANCER3,
-DANCER2,
-DANCER1,
-# Fever(Appear when tamashii gauge is full.)
-FEVER,
-
-# Course icon. not affected by sabi effect.
-COURSE, 
-# Character don.(At normal states)
-DON,
-# The tamashi gauge
-GAUGE,
-
-CHIBI,
-
-########################
-# Enso Part!
-# Enso parts rules.hit judge effect can be the most top.
-# The onp_fly animation is on top of the gauge and something else
-########################
-LANE, 
-HITEFFECTS, 
-BUNKI,
-MATO_GOGO, 
-BUNKI_MOJI, 
-MATO, 
-FULLCOMBO,
-
-# =========> onps <====================
-
-# The taiko.
-TAIKO, 
-# Left/Right Don/Kats.
-LEFT_DON, LEFT_KATS, RIGHT_DON, RIGHT_KATS, 
-# Combo number and Cherry(every 100 combo).
-COMBO,
-
-ONP_FLY,
-
-# Hitjudge
-HITJUDGE, 
-
-# Don chan will go above the enso lane at certain scenes.
-# when player hits a balloon or a imo
-DON2,
-BALLOON,
-IMO,
-
-#######################
-# HUD Part!
-#######################
-# Scores.
-# Score Add: How many score is added in the last hit
-# Score Main: The total score.
-# Fukidashi: The current combo(every 10 combo), Level up, Level down, Miss
-# Renda Num: The current hit of the renda onp
-FUKIDASHI,
-RENDA_NUM, 
-SCORE_ADD, SCORE_MAIN,
-
-# To be layout correctly
-#SYOUSETSU,
-#ONP_DON,
-#ONP_KATS,
-#ONP_DON_DAI,
-#ONP_KATS_DAI,
-#ONP_RENDA1,
-#ONP_RENDA2,
-#ONP_RENDA3,
-#ONP_RENDA1_DAI,
-#ONP_RENDA2_DAI,
-#ONP_RENDA3_DAI,
-#ONP_IMO,
-#ONP_BALLOON,
-) = range(NUM_MOVIECLIP)
 
 # Build up scene
 def build_scene(cfg):
@@ -805,6 +710,21 @@ def build_scene(cfg):
 			_ctx.replace_texture(idx, os.path.join(cfg.DON_KARADA[0], "cos_%02d_%s.png" % (cfg.DON_KARADA[1], part)))
 		for idx, part in DON_ATAMA_MAPPING:
 			_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
+	
+	# ONPS
+	reader = tja_reader.CReader()
+	reader.set_file(sys.argv[1])
+	fumen = tja_fumen.CFumen()
+	fumen.read_header(reader)
+	fumen.read_fumen(reader)
+	
+	onp_lumens = []
+	for filename in cfg.ONPS[:-1]:
+		onp_lumens.append(LMC(filename))
+	onp_lumens.extend(LMCS(cfg.ONPS[-1], 2))
+	
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, options=0)
+	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips
 
