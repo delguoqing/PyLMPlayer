@@ -82,6 +82,12 @@ class CMgr(object):
 		self._onp_lumens[self.ONP_SYOUSETSU].gotoAndPlay("normal")
 		self._onp_lumens[self.ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
 		
+	def log_onps(self, onps):
+		print "active onps:"
+		for off, onp, hits, spd in onps:
+			print "\t%s @off=%f, spd=%f" % (onp, off, spd)
+		print
+		
 	def set_option(self, options):
 		self._auto = (options & OPTION_AUTO_MASK == OPTION_AUTO)
 		
@@ -118,10 +124,11 @@ class CMgr(object):
 		
 		self._fumen.update(self._state, self._onps)
 		
+		self.log_onps(self._onps)
+		
 		# draw from back to front
-		self._onps.reverse()
 		end_note = None
-		for off, onp, hits, spd in self._onps:
+		for off, onp, hits, spd in reversed(self._onps):
 			x = self._onp_hit_x + (off - self._state.offset) * spd
 			if onp == "1":
 				lumen = self._onp_lumens[self.ONP_DON]
