@@ -154,8 +154,8 @@ class CMgr(object):
 					end_x = 480
 				else:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_renda(render_state, operation, self.ONP_RENDA_DAI1, self.ONP_RENDA_DAI2,
-								self.ONP_RENDA_DAI3, x, end_x)
+				self.draw_renda(render_state, operation, self.ONP_RENDA1, self.ONP_RENDA2, self.ONP_RENDA3,
+								x, end_x)
 				end_note = None
 				
 			elif onp == "6":
@@ -163,9 +163,10 @@ class CMgr(object):
 					end_x = 480
 				else:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_renda(render_state, operation, self.ONP_RENDA1, self.ONP_RENDA2, self.ONP_RENDA3,
-								x, end_x)
+				self.draw_renda(render_state, operation, self.ONP_RENDA_DAI1, self.ONP_RENDA_DAI2,
+								self.ONP_RENDA_DAI3, x, end_x)
 				end_note = None
+				
 			elif onp == "7":
 				if end_note is None:
 					end_x = 480
