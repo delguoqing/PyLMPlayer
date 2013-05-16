@@ -217,7 +217,6 @@ class CMgr(object):
 		lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 	def draw_renda(self, render_state, operation, head, body, tail, x, end_x):
-		print "draw renda [%f, %f]" % (x, end_x)
 		body_len = end_x - x
 		
 		lumen_body = self._onp_lumens[body]

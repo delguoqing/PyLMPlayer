@@ -28,6 +28,7 @@ fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 ###################################
 # Game Logic
 ###################################
+scr_shot_id = 0
 cur_combo = 0	# current combo
 cur_renda = 0	# current renda
 cur_score = 0	# current score
@@ -521,8 +522,13 @@ def on_key_press(symbol, modifiers):
 		if max_imo <= 0:
 			set_max_imo(random.randint(10, 20))
 		else:
-			set_imo(cur_imo - 1)	
-	
+			set_imo(cur_imo - 1)
+			
+	elif symbol == pyglet.window.key.F10:
+		global scr_shot_id
+		pyglet.image.get_buffer_manager().get_color_buffer().save('enso%d.jpg' % scr_shot_id)
+		scr_shot_id += 1
+		
 ###################################
 # Rendering
 ###################################
