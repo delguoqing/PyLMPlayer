@@ -217,11 +217,13 @@ class CMgr(object):
 		lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 	def draw_renda(self, render_state, operation, head, body, tail, x, end_x):
+		print "draw renda [%f, %f]" % (x, end_x)
 		body_len = end_x - x
 		
 		lumen_body = self._onp_lumens[body]
 		lumen_body.matrix.translate = ((x + end_x) * 0.5, self._onp_y)
 		lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
+		lumen_body.renda.gotoAndStop("yellow")
 		lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 		lumen_head = self._onp_lumens[head]
@@ -229,6 +231,7 @@ class CMgr(object):
 		lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 		lumen_tail = self._onp_lumens[tail]
+		lumen_tail.renda.gotoAndStop("yellow")
 		lumen_tail.matrix.translate = (end_x, self._onp_y)
 		lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 	
