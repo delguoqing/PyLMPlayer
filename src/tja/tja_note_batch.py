@@ -59,6 +59,9 @@ class CNoteBatch(object):
 			and (not reader.check_commands(("#BPMCHANGE", "#SCROLL")) or len(self.notes) == 0):
 		
 			notes, tot_notes = reader.read_notes()
+			if notes == ",":
+				notes = "0,"
+				tot_notes = 1
 			cmd_name, args = reader.read_command()
 
 			# handle commands
@@ -90,9 +93,6 @@ class CNoteBatch(object):
 				
 			# handle notes
 			if notes:
-				if notes == ",":
-					notes = "0,"
-					tot_notes = 1
 				print "NOTES off=%d:\t%s\tbar_off=%d" % (state.offset, notes, state.bar_offset)
 				num_notes = len(notes) - int(notes.endswith(","))
 				tot_notes += state.bar_offset
