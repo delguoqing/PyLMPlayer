@@ -46,7 +46,7 @@ class CNoteBatch(object):
 				state.long_note = note
 				self.log("ONP %s @off=%f, hitcount=%d" % (note, off, hit_count))
 			elif note == "8":
-				self.notes.append((off, state.long_note+"E", 0, self.speed))
+				self.notes.append((off, note, 0, self.speed))
 				state.long_note = None
 				self.log("ONP RENDA END")
 			else:
@@ -137,7 +137,7 @@ class CNoteBatch(object):
 			if state.offset - off > self.out_off:
 				if note in ("5", "6", "7", "9"):
 					delay_removing = True
-				elif note.endswith("E"):
+				elif note == "8":
 					delay_removing = False
 					out_idx = idx + 1
 				elif not delay_removing:

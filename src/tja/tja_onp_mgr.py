@@ -130,6 +130,7 @@ class CMgr(object):
 		end_note = None
 		for off, onp, hits, spd in reversed(self._onps):
 			x = self._onp_hit_x + (off - self._state.offset) * spd
+			end_x = 480
 			if onp == "1":
 				lumen = self._onp_lumens[self.ONP_DON]
 				lumen.matrix.translate = (x, self._onp_y)
@@ -154,57 +155,33 @@ class CMgr(object):
 				lumen = self._onp_lumens[self.ONP_SYOUSETSU_BUNKI]
 				lumen.matrix.translate = (x, self._onp_y)
 				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp.endswith("E"):
+			elif onp == "8":
 				end_note = (off, onp, hits, spd)
 			elif onp == "5":
-				if end_note is None:
-					end_x = 480
-				else:
+				if end_note is not None:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 				self.draw_renda(render_state, operation, self.ONP_RENDA1, self.ONP_RENDA2, self.ONP_RENDA3,
 								x, end_x)
 				end_note = None
 				
 			elif onp == "6":
-				if end_note is None:
-					end_x = 480
-				else:
+				if end_note is not None:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 				self.draw_renda(render_state, operation, self.ONP_RENDA_DAI1, self.ONP_RENDA_DAI2,
 								self.ONP_RENDA_DAI3, x, end_x)
 				end_note = None
 				
 			elif onp == "7":
-				if end_note is None:
-					end_x = 480
-				else:
+				if end_note is not None:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 				self.draw_geki_or_imo(render_state, operation, self.ONP_GEKI, x, end_x)
 				end_note = None
 				
 			elif onp == "9":
-				if end_note is None:
-					end_x = 480
-				else:
+				if end_note is not None:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 				self.draw_geki_or_imo(render_state, operation, self.ONP_IMO, x, end_x)
 				end_note = None
-				
-		if end_note:
-			off, onp, hits, spd = end_note
-			x = 0
-			end_x = end_x = self._onp_hit_x + (off - self._state.offset) * spd
-			if onp == "5E":
-				self.draw_renda(render_state, operation, self.ONP_RENDA1, self.ONP_RENDA2, self.ONP_RENDA3, x, end_x)
-			elif onp == "6E":
-				self.draw_renda(render_state, operation, self.ONP_RENDA_DAI1, self.ONP_RENDA_DAI2, self.ONP_RENDA_DAI3, x, end_x)
-			elif onp == "7E":
-				self.draw_geki_or_imo(render_state, operation, self.ONP_GEKI, x, end_x)
-			elif onp == "9E":
-				self.draw_geki_or_imo(render_state, operation, self.ONP_IMO, x, end_x)
-			else:
-				assert False, "Invalid end note %s" % onp
-			end_note = None
 				
 	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):
 		lumen = self._onp_lumens[index]
