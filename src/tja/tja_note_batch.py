@@ -30,7 +30,7 @@ class CNoteBatch(object):
 			"8": ONP_END,
 			"9": ONP_IMO,
 			"A": ONP_IMO_HIGH,
-			"B": ONP_SYOUSETSU,
+			"B": ONP_SYOUSETSU_NORMAL,
 			"C": ONP_SYOUSETSU_BUNKI,
 		}
 		return TABLE[str]
@@ -168,9 +168,6 @@ class CNoteBatch(object):
 			
 		# remove outdated onps
 		if out_idx > 0:
-			for i in xrange(out_idx):
-				print "removing %s" % self.notes[i][1]
-			
 			self.notes = self.notes[out_idx:]
 		
 	def __cmp__(self, o):

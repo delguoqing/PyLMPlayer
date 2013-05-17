@@ -53,7 +53,7 @@ class CMgr(object):
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
 	
-		self._onp_lumens[ONP_SYOUSETSU].gotoAndPlay("normal")
+		self._onp_lumens[ONP_SYOUSETSU_NORMAL].gotoAndPlay("normal")
 		self._onp_lumens[ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
 		
 	def log_onps(self, onps):
@@ -106,7 +106,7 @@ class CMgr(object):
 			x = self._onp_hit_x + (off - self._state.offset) * spd
 			end_x = 480
 			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
-				or (ONP_SHORT[0] <= onp <= ONP_SHORT[1] and self._state.barline_on):
+				or (ONP_SYOUSETSU[0] <= onp <= ONP_SYOUSETSU[1] and self._state.barline_on):
 				lumen = self._onp_lumens[onp]
 				lumen.matrix.translate = (x, self._onp_y)
 				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
