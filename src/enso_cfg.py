@@ -123,15 +123,16 @@ ONPS = (
 	r"pack42/ONP_KATSU.LM",
 	r"pack42/ONP_DON_DAI.LM",
 	r"pack42/ONP_KATSU_DAI.LM",
+	r"pack42/ENSO_SYOUSETSU.LM",
+	r"pack42/ENSO_SYOUSETSU.LM",
 	r"pack42/ONP_RENDA01.LM",
-	r"pack42/ONP_RENDA02.LM",
-	r"pack42/ONP_RENDA03.LM",
 	r"pack42/ONP_D_RENDA01.LM",
-	r"pack42/ONP_D_RENDA02.LM",
-	r"pack42/ONP_D_RENDA03.LM",
 	r"pack42/ONP_GEKI.LM",
 	r"pack42/ONP_IMO.LM",
-	r"pack42/ENSO_SYOUSETSU.LM",
+	r"pack42/ONP_RENDA02.LM",
+	r"pack42/ONP_RENDA03.LM",
+	r"pack42/ONP_D_RENDA02.LM",
+	r"pack42/ONP_D_RENDA03.LM",
 )
 # =========> onps <====================
 

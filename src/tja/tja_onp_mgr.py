@@ -3,20 +3,9 @@ sys.path.append("..")
 
 import random
 import tja_enso_state
+
 from lm import lm_consts
-
-OPTION_SPD_2x = 1
-OPTION_SPD_3x = 2
-OPTION_SPD_4x = 3
-OPTION_SPD_MASK = 3
-
-OPTION_AUTO = 4
-OPTION_AUTO_MASK = 4
-
-OPTION_ONP_MIRROR = 8
-OPTION_ONP_RANDOM = 16
-OPTION_ONP_SRANDOM = 24
-OPTION_ONP_MASK = 24
+from tja_consts import *
 
 def onp_rand_none(onp):
 	return onp
@@ -48,21 +37,6 @@ def onp_rand_srandom(onp):
 
 class CMgr(object):
 	
-	ONP_DON = 0
-	ONP_KATSU = 1
-	ONP_DON_DAI = 2
-	ONP_KATSU_DAI = 3
-	ONP_RENDA1 = 4
-	ONP_RENDA2 = 5
-	ONP_RENDA3 = 6
-	ONP_RENDA_DAI1 = 7
-	ONP_RENDA_DAI2 = 8
-	ONP_RENDA_DAI3 = 9
-	ONP_GEKI = 10
-	ONP_IMO = 11
-	ONP_SYOUSETSU = 12
-	ONP_SYOUSETSU_BUNKI = 13
-	
 	def __init__(self, fumen, options=0):
 		self._glb_scroll = 1.0
 		self._auto = False
@@ -79,8 +53,8 @@ class CMgr(object):
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
 	
-		self._onp_lumens[self.ONP_SYOUSETSU].gotoAndPlay("normal")
-		self._onp_lumens[self.ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
+		self._onp_lumens[ONP_SYOUSETSU].gotoAndPlay("normal")
+		self._onp_lumens[ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
 		
 	def log_onps(self, onps):
 		print "active onps:"
@@ -131,58 +105,28 @@ class CMgr(object):
 		for off, onp, hits, spd in reversed(self._onps):
 			x = self._onp_hit_x + (off - self._state.offset) * spd
 			end_x = 480
-			if onp == "1":
-				lumen = self._onp_lumens[self.ONP_DON]
+			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
+				or (ONP_SHORT[0] <= onp <= ONP_SHORT[1] and self._state.barline_on):
+				lumen = self._onp_lumens[onp]
 				lumen.matrix.translate = (x, self._onp_y)
 				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "2":
-				lumen = self._onp_lumens[self.ONP_KATSU]
-				lumen.matrix.translate = (x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "3":
-				lumen = self._onp_lumens[self.ONP_DON_DAI]
-				lumen.matrix.translate = (x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "4":
-				lumen = self._onp_lumens[self.ONP_KATSU_DAI]
-				lumen.matrix.translate = (x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "B" and self._state.barline_on:
-				lumen = self._onp_lumens[self.ONP_SYOUSETSU]
-				lumen.matrix.translate = (x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "C":
-				lumen = self._onp_lumens[self.ONP_SYOUSETSU_BUNKI]
-				lumen.matrix.translate = (x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == "8":
+			elif onp == ONP_END:
 				end_note = (off, onp, hits, spd)
-			elif onp == "5":
+			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
 				if end_note is not None:
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_renda(render_state, operation, self.ONP_RENDA1, self.ONP_RENDA2, self.ONP_RENDA3,
-								x, end_x)
-				end_note = None
-				
-			elif onp == "6":
-				if end_note is not None:
-					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_renda(render_state, operation, self.ONP_RENDA_DAI1, self.ONP_RENDA_DAI2,
-								self.ONP_RENDA_DAI3, x, end_x)
-				end_note = None
-				
-			elif onp == "7":
-				if end_note is not None:
-					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_geki_or_imo(render_state, operation, self.ONP_GEKI, x, end_x)
-				end_note = None
-				
-			elif onp == "9":
-				if end_note is not None:
-					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-				self.draw_geki_or_imo(render_state, operation, self.ONP_IMO, x, end_x)
-				end_note = None
-				
+					end_note = None
+				if onp == ONP_RENDA1:
+					self.draw_renda(render_state, operation,
+						ONP_RENDA1, ONP_RENDA2, ONP_RENDA3, x, end_x)
+				elif onp == ONP_RENDA_DAI1:
+					self.draw_renda(render_state, operation,
+						ONP_RENDA_DAI1, ONP_RENDA_DAI2, ONP_RENDA_DAI3, x, end_x)
+				elif onp == ONP_GEKI:
+					self.draw_geki_or_imo(render_state, operation, ONP_GEKI, x, end_x)
+				elif onp == ONP_IMO:
+					self.draw_geki_or_imo(render_state, operation, ONP_IMO, x, end_x)
+	
 	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):
 		lumen = self._onp_lumens[index]
 		if x > self._onp_hit_x:

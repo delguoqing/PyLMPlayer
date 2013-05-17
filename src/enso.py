@@ -726,9 +726,8 @@ def build_scene(cfg):
 	fumen.read_fumen(reader)
 	
 	onp_lumens = []
-	for filename in cfg.ONPS[:-1]:
+	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
-	onp_lumens.extend(LMCS(cfg.ONPS[-1], 2))
 	
 	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, options=0)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)

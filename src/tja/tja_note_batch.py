@@ -1,3 +1,5 @@
+from tja_consts import *
+
 # A batch of note scrolling at the same speed
 class CNoteBatch(object):
 	
@@ -16,6 +18,23 @@ class CNoteBatch(object):
 	def log(self, str):
 		print str
 			
+	def trans_note(self, str):
+		TABLE = {
+			"1": ONP_DON,
+			"2": ONP_KATSU,
+			"3": ONP_DON_DAI,
+			"4": ONP_KATSU_DAI,
+			"5": ONP_RENDA1,
+			"6": ONP_RENDA_DAI1,
+			"7": ONP_GEKI,
+			"8": ONP_END,
+			"9": ONP_IMO,
+			"A": ONP_IMO_HIGH,
+			"B": ONP_SYOUSETSU,
+			"C": ONP_SYOUSETSU_BUNKI,
+		}
+		return TABLE[str]
+	
 	def append_notes(self, notes, tot_notes, state):
 		t_unit = (60000.0/state.bpm) * state.measure / tot_notes
 		
@@ -24,10 +43,10 @@ class CNoteBatch(object):
 			# Add Barline after the frist note
 			if idx == 1 and state.bar_offset == 0:
 				if state.branch_bar:
-					self.notes.append((state.offset, "C", 0, self.speed))
+					self.notes.append((state.offset, self.trans_note("C"), 0, self.speed))
 					state.branch_bar = False
 				else:
-					self.notes.append((state.offset, "B", 0, self.speed))
+					self.notes.append((state.offset, self.trans_note("B"), 0, self.speed))
 				
 				self.log("ONP B @off=%f" % state.offset)
 				
@@ -35,22 +54,22 @@ class CNoteBatch(object):
 			if note == "0" or note == ",":
 				continue
 			elif note == "5" or note == "6":	# Renda
-				self.notes.append((off, note, 0, self.speed))
-				state.long_note = note
+				self.long_note = True
+				self.notes.append((off, self.trans_note(note), 0, self.speed))
 				self.log("ONP %s @off=%f" % (note, off))
 			elif note == "7" or note == "9":	# Balloon Renda or Imo Renda
 				if state.long_note:
 					continue
 				hit_count = state.balloons.pop(0)
-				self.notes.append((off, note, hit_count, self.speed))
-				state.long_note = note
+				self.notes.append((off, self.trans_note(note), hit_count, self.speed))
+				state.long_note = True
 				self.log("ONP %s @off=%f, hitcount=%d" % (note, off, hit_count))
 			elif note == "8":
-				self.notes.append((off, note, 0, self.speed))
-				state.long_note = None
+				self.notes.append((off, self.trans_note(note), 0, self.speed))
+				state.long_note = False
 				self.log("ONP RENDA END")
 			else:
-				self.notes.append((off, note, 0, self.speed))
+				self.notes.append((off, self.trans_note(note), 0, self.speed))
 				self.log("ONP %s @off=%f" % (note, off))
 		
 	def read(self, reader, state):
@@ -135,9 +154,9 @@ class CNoteBatch(object):
 		for idx, note_cfg in enumerate(self.notes):
 			off, note = note_cfg[0], note_cfg[1]
 			if state.offset - off > self.out_off:
-				if note in ("5", "6", "7", "9"):
+				if ONP_LONG[0] <= note <= ONP_LONG[1]:
 					delay_removing = True
-				elif note == "8":
+				elif note == ONP_END:
 					delay_removing = False
 					out_idx = idx + 1
 				elif not delay_removing:
