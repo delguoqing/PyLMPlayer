@@ -37,7 +37,7 @@ def onp_rand_srandom(onp):
 
 class CMgr(object):
 	
-	def __init__(self, fumen, options=0):
+	def __init__(self, fumen, scene, options=0):
 		self._glb_scroll = 1.0
 		self._auto = False
 		self._onp_rand = 0
@@ -49,6 +49,14 @@ class CMgr(object):
 		self._onp_hit_x = 104
 		
 		self.set_option(options)
+		
+		self._judge_ryo = 50 * 0.5
+		self._judge_ka = 150 * 0.5
+		self._judge_fuka = 217 * 0.5
+		
+		self._keys = 0
+		#self._scn = scene
+		#self._anims = self._scn.movieclips
 		
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
@@ -87,7 +95,63 @@ class CMgr(object):
 		
 		# TODO:
 		# apply options to fumen
-		
+	
+	def add_key(self, key):
+		self._keys |= key
+	
+	def judge(self):
+		hit_ok = hit_big = hitaway = False
+		# judge
+		if self._state.hit_onp:
+			off, onp, hits, spd = self._state.hit_onp
+			valid_keys, big_keys, onp_flys, delay_judge, fly_on_break = ONP_CFG[onp]
+			if self._keys > 0 or (delay_judge > 0 and self._state.hit_onp_start):
+				self._state.hit_onp_keys |= self._keys	# combine keys
+				hit_ok = bool(self._state.hit_onp_keys & valid_keys)
+				hit_big = bool((self._state.hit_onp_keys & big_keys) == big_keys)
+				self._state.hit_onp_hits += int(hit_ok)
+				hitaway = self._state.hit_onp_hits >= hits \
+					and (hit_big or delay_judge == 0 or self._state.hit_onp_start)
+				#print hit_big, delay_judge, self._state.hit_onp_start
+				if hit_ok:
+					self._state.hit_onp_start = True
+				if hitaway:
+					self._state.hitaway_off = off
+					self._state.hit_onp_off += 1
+					
+			
+		if not hit_ok:
+			hit_keys = self._keys
+			lane_effect = None
+			if hit_keys & HIT_DON:
+				lane_effect = "don_s"
+			elif hit_keys & HIT_KATSU:
+				lane_effect = "katsu_s"
+			onp_fly = ONP_FLY_NONE
+			onp_judge = None
+		else:
+			#print "hit_ok %d/%d" % (self._state.hit_onp_hits, hits)
+			#if hitaway: print "hit_away!!!!!!"
+			hit_keys = self._state.hit_onp_keys & valid_keys
+			hit_katsu = bool(hit_keys & HIT_DON)
+			if not hit_katsu:
+				lane_effect = "don_hit"
+			else:
+				lane_effect = "katsu_hit"
+			if fly_on_break == hitaway:
+				onp_fly = onp_flys[int(hit_katsu) + int(hit_big) * 2]
+			onp_judge = None
+			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
+				off_delta = abs(self._state.offset - off)	
+				if off_delta <= self._judge_ryo:
+					onp_judge = "hit_ryo"
+					if hit_big: onp_judge = "hit_ryo_big"
+				elif off_delta <= self._judge_ka:
+					onp_judge = "hit_ka"
+					if hit_big: onp_judge = "hit_ka_big"
+				else:
+					onp_judge = "hit_huka"
+			
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		self._state.offset += 1000.0 / 60.0
 		self._onps = []
@@ -97,8 +161,42 @@ class CMgr(object):
 			lumen.update(render_state, operation & lm_consts.MASK_NO_DRAW)
 		
 		self._fumen.update(self._state, self._onps)
-		
 		#self.log_onps(self._onps)
+		
+		# update current hit onp
+		hit_onp_off = self._state.hit_onp_off
+		for off, onp, hits, spd in self._onps:
+			if off < self._state.hit_onp_off:	# already missed, don't check
+				continue
+			if self._state.offset + self._judge_fuka < off:		# not ready for check yet
+				break
+			if ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
+				if self._state.offset - self._judge_fuka > off:	# fully missed
+					self._state.hit_onp = None
+				else:
+					self._state.hit_onp = (off, onp, hits, spd) # accept as new hit onp
+					break
+			elif onp == ONP_END:
+				if self._state.offset > off:	# miss the whole long onp
+					self._state.hit_onp = None
+				else:	# the long onp still holds
+					break
+			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
+				if self._state.offset >= off:	# accept as  new hit onp, but continue find
+					self._state.hit_onp = (off, onp, hits, spd)
+			
+		if self._state.hit_onp:
+			self._state.hit_onp_off = self._state.hit_onp[0]
+			#print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
+		if self._state.hit_onp_off != hit_onp_off: # clear hit count
+			self._state.hit_onp_hits = 0
+			self._state.hit_onp_keys = 0
+			self._state.hit_onp_start = False
+			#print "init hit status"
+		
+		self.judge()		
+		# clear keys	
+		self._keys = 0
 		
 		# draw from back to front
 		end_note = None
@@ -170,3 +268,57 @@ if __name__ == '__main__':
 	onp_mgr = CMgr(fumen, options=0)
 	while onp_mgr.update(None):
 		pass
+	
+"""
+		movieclips[LEFT_DON].gotoAndPlay("left_don")
+		movieclips[MATO].gotoAndPlay("hit_ryo")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
+		movieclips[HITEFFECTS].gotoAndPlay("don_s")
+		
+		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
+		if chibi is not None: chibi.gotoAndPlay(0)
+
+		onp_fly_don = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
+		onp_fly_don.gotoAndPlay("don_hit")
+		
+		global cur_renda_effect
+		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
+		if renda_effect: 
+			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
+			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
+			x = random.randint(x_range[0], x_range[1])
+			y = random.randint(y_range[0], y_range[1])
+			renda_effect.matrix.translate = (x, y)
+			enso_cfg.RENDA_EFFECT_FUNC(renda_effect, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
+"""
+"""
+		movieclips[RIGHT_DON].gotoAndPlay("right_don")
+		movieclips[MATO].gotoAndPlay("hit_ka")		
+		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
+		movieclips[HITEFFECTS].gotoAndPlay("don_b")
+		movieclips[COURSE].gotoAndPlay("hit")
+		
+		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+		if chibi is not None: chibi.gotoAndPlay(0)
+
+		onp_fly_kats = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
+		onp_fly_kats.gotoAndPlay("katsu_hit")
+"""
+"""
+		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
+		movieclips[MATO].gotoAndPlay("hit_dai_ryo")		
+		movieclips[HITEFFECTS].gotoAndPlay("katsu_s")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ryo_big")
+		
+		onp_fly_geki = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
+		onp_fly_geki.gotoAndPlay("geki_hit")
+"""
+"""
+		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
+		movieclips[MATO].gotoAndPlay("hit_dai_ka")
+		movieclips[HITJUDGE].gotoAndPlay("hit_ka_big")
+		movieclips[HITEFFECTS].gotoAndPlay("katsu_b")		
+		
+		onp_fly_don_dai = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
+		onp_fly_don_dai.gotoAndPlay("don_d_hit")
+"""

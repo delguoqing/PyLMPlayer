@@ -415,57 +415,13 @@ def on_imo_in_end(mc, data):
 def on_key_press(symbol, modifiers):
 	global movieclips, render_state
 	if symbol == pyglet.window.key.F:
-		movieclips[LEFT_DON].gotoAndPlay("left_don")
-		movieclips[MATO].gotoAndPlay("hit_ryo")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
-		movieclips[HITEFFECTS].gotoAndPlay("don_s")
-		
-		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
-		if chibi is not None: chibi.gotoAndPlay(0)
-
-		onp_fly_don = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
-		onp_fly_don.gotoAndPlay("don_hit")
-		
-		global cur_renda_effect
-		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
-		if renda_effect: 
-			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
-			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
-			x = random.randint(x_range[0], x_range[1])
-			y = random.randint(y_range[0], y_range[1])
-			renda_effect.matrix.translate = (x, y)
-			enso_cfg.RENDA_EFFECT_FUNC(renda_effect, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
-			
+		movieclips[ONPS].add_key(1)
 	elif symbol == pyglet.window.key.J:
-		movieclips[RIGHT_DON].gotoAndPlay("right_don")
-		movieclips[MATO].gotoAndPlay("hit_ka")		
-		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
-		movieclips[HITEFFECTS].gotoAndPlay("don_b")
-		movieclips[COURSE].gotoAndPlay("hit")
-		
-		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
-		if chibi is not None: chibi.gotoAndPlay(0)
-
-		onp_fly_kats = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
-		onp_fly_kats.gotoAndPlay("katsu_hit")
-						
+		movieclips[ONPS].add_key(2)
 	elif symbol == pyglet.window.key.R:
-		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
-		movieclips[MATO].gotoAndPlay("hit_dai_ryo")		
-		movieclips[HITEFFECTS].gotoAndPlay("katsu_s")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ryo_big")
-		
-		onp_fly_geki = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
-		onp_fly_geki.gotoAndPlay("geki_hit")		
-		
+		movieclips[ONPS].add_key(4)
 	elif symbol == pyglet.window.key.U:
-		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
-		movieclips[MATO].gotoAndPlay("hit_dai_ka")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ka_big")
-		movieclips[HITEFFECTS].gotoAndPlay("katsu_b")		
-		
-		onp_fly_don_dai = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
-		onp_fly_don_dai.gotoAndPlay("don_d_hit")
+		movieclips[ONPS].add_key(8)
 		
 	elif symbol == pyglet.window.key.BRACKETLEFT:
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
@@ -729,7 +685,7 @@ def build_scene(cfg):
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, options=0)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, options=0)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips

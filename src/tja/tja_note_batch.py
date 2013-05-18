@@ -59,7 +59,7 @@ class CNoteBatch(object):
 				continue
 			elif note == "5" or note == "6":	# Renda
 				self.long_note = True
-				self.notes.append((off, self.trans_note(note), 0, self.speed))
+				self.notes.append((off, self.trans_note(note), 999999, self.speed))
 				self.log("ONP %s @off=%f" % (note, off))
 			elif note == "7" or note == "9":	# Balloon Renda or Imo Renda
 				if state.long_note:
@@ -73,7 +73,7 @@ class CNoteBatch(object):
 				state.long_note = False
 				self.log("ONP RENDA END")
 			else:
-				self.notes.append((off, self.trans_note(note), 0, self.speed))
+				self.notes.append((off, self.trans_note(note), 1, self.speed))
 				self.log("ONP %s @off=%f" % (note, off))
 		
 	def read(self, reader, state):
@@ -165,10 +165,11 @@ class CNoteBatch(object):
 		# Removing missed or hit away notes
 		out_idx = 0
 		for off, note, hits, spd in self._active_notes:
-			if hits > 0 and off > state.tohit_off:
+			if hits > 0 and off >= state.hit_onp_off:
 				break
-			if hits == 0 or (not state.last_hitaway) or (off < state.last_hitaway_left):
+			if hits == 0 or (not state.is_hitaway and off < state.hitaway_off):
 				self._missed_notes.append((off, note, hits, spd))
+
 			out_idx += 1
 		for _ in xrange(out_idx):
 			self._active_notes.popleft()
