@@ -1,3 +1,4 @@
+import collections
 from tja_consts import *
 
 # A batch of note scrolling at the same speed
@@ -13,8 +14,11 @@ class CNoteBatch(object):
 		
 		self.commands = []
 		
-		self.notes = []
+		self.notes = collections.deque()
 
+		self._active_notes = collections.deque()
+		self._missed_notes = collections.deque()
+		
 	def log(self, str):
 		print str
 			
@@ -143,16 +147,36 @@ class CNoteBatch(object):
 			# 104: hit pos x
 			# 480: screen border x
 			# 32: padding
+			# 80: taiko right border(disappear pos)
 			self.in_off = (32 + 480 - 104) / self.speed
 			self.out_off = (32 + 104 - 80) / self.speed
 			
 	def update(self, state, onps):
+			
+		# Checking for new notes
+		out_idx = 0
+		for off, note, hits, spd in self.notes:
+			if off - state.offset > self.in_off:
+				break
+			out_idx += 1
+		for _ in xrange(out_idx):
+			self._active_notes.append(self.notes.popleft())
 		
-		# checking for new notes
+		# Removing missed or hit away notes
+		out_idx = 0
+		for off, note, hits, spd in self._active_notes:
+			if hits > 0 and off > state.tohit_off:
+				break
+			if hits == 0 or (not state.last_hitaway) or (off < state.last_hitaway_left):
+				self._missed_notes.append((off, note, hits, spd))
+			out_idx += 1
+		for _ in xrange(out_idx):
+			self._active_notes.popleft()
+		
+		# Removing outdated notes
 		out_idx = 0
 		delay_removing = False
-		for idx, note_cfg in enumerate(self.notes):
-			off, note = note_cfg[0], note_cfg[1]
+		for idx, (off, note, hits, spd) in enumerate(self._missed_notes):
 			if state.offset - off > self.out_off:
 				if ONP_LONG[0] <= note <= ONP_LONG[1]:
 					delay_removing = True
@@ -161,14 +185,14 @@ class CNoteBatch(object):
 					out_idx = idx + 1
 				elif not delay_removing:
 					out_idx = idx + 1
-			elif off - state.offset > self.in_off:
+			else:
 				break
-			# append active onp to queue
-			onps.append(note_cfg)
+		for _ in xrange(out_idx):
+			self._missed_notes.popleft()
 			
-		# remove outdated onps
-		if out_idx > 0:
-			self.notes = self.notes[out_idx:]
+		# appending missed and active notes
+		onps.extend(self._missed_notes)
+		onps.extend(self._active_notes)
 		
 	def __cmp__(self, o):
 		return self.offset - self.in_off - (o.offset - o.in_off)
@@ -178,6 +202,6 @@ class CNoteBatch(object):
 		
 	# TODO: also check for commands
 	def empty(self):
-		return len(self.notes) == 0
+		return len(self.notes) == 0 and  len(self._active_notes) == 0 and len(self._missed_notes) == 0
 		
 		
