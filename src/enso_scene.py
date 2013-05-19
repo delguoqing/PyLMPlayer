@@ -461,8 +461,10 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		elif hit_judge == tja_consts.HITJUDGE_KA_DAI:
 			enso_mato = "hit_dai_ka"
 			enso_hitjudge = "hit_ka_big"
+		else:
+			enso_mato = enso_hitjudge = "hit_no"
 		
-		if onp_fly_on_break != hitaway:
+		if onp_fly_on_break != hitaway or hit_judge == tja_consts.HITJUDGE_FUKA:
 			onp_fly = tja_consts.ONP_FLY_NONE
 		else:
 			onp_fly = onp_flys[enso_hiteffects_type + int(hit_big) * 2]
@@ -476,6 +478,17 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	if enso_mato != "hit_no":
 		movieclips[MATO].gotoAndPlay(enso_mato)
 	play_onp_fly(onp_fly)	
+	
+def on_hit(keys):
+	global movieclips
+	if keys & tja_consts.HIT_LEFT_DON:
+		movieclips[LEFT_DON].gotoAndPlay("left_don")
+	if keys & tja_consts.HIT_LEFT_KATSU:
+		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
+	if keys & tja_consts.HIT_RIGHT_DON:
+		movieclips[RIGHT_DON].gotoAndPlay("right_don")
+	if keys & tja_consts.HIT_RIGHT_KATSU:
+		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")		
 
 # Build up scene
 def build_scene(cfg, tja_file):

@@ -145,6 +145,7 @@ class CMgr(object):
 		
 		self._state.is_hitaway = hitaway
 			
+		self._scn.on_hit(self._keys)
 		self._scn.on_hit_judge(onp, hit_keys, hit_judge, hitaway)
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
@@ -161,11 +162,11 @@ class CMgr(object):
 		# update current hit onp
 		if self._state.is_hitaway:
 			self._state.hit_onp_off += 1
+			self._state.hit_onp = None
 		hit_onp_off = self._state.hit_onp_off
 		for off, onp, hits, spd in self._onps:
 			if off < self._state.hit_onp_off:	# already missed, don't check
 				continue
-			#if off == self._state.hitaway_off and self.
 			if self._state.offset + self._judge_fuka < off:		# not ready for check yet
 				break
 			if ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
@@ -185,9 +186,9 @@ class CMgr(object):
 			
 		if self._state.hit_onp:
 			self._state.hit_onp_off = self._state.hit_onp[0]
-			print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
-		else:
-			print "no hit onp"
+			#print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
+		#else:
+			#print "no hit onp"
 			
 		if self._state.hit_onp_off != hit_onp_off: # clear hit count
 			self._state.hit_onp_hits = 0

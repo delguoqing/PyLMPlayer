@@ -21,7 +21,7 @@ http://ericlin2.tripod.com/
 #51. implement hit judge
 #52. implement fumen bunki
 #53. implement auto play
-#54
+#54. fix bug. hitjudge(ryo, ka, fuka) blend mode not correct.
 #55.
 #10000. optimize(Never do this when not neccesary!)
 
