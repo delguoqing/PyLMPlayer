@@ -165,10 +165,14 @@ class CNoteBatch(object):
 		# Removing missed or hit away notes
 		out_idx = 0
 		for off, note, hits, spd in self._active_notes:
-			if hits > 0 and off >= state.hit_onp_off:
+			if hits > 0 and off > state.hit_onp_off:
+				#print "off = %f, behind the hit onp %f, no need to check" % (off, state.hit_onp_off)
 				break
-			if hits == 0 or (not state.is_hitaway and off < state.hitaway_off):
+			if hits == 0 or off < state.hitaway_off:
 				self._missed_notes.append((off, note, hits, spd))
+				#print "add missed note %s off = %f / %f" % (note, off, state.hitaway_off)
+			elif not state.is_hitaway:
+				break
 
 			out_idx += 1
 		for _ in xrange(out_idx):

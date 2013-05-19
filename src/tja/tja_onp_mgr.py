@@ -37,7 +37,7 @@ def onp_rand_srandom(onp):
 
 class CMgr(object):
 	
-	def __init__(self, fumen, scene, options=0):
+	def __init__(self, fumen, scn, options=0):
 		self._glb_scroll = 1.0
 		self._auto = False
 		self._onp_rand = 0
@@ -55,8 +55,7 @@ class CMgr(object):
 		self._judge_fuka = 217 * 0.5
 		
 		self._keys = 0
-		#self._scn = scene
-		#self._anims = self._scn.movieclips
+		self._scn = scn
 		
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
@@ -99,8 +98,20 @@ class CMgr(object):
 	def add_key(self, key):
 		self._keys |= key
 	
+	def _get_hitjudge(self, onp_off, hit_off):
+		off_delta = abs(onp_off - hit_off)
+		if off_delta <= self._judge_ryo:
+			return HITJUDGE_RYO
+		elif off_delta <= self._judge_ka:
+			return HITJUDGE_KA
+		else:
+			return HITJUDGE_FUKA
+		return HITJUDGE_NO
+	
 	def judge(self):
 		hit_ok = hit_big = hitaway = False
+		onp = ONP_NONE
+		hit_judge = None
 		# judge
 		if self._state.hit_onp:
 			off, onp, hits, spd = self._state.hit_onp
@@ -117,41 +128,25 @@ class CMgr(object):
 					self._state.hit_onp_start = True
 				if hitaway:
 					self._state.hitaway_off = off
-					self._state.hit_onp_off += 1
-					
-			
-		if not hit_ok:
-			hit_keys = self._keys
-			lane_effect = None
-			if hit_keys & HIT_DON:
-				lane_effect = "don_s"
-			elif hit_keys & HIT_KATSU:
-				lane_effect = "katsu_s"
-			onp_fly = ONP_FLY_NONE
-			onp_judge = None
-		else:
-			#print "hit_ok %d/%d" % (self._state.hit_onp_hits, hits)
-			#if hitaway: print "hit_away!!!!!!"
 			hit_keys = self._state.hit_onp_keys & valid_keys
-			hit_katsu = bool(hit_keys & HIT_DON)
-			if not hit_katsu:
-				lane_effect = "don_hit"
+			if not delay_judge:
+				self._state.hit_onp_keys = 0
+			if not hit_ok:
+				hit_judge = HITJUDGE_NO
+			elif not hitaway:
+				hit_judge = HITJUDGE_HIT
 			else:
-				lane_effect = "katsu_hit"
-			if fly_on_break == hitaway:
-				onp_fly = onp_flys[int(hit_katsu) + int(hit_big) * 2]
-			onp_judge = None
-			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
-				off_delta = abs(self._state.offset - off)	
-				if off_delta <= self._judge_ryo:
-					onp_judge = "hit_ryo"
-					if hit_big: onp_judge = "hit_ryo_big"
-				elif off_delta <= self._judge_ka:
-					onp_judge = "hit_ka"
-					if hit_big: onp_judge = "hit_ka_big"
-				else:
-					onp_judge = "hit_huka"
+				hit_judge = self._get_hitjudge(off, self._state.offset)
+				if hit_big:
+					hit_judge |= HITJUDGE_DAI
+		else:
+			hit_keys = self._keys
+			hit_judge = HITJUDGE_NO
+		
+		self._state.is_hitaway = hitaway
 			
+		self._scn.on_hit_judge(onp, hit_keys, hit_judge, hitaway)
+		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		self._state.offset += 1000.0 / 60.0
 		self._onps = []
@@ -164,10 +159,13 @@ class CMgr(object):
 		#self.log_onps(self._onps)
 		
 		# update current hit onp
+		if self._state.is_hitaway:
+			self._state.hit_onp_off += 1
 		hit_onp_off = self._state.hit_onp_off
 		for off, onp, hits, spd in self._onps:
 			if off < self._state.hit_onp_off:	# already missed, don't check
 				continue
+			#if off == self._state.hitaway_off and self.
 			if self._state.offset + self._judge_fuka < off:		# not ready for check yet
 				break
 			if ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
@@ -187,7 +185,10 @@ class CMgr(object):
 			
 		if self._state.hit_onp:
 			self._state.hit_onp_off = self._state.hit_onp[0]
-			#print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
+			print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
+		else:
+			print "no hit onp"
+			
 		if self._state.hit_onp_off != hit_onp_off: # clear hit count
 			self._state.hit_onp_hits = 0
 			self._state.hit_onp_keys = 0

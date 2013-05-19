@@ -28,8 +28,9 @@ ONP_RENDA_DAI2 = 12		# Renda onp(dai) body
 ONP_RENDA_DAI3 = 13		# Renda onp(dai) tail
 ONP_END = 14
 ONP_IMO_HIGH = 15
+ONP_NONE = 16
 
-ONP_MAX = 15
+ONP_MAX = 16
 
 ###################
 # ONP FLY DEFINE
@@ -53,6 +54,19 @@ HIT_DON = HIT_LEFT_DON | HIT_RIGHT_DON
 HIT_KATSU = HIT_LEFT_KATSU | HIT_RIGHT_KATSU
 HIT_ANY = HIT_DON | HIT_KATSU
 
+###################
+# HIT JUDGE DEFINE
+###################
+HITJUDGE_DAI = 8
+
+HITJUDGE_NO = 0
+HITJUDGE_FUKA = 1
+HITJUDGE_KA = 2
+HITJUDGE_RYO = 3
+HITJUDGE_HIT = 4
+
+HITJUDGE_KA_DAI = HITJUDGE_KA | HITJUDGE_DAI
+HITJUDGE_RYO_DAI = HITJUDGE_RYO | HITJUDGE_DAI
 ###################
 # ONP CONFIG:
 # 1. valid_keys: (input_keys & valid_keys) > 0 ===> count as a hit
