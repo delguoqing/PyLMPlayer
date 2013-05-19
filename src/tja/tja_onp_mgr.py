@@ -137,7 +137,7 @@ class CMgr(object):
 				hit_judge = HITJUDGE_HIT
 			else:
 				hit_judge = self._get_hitjudge(off, self._state.offset)
-				if hit_big:
+				if hit_big and hit_judge != HITJUDGE_FUKA:
 					hit_judge |= HITJUDGE_DAI
 		else:
 			hit_keys = self._keys
@@ -272,17 +272,6 @@ if __name__ == '__main__':
 		pass
 	
 """
-		movieclips[LEFT_DON].gotoAndPlay("left_don")
-		movieclips[MATO].gotoAndPlay("hit_ryo")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ryo")
-		movieclips[HITEFFECTS].gotoAndPlay("don_s")
-		
-		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
-		if chibi is not None: chibi.gotoAndPlay(0)
-
-		onp_fly_don = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
-		onp_fly_don.gotoAndPlay("don_hit")
-		
 		global cur_renda_effect
 		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
 		if renda_effect: 
