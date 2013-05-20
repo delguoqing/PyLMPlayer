@@ -463,13 +463,14 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 			enso_hitjudge = "hit_ka_big"
 		else:
 			enso_mato = enso_hitjudge = "hit_no"
+			print "[WARNING] unknown hit_judge %d" % hit_judge
 		
 		if onp_fly_on_break != hitaway or hit_judge == tja_consts.HITJUDGE_FUKA:
 			onp_fly = tja_consts.ONP_FLY_NONE
 		else:
 			onp_fly = onp_flys[enso_hiteffects_type + int(hit_big) * 2]
 			
-		print enso_mato, enso_hiteffects, enso_hitjudge, onp_fly
+		#print enso_mato, enso_hiteffects, enso_hitjudge, onp_fly
 	
 	if enso_hitjudge != "hit_no":
 		movieclips[HITJUDGE].gotoAndPlay(enso_hitjudge)
@@ -477,8 +478,23 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		movieclips[HITEFFECTS].gotoAndPlay(enso_hiteffects)
 	if enso_mato != "hit_no":
 		movieclips[MATO].gotoAndPlay(enso_mato)
-	play_onp_fly(onp_fly)	
+	play_onp_fly(onp_fly)
 	
+	# chibi and rendaeffects
+	if hit_judge == tja_consts.HITJUDGE_NO:
+		pass
+	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_RENDA1, tja_consts.ONP_RENDA_DAI1):
+		pass
+	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_GEKI, tja_consts.ONP_IMO):
+		pass
+	elif hit_judge == tja_consts.HITJUDGE_FUKA:
+		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+		if mc: mc.gotoAndPlay(0)
+	else: #HITJUDGE_KA, HITJUDGE_KA_DAI, HITJUDGE_RYO, HITJUDGE_RYO_DAI
+		assert onp in (tja_consts.HITJUDGE_KA, tja_consts.HITJUDGE_KA_DAI, tja_consts.HITJUDGE_RYO, tja_consts.HITJUDGE_RYO_DAI)
+		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
+		if mc: mc.gotoAndPlay(0)
+		
 def on_hit(keys):
 	global movieclips
 	if keys & tja_consts.HIT_LEFT_DON:
