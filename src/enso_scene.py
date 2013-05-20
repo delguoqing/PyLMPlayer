@@ -1,3 +1,5 @@
+import random
+
 import enso_layout
 
 from tja import tja_onp_mgr, tja_fumen, tja_reader, tja_consts
@@ -24,15 +26,12 @@ first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
 
-
 # Dancer Pos
 DANCER1_POS = (240, 270)
 DANCER2_POS = (150, 270)
 DANCER3_POS = (330, 270)
 DANCER4_POS = (60, 270)
 DANCER5_POS = (420, 270)
-
-RENDA_EFFECT_POS_BASE = (-30, 200)
 
 def set_combo(combo):
 
@@ -484,7 +483,14 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	if hit_judge == tja_consts.HITJUDGE_NO:
 		pass
 	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_RENDA1, tja_consts.ONP_RENDA_DAI1):
-		pass
+		mc = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
+		if mc: 
+			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
+			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
+			x = random.randint(x_range[0], x_range[1])
+			y = random.randint(y_range[0], y_range[1])
+			mc.matrix.translate = (x, y)
+			enso_cfg.RENDA_EFFECT_FUNC(mc, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
 	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_GEKI, tja_consts.ONP_IMO):
 		pass
 	elif hit_judge == tja_consts.HITJUDGE_FUKA:
