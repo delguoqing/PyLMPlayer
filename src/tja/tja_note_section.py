@@ -33,12 +33,10 @@ class CNoteSection(object):
 			self.scroll = state.scroll
 			self.bpm = state.bpm			
 		
-		# TODO:
-		# add cmp function for note batches
 		self.note_batches.sort()
 		
 	def active(self, state):
-		return self.offset - state.offset <= state.measure * 60000.0 / state.bpm
+		return self.note_batches[0].active(state)
 	
 	def empty(self):
 		return len(self.note_batches) == 0 and len(self._active_batch) == 0
@@ -77,3 +75,6 @@ class CNoteSection(object):
 			#print "empty batch removed!"
 			self._active_batch = self._active_batch[out_idx:]
 			
+	def get_first_batch(self):
+		return self.note_batches[0]
+	

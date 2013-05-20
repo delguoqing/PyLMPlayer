@@ -93,6 +93,12 @@ class CFumen(object):
 	def empty(self):
 		return len(self.sections) == 0 and len(self._active_sections) == 0
 	
+	def get_first_batch(self):
+		for section in self.sections[0][2:]:
+			if section is not None:
+				return section.get_first_batch()
+		return None
+		
 if __name__ == "__main__":
 	import tja_reader
 	import sys

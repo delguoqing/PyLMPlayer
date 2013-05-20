@@ -51,14 +51,17 @@ class CMgr(object):
 		self._onp_y = 107
 		self._onp_hit_x = 104
 		
-		self.set_option(options)
-		
 		self._judge_ryo = 50 * 0.5
 		self._judge_ka = 150 * 0.5
 		self._judge_fuka = 217 * 0.5
 		
 		self._keys = 0
 		self._scn = scn
+		
+		self.set_option(options)
+		first_batch = self._fumen.get_first_batch()
+		if first_batch:
+			self._state.offset -= first_batch.in_off
 		
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens

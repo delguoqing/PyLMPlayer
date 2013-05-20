@@ -208,5 +208,4 @@ class CNoteBatch(object):
 	# TODO: also check for commands
 	def empty(self):
 		return len(self.notes) == 0 and  len(self._active_notes) == 0 and len(self._missed_notes) == 0
-		
-		
+	
