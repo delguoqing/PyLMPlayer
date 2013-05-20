@@ -1,8 +1,8 @@
 LM_PACK_ROOT = r"../packages"
 
 # Character don.(At normal states)
-#DON = r"pack363/DON_COS00_DIET.LM"
-DON = r"pack364/M_DON.LM"
+DON = r"pack363/DON_COS00_DIET.LM"
+#DON = r"pack364/M_DON.LM"
 
 DON_COS = False # use don cos or not, turn this off if you use mecha don
 DON_ATAMA = (r"../packages/pack_cos51", 51)
@@ -54,10 +54,16 @@ def RENDA_EFFECT_FUNC2(mc, style):
 #RENDA_EFFECT_Y_RANGE = (200, 272)
 #RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC2
 
+#RENDA_EFFECT = r"pack95/RENDA_EFFECT_MIKU.LM"
+#RENDA_EFFECT_NUM = 5
+#RENDA_EFFECT_X_RANGE = (-10, 10)
+#RENDA_EFFECT_Y_RANGE = (200, 272)
+#RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC0
+
 RENDA_EFFECT = r"pack95/RENDA_EFFECT_MIKU.LM"
 RENDA_EFFECT_NUM = 5
-RENDA_EFFECT_X_RANGE = (-10, 10)
-RENDA_EFFECT_Y_RANGE = (200, 272)
+RENDA_EFFECT_X_RANGE = (480, 480)
+RENDA_EFFECT_Y_RANGE = (30, 262)
 RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC0
 
 # Dancers: (Appear in the  following order)
