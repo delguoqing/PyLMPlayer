@@ -10,12 +10,15 @@ def func_2(this, _global):
 	this.stop()
 
 def func_3(this, _global):
+	return
 	_global["don"].gotoAndStop(6)
 	
 def func_4(this, _global):
+	return
 	_global["don"].gotoAndStop(17)
 	
 def func_5(this, _global):
+	return
 	_global["don"].gotoAndStop(18)
 
 DATA = (

@@ -234,6 +234,18 @@ def swap_depth(depth1, depth2):
 	global movieclips
 	movieclips[depth1], movieclips[depth2] = movieclips[depth2], movieclips[depth1]
 		
+def set_balloon_miss():
+	global movieclips, max_balloon, cur_balloon
+	
+	movieclips[DON2].gotoAndStop("balloon_miss")
+	movieclips[DON2].don.gotoAndPlay(0)
+	movieclips[BALLOON].gotoAndStop("geki_miss")
+	progress = (max_balloon - cur_balloon) * 6 / max_balloon + 1
+	if progress != 3:
+		movieclips[BALLOON].geki_miss.gotoAndPlay("geki0%d_miss" % progress)
+	else:
+		movieclips[BALLOON].geki_miss.gotoAndPlay("geki_03_miss")
+		
 def set_max_balloon(balloon):
 	global max_balloon, cur_balloon, donchan_free
 
@@ -293,14 +305,14 @@ def set_balloon(balloon):
 	mc.geki_don.gotoAndPlay("geki_0%d" % progress)
 	
 	if progress == 6:
-		movieclips[DON2].gotoAndPlay("balloon_6")
+		movieclips[DON2].gotoAndStop("balloon_6")
 	else:
-		movieclips[DON2].gotoAndPlay("balloon_1")
+		movieclips[DON2].gotoAndStop("balloon_1")
 	movieclips[DON2].don.gotoAndPlay(0)
 		
 	cur_balloon = balloon
 
-def on_balloon_success_end(mc, data):
+def on_balloon_end(mc, data):
 	global max_balloon, cur_balloon, donchan_free
 	swap_depth(DON, DON2)
 	# should gotoAndPlay old animation
@@ -309,7 +321,7 @@ def on_balloon_success_end(mc, data):
 	donchan_free = True
 	movieclips[DON].gotoAndPlay("normal")
 	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
-		
+
 def set_max_imo(imo):
 	global max_imo, cur_imo, donchan_free
 	
@@ -598,9 +610,11 @@ def build_scene(cfg, tja_file):
 		mc.register_callback("in_end", on_dancer_in_end, dancer)
 		mc.register_callback("dance_sync", on_dancer_sync, dancer)
 	
-	movieclips[DON].register_callback("baloon_success_end", on_balloon_success_end, None)
+	movieclips[DON].register_callback("baloon_success_end", on_balloon_end, None)
+	movieclips[DON].register_callback("balloon_miss_end", on_balloon_end, None)
 	movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
 	movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
+	movieclips[DON].speed = 2.0
 		
 	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 	movieclips[BALLOON]._visible = False

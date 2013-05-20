@@ -22,6 +22,7 @@ class CEnsoState(object):
 		self.hit_onp_keys = 0
 		self.hit_onp_hits = 0
 		self.hit_onp_start = False
+		self.hit_onp_time = 0
 		
 		###########################
 		# Preprocessing variable

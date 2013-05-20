@@ -121,9 +121,12 @@ class CMgr(object):
 		off, onp, hits, spd = self._state.hit_onp
 		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:
 			return 0
-		if ONP_LONG[0] <= onp <= ONP_LONG[1]:
+		if onp == ONP_RENDA1 or onp == ONP_RENDA_DAI1:
 			self._auto_last_hit = (self._auto_last_hit + 1) % 5
-			if self._auto_last_hit < 4: return 0
+			if self._auto_last_hit != 0: return 0
+		elif onp == ONP_GEKI or onp == ONP_IMO:
+			self._auto_last_hit = (self._auto_last_hit + 1) % 2
+			if self._auto_last_hit != 0: return 0			
 		else:
 			self._auto_last_hit = -1
 			
@@ -164,12 +167,19 @@ class CMgr(object):
 				self._state.hit_onp_keys = 0
 			if not hit_ok:
 				hit_judge = HITJUDGE_NO
-			elif not hitaway:
+			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
 				hit_judge = HITJUDGE_HIT
 			else:
 				hit_judge = self._get_hitjudge(off, self._state.offset)
 				if hit_big and hit_judge != HITJUDGE_FUKA:
 					hit_judge |= HITJUDGE_DAI
+					
+			# special case for ONP_GEKI and ONP_IMO
+			if onp == ONP_GEKI and hit_ok:
+				if self._state.hit_onp_hits == 1:
+					self._scn.set_max_balloon(hits)
+				self._scn.set_balloon(hits - self._state.hit_onp_hits)
+				
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
@@ -179,6 +189,15 @@ class CMgr(object):
 		self._scn.on_hit(self._keys)
 		self._scn.on_hit_judge(onp, hit_keys, hit_judge, hitaway)
 		
+		# special case for missing ONP_GEKI
+		if onp == ONP_GEKI and self._state.hit_onp_hits != 0 and not hitaway and self._state.hit_onp_time < 1000.0 / 60:
+			if not self._auto:
+				self._scn.set_balloon_miss()
+			else:
+				self._scn.set_balloon(0)
+			self._state.is_hitaway = True
+			self._state.hitaway_off = off
+			
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		self._state.offset += 1000.0 / 60.0
 		self._onps = []
@@ -205,29 +224,37 @@ class CMgr(object):
 					self._state.hit_onp = None
 				else:
 					self._state.hit_onp = (off, onp, hits, spd) # accept as new hit onp
+					self._state.hit_onp_time = 0
 					break
 			elif onp == ONP_END:
 				if self._state.offset > off:	# miss the whole long onp
 					self._state.hit_onp = None
 				else:	# the long onp still holds
+					self._state.hit_onp_time = off - self._state.offset
 					break
 			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
-				if self._state.offset >= off:	# accept as  new hit onp, but continue find
+				if self._state.offset >= off:	# accept as new hit onp, but continue find
 					self._state.hit_onp = (off, onp, hits, spd)
+					self._state.hit_onp_time = 999999
 			
 		if self._state.hit_onp:
 			self._state.hit_onp_off = self._state.hit_onp[0]
+		else:
+			self._state.hit_onp_off += 1
 			#print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
 		#else:
 			#print "no hit onp"
-			
+		
 		if self._state.hit_onp_off != hit_onp_off: # clear hit count
 			self._state.hit_onp_hits = 0
 			self._state.hit_onp_keys = 0
 			self._state.hit_onp_start = False
+			
+			
 			#print "init hit status"
 		
-		self.judge()		
+		self.judge()
+		
 		# clear keys	
 		self._keys = 0
 		
@@ -253,7 +280,7 @@ class CMgr(object):
 				elif onp == ONP_RENDA_DAI1:
 					self.draw_renda(render_state, operation,
 						ONP_RENDA_DAI1, ONP_RENDA_DAI2, ONP_RENDA_DAI3, x, end_x)
-				elif onp == ONP_GEKI:
+				elif onp == ONP_GEKI and (off != self._state.hit_onp_off or self._state.hit_onp_hits == 0):
 					self.draw_geki_or_imo(render_state, operation, ONP_GEKI, x, end_x)
 				elif onp == ONP_IMO:
 					self.draw_geki_or_imo(render_state, operation, ONP_IMO, x, end_x)
