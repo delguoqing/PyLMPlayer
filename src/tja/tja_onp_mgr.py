@@ -39,7 +39,10 @@ class CMgr(object):
 	
 	def __init__(self, fumen, scn, options=0):
 		self._glb_scroll = 1.0
+		
 		self._auto = False
+		self._auto_hit_left = True
+		
 		self._onp_rand = 0
 		self._onp_rand_func = onp_rand_none
 		self._fumen = fumen
@@ -108,7 +111,25 @@ class CMgr(object):
 			return HITJUDGE_FUKA
 		return HITJUDGE_NO
 	
+	def _gen_auto_play(self):
+		if self._state.hit_onp is None:
+			return 0
+		off, onp, hits, spd = self._state.hit_onp
+		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:
+			return 0		
+		valid_keys, big_keys, _, _, _ = ONP_CFG[onp]
+		if big_keys != HIT_INVALID:
+			keys = big_keys
+			self._auto_hit_left = True
+		else:
+			keys = valid_keys & (self._auto_hit_left and HIT_MASK_LEFT or HIT_MASK_RIGHT)
+			self._auto_hit_left = not self._auto_hit_left
+		return keys
+			
 	def judge(self):
+		if self._auto:
+			self._keys = self._gen_auto_play()
+			
 		hit_ok = hit_big = hitaway = False
 		onp = ONP_NONE
 		hit_judge = None

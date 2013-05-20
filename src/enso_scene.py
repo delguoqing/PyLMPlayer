@@ -665,7 +665,7 @@ def build_scene(cfg, tja_file):
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, options=0)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, options=tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips

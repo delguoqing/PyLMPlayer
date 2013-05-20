@@ -81,9 +81,9 @@ def on_draw(dt):
 	render_state.end()
 			
 	# Draw fps
-#	glScalef(1.0, -1.0, 1.0)
-#	glTranslatef(0.0, -64.0, 1.0)
-#	fps_display.draw()
+	#glScalef(1.0, -1.0, 1.0)
+	#glTranslatef(0.0, -64.0, 1.0)
+	#fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
