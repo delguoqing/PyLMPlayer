@@ -183,6 +183,10 @@ class CMgr(object):
 				self._scn.set_imo(hits - self._state.hit_onp_hits,
 					self._state.offset <= self._state.imo_break_high_time)
 				
+			# Add combo
+			if hitaway and ONP_SHORT[0] <= onp <= ONP_LONG[1]:
+				self._state.combo += 1
+				self._scn.set_combo(self._state.combo)
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
@@ -218,11 +222,17 @@ class CMgr(object):
 		self._fumen.update(self._state, self._onps)
 		#self.log_onps(self._onps)
 		
-		# update current hit onp
+		
+		# Remove hitawayed hit onp
 		if self._state.is_hitaway:
 			self._state.hit_onp_off += 1
 			self._state.hit_onp = None
+		
+		# Old hit onp	
+		hit_onp = self._state.hit_onp
 		hit_onp_off = self._state.hit_onp_off
+		
+		# update current hit onp
 		for off, onp, hits, spd in self._onps:
 			if off < self._state.hit_onp_off:	# already missed, don't check
 				continue
@@ -231,6 +241,9 @@ class CMgr(object):
 			if ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
 				if self._state.offset - self._judge_fuka > off:	# fully missed
 					self._state.hit_onp = None
+					self._state.fuka += 1
+					self._state.combo = 0
+					self._scn.set_combo(self._state.combo)
 				else:
 					self._state.hit_onp = (off, onp, hits, spd) # accept as new hit onp
 					self._state.hit_onp_time = 0
@@ -250,11 +263,8 @@ class CMgr(object):
 			
 		if self._state.hit_onp:
 			self._state.hit_onp_off = self._state.hit_onp[0]
-		else:
+		elif hit_onp is not None:
 			self._state.hit_onp_off += 1
-			#print "off=%f, current judging onp %s, %f" % (self._state.offset, self._state.hit_onp[1], self._state.hit_onp[0])
-		#else:
-			#print "no hit onp"
 		
 		if self._state.hit_onp_off != hit_onp_off: # clear hit count
 			if self._state.hit_onp and self._state.hit_onp[1] == ONP_IMO:

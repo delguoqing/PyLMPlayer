@@ -20,6 +20,7 @@ max_balloon = -1 # hits needed to break to balloon
 cur_balloon = 0 # current balloon
 max_imo = -1
 cur_imo = 0
+cur_miss = 0
 cur_dancer = -1	# current dancer
 cur_renda_effect = 1 # current renda_effect id
 first_unsync_dancer = -1 # current unsync_dancer
@@ -35,7 +36,7 @@ DANCER5_POS = (420, 270)
 
 def set_combo(combo):
 
-	global movieclips, cur_combo
+	global movieclips, cur_combo, cur_miss
 	
 	num1000 = combo // 1000
 	num100 = (combo - num1000 * 1000) // 100
@@ -71,7 +72,23 @@ def set_combo(combo):
 		movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
 		set_fukidashi_combo(num1000, num100, num10)
 	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
-		set_fukidashi_combo(num1000, num100, num10)	
+		set_fukidashi_combo(num1000, num100, num10)
+		
+	if combo == 0:
+		cur_miss += 1
+		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+		if mc: mc.gotoAndPlay(0)
+	else:
+		if cur_miss > 0:
+			movieclips[DON].gotoAndStop("miss_normal")
+		cur_miss = 0
+		
+	if cur_miss == 1:
+		movieclips[FUKIDASHI].gotoAndPlay("miss")
+		movieclips[DON].gotoAndStop("miss")
+		movieclips[DON].don.gotoAndPlay(0)
+	elif cur_miss == 6:
+		movieclips[DON].gotoAndPlay("miss_6_1")
 		
 	cur_combo = combo
 	
@@ -82,6 +99,10 @@ def set_fukidashi_combo(num1000, num100, num10):
 	
 	mc = movieclips[FUKIDASHI]
 	mc.gotoAndPlay("combo")
+	
+	don = movieclips[DON]
+	don.gotoAndStop("combo")
+	don.don.gotoAndPlay(0)
 	
 	first = False
 
@@ -417,6 +438,23 @@ def on_imo_in_end(mc, data):
 	
 	movieclips[DON2].gotoAndPlay("imo_eat")
 	
+def on_combo_end(mc, data):
+	global movieclips
+	
+	movieclips[DON].gotoAndPlay("normal")
+
+def on_miss1_end(mc, data):
+	global movieclips
+	movieclips[DON].gotoAndPlay("normal")
+	
+def on_miss2_end(mc, data):
+	global movieclips
+	movieclips[DON].gotoAndPlay("miss_6_2")
+
+def on_miss_normal_start_end(mc, data):
+	global movieclips
+	movieclips[DON].gotoAndPlay("normal")
+
 def play_onp_fly(onp_fly):
 	if onp_fly == tja_consts.ONP_FLY_NONE:
 		return
@@ -519,8 +557,7 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_GEKI, tja_consts.ONP_IMO):
 		pass
 	elif hit_judge == tja_consts.HITJUDGE_FUKA:
-		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
-		if mc: mc.gotoAndPlay(0)
+		pass
 	else: #HITJUDGE_KA, HITJUDGE_KA_DAI, HITJUDGE_RYO, HITJUDGE_RYO_DAI
 		assert onp in (tja_consts.HITJUDGE_KA, tja_consts.HITJUDGE_KA_DAI, tja_consts.HITJUDGE_RYO, tja_consts.HITJUDGE_RYO_DAI)
 		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
@@ -628,6 +665,10 @@ def build_scene(cfg, tja_file):
 	movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
 	movieclips[DON].register_callback("imo_miss_end", on_imo_break_end, None)
 	movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
+	movieclips[DON].register_callback("combo_end", on_combo_end, None)
+	movieclips[DON].register_callback("miss1_end", on_miss1_end, None)
+	movieclips[DON].register_callback("miss2_end", on_miss2_end, None)
+	movieclips[DON].register_callback("miss_normal_start_end", on_miss_normal_start_end, None)
 	movieclips[DON].speed = 2.0
 		
 	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
@@ -699,7 +740,7 @@ def build_scene(cfg, tja_file):
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, options=tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips
