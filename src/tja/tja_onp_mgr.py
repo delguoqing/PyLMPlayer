@@ -185,7 +185,6 @@ class CMgr(object):
 				
 			# Add combo
 			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
-				self._state.combo += 1
 				if hit_judge == HITJUDGE_RYO:
 					self._state.combo += 1
 					self._state.ryo += 1
@@ -368,23 +367,8 @@ if __name__ == '__main__':
 	onp_mgr = CMgr(fumen, options=0)
 	while onp_mgr.update(None):
 		pass
-	
+
 """
-		global cur_renda_effect
-		renda_effect = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
-		if renda_effect: 
-			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
-			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
-			x = random.randint(x_range[0], x_range[1])
-			y = random.randint(y_range[0], y_range[1])
-			renda_effect.matrix.translate = (x, y)
-			enso_cfg.RENDA_EFFECT_FUNC(renda_effect, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
-"""
-"""
-		movieclips[RIGHT_DON].gotoAndPlay("right_don")
-		movieclips[MATO].gotoAndPlay("hit_ka")		
-		movieclips[HITJUDGE].gotoAndPlay("hit_ka")
-		movieclips[HITEFFECTS].gotoAndPlay("don_b")
 		movieclips[COURSE].gotoAndPlay("hit")
 		
 		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)

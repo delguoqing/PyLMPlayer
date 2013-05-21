@@ -456,8 +456,6 @@ def on_miss_normal_start_end(mc, data):
 	movieclips[DON].gotoAndPlay("normal")
 
 def play_onp_fly(onp_fly):
-	if onp_fly == tja_consts.ONP_FLY_NONE:
-		return
 	if onp_fly == tja_consts.ONP_FLY_DON:
 		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
 		if mc: mc.gotoAndPlay("don_hit")
@@ -473,7 +471,9 @@ def play_onp_fly(onp_fly):
 	elif onp_fly == tja_consts.ONP_FLY_GEKI:
 		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
 		if mc: mc.gotoAndPlay("geki_hit")
-
+	if onp_fly != tja_consts.ONP_FLY_GEKI:
+		movieclips[COURSE].gotoAndPlay("hit")
+	
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	
@@ -540,7 +540,8 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		movieclips[HITEFFECTS].gotoAndPlay(enso_hiteffects)
 	if enso_mato != "hit_no":
 		movieclips[MATO].gotoAndPlay(enso_mato)
-	play_onp_fly(onp_fly)
+	if onp_fly != tja_consts.ONP_FLY_NONE:
+		play_onp_fly(onp_fly)
 	
 	# chibi and rendaeffects
 	if hit_judge == tja_consts.HITJUDGE_NO:
@@ -572,7 +573,7 @@ def on_hit(keys):
 	if keys & tja_consts.HIT_RIGHT_DON:
 		movieclips[RIGHT_DON].gotoAndPlay("right_don")
 	if keys & tja_consts.HIT_RIGHT_KATSU:
-		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")		
+		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
 
 # Build up scene
 def build_scene(cfg, tja_file):
