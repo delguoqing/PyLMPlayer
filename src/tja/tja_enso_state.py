@@ -32,6 +32,7 @@ class CEnsoState(object):
 		self.long_note = None
 		self.branch_bar = False	# is the next bar a start of new branch
 		self.balloons = list(header["BALLOON"])
+		self.tot_combo = 0
 		
 		###########################
 		# Statistic Variable
@@ -41,6 +42,6 @@ class CEnsoState(object):
 		self.ryo = 0
 		self.ka = 0
 		self.fuka = 0	# include miss
-		self.tamashii = 0
+		self.tamashii = -1
 		self.score = 0
 		

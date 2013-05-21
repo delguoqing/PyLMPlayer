@@ -21,7 +21,8 @@ http://ericlin2.tripod.com/
 #52. implement fumen bunki
 #54. fix bug. hitjudge(ryo, ka, fuka) blend mode not correct.
 #55. implement score adding, and other statistics(base for fumen bunki)
-#56.
+#56. fix bug. utahim.tja.
+#57.
 #10000. optimize(Never do this when not neccesary!)
 
 # DONE

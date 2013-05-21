@@ -20,6 +20,7 @@ class CNoteBatch(object):
 		self._missed_notes = collections.deque()
 		
 	def log(self, str):
+		return
 		print str
 			
 	def trans_note(self, str):
@@ -76,6 +77,7 @@ class CNoteBatch(object):
 				self.log("ONP RENDA END")
 			else:
 				self.notes.append((off, self.trans_note(note), 1, self.speed))
+				state.tot_combo += 1
 				self.log("ONP %s @off=%f" % (note, off))
 		
 	def read(self, reader, state):
@@ -200,7 +202,7 @@ class CNoteBatch(object):
 		# appending missed and active notes
 		onps.extend(self._missed_notes)
 		onps.extend(self._active_notes)
-		
+									
 	def __cmp__(self, o):
 		return self.offset - self.in_off - (o.offset - o.in_off)
 	

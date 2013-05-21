@@ -1,3 +1,4 @@
+import os
 import random
 
 import enso_layout
@@ -26,6 +27,7 @@ cur_renda_effect = 1 # current renda_effect id
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
+cur_tamashii = None
 
 # Dancer Pos
 DANCER1_POS = (240, 270)
@@ -92,6 +94,10 @@ def set_combo(combo):
 		
 	cur_combo = combo
 	
+def play_fullcombo():
+	global movieclips
+	movieclips[FULLCOMBO].gotoAndPlay("run")
+
 def set_fukidashi_combo(num1000, num100, num10):
 	global movieclips
 	
@@ -474,6 +480,25 @@ def play_onp_fly(onp_fly):
 	if onp_fly != tja_consts.ONP_FLY_GEKI:
 		movieclips[COURSE].gotoAndPlay("hit")
 	
+def set_tamashii(tamashii, max_tamashii):
+	global cur_tamashii, movieclips, cur_dancer
+	if cur_tamashii == None:
+		add_dancer()
+	else:
+		old_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		now_gauge_num = int(50.0 * tamashii / max_tamashii)
+		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
+		now_dancer_num = 1 + now_gauge_num // 8
+		if now_dancer_num > DANCER1 - cur_dancer + 1:
+			add_dancer()
+		
+		if old_gauge_num < 40 and now_gauge_num >= 40:
+			movieclips[DANCE_BG].gotoAndPlay("normal_fever")
+		elif old_gauge_num >= 40 and now_gauge_num < 40:
+			movieclips[DANCE_BG].gotoAndPlay("fever_normal")
+			
+	cur_tamashii = tamashii
+
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	

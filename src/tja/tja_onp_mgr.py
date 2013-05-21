@@ -58,6 +58,7 @@ class CMgr(object):
 		
 		self._keys = 0
 		self._scn = scn
+		self.active = True
 		
 		self.set_option(options)
 		first_batch = self._fumen.get_first_batch()
@@ -188,20 +189,27 @@ class CMgr(object):
 				if hit_judge == HITJUDGE_RYO:
 					self._state.combo += 1
 					self._state.ryo += 1
+					self._state.tamashii += 1
 				elif hit_judge == HITJUDGE_KA:
 					self._state.combo += 1
 					self._state.ka += 1
+					self._state.tamashii += 0.5
 				elif hit_judge == HITJUDGE_RYO_DAI:
 					self._state.combo += 1
 					self._state.ryo += 1
+					self._state.tamashii += 1
 				elif hit_judge == HITJUDGE_KA_DAI:
 					self._state.combo += 1
 					self._state.ka += 1
+					self._state.tamashii += 0.5
 				elif hit_judge == HIT_JUDGE_FUKA:
 					self._state.combo = 0
 					self._state.fuka += 1
+					self._state.tamashii = max(self._state.tamashii - 2, 0)
 					
 				self._scn.set_combo(self._state.combo)
+				print self._state.combo
+				self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
@@ -227,6 +235,14 @@ class CMgr(object):
 			self._state.hitaway_off = off
 			
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if not self.active:
+			return
+		
+		# init tamashii
+		if self._state.tamashii == -1:
+			self._state.tamashii = 0
+			self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
+			
 		self._state.offset += 1000.0 / 60.0
 		self._onps = []
 		
@@ -258,7 +274,9 @@ class CMgr(object):
 					self._state.hit_onp = None
 					self._state.fuka += 1
 					self._state.combo = 0
+					self._state.tamashii = max(self._state.tamashii - 2, 0)
 					self._scn.set_combo(self._state.combo)
+					self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
 				else:
 					self._state.hit_onp = (off, onp, hits, spd) # accept as new hit onp
 					self._state.hit_onp_time = 0
@@ -324,6 +342,11 @@ class CMgr(object):
 				elif onp == ONP_IMO and (off > self._state.hit_onp_off):
 					self.draw_geki_or_imo(render_state, operation, ONP_IMO, x, end_x)
 	
+		# judge full combo
+		if self._fumen.empty() and self._state.fuka == 0:
+			self._scn.play_fullcombo()
+			self.active = False
+			
 	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):
 		lumen = self._onp_lumens[index]
 		if x > self._onp_hit_x:

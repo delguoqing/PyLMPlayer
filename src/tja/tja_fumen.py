@@ -13,6 +13,7 @@ class CFumen(object):
 		self.header = tja_header.CData()
 		self.sections = []
 		self._active_sections = []
+		self.tot_combo = 0
 		
 	def read_header(self, reader):
 		self.header.read(reader)
@@ -31,9 +32,9 @@ class CFumen(object):
 					curr_state, next_state = next_state, None
 				curr_state.branch_bar = True
 				self.sections.append([True, args, None, None, None])
-				print "======> BRANCHSTART"
+				#print "======> BRANCHSTART"
 			elif cmd_name in ("#N", "#E", "#M"):
-				print "<======> %s BEG" % cmd_name
+				#print "<======> %s BEG" % cmd_name
 				reader.skip_line()
 				sec = tja_note_section.CNoteSection()
 				next_state = copy.copy(curr_state)
@@ -44,18 +45,21 @@ class CFumen(object):
 					self.sections[-1][SECTION_EXPERT] = sec
 				elif cmd_name == "#M":
 					self.sections[-1][SECTION_MASTER] = sec
-				print "<======> %s END" % cmd_name					
+				#print "<======> %s END" % cmd_name					
 			elif cmd_name == "#BRANCHEND":
-				print "=====> BRANCHEND"
+				#print "=====> BRANCHEND"
 				reader.skip_line()
 				if next_state:
 					curr_state, next_state = next_state, None
 			else:
-				print "=====> NO BUNKI BEG"
+				#print "=====> NO BUNKI BEG"
 				section = tja_note_section.CNoteSection()
 				self.sections.append([False, None, section, None, None])
 				section.read(reader, curr_state)
-				print "=====> NO BUNKI END"				
+				#print "=====> NO BUNKI END"
+				
+		self.tot_combo = curr_state.tot_combo
+		#print "tot_combo = %d" % curr_state.tot_combo
 			
 	def update(self, state, onps):
 		t = state.offset

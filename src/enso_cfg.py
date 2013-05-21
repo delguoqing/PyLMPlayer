@@ -4,9 +4,9 @@ LM_PACK_ROOT = r"../packages"
 DON = r"pack363/DON_COS00_DIET.LM"
 #DON = r"pack364/M_DON.LM"
 
-DON_COS = False # use don cos or not, turn this off if you use mecha don
-DON_ATAMA = (r"../packages/pack_cos51", 51)
-DON_KARADA = (r"../packages/pack_cos51", 51)
+DON_COS = True # use don cos or not, turn this off if you use mecha don
+DON_ATAMA = (r"../packages/pack301", 29)
+DON_KARADA = (r"../packages/pack330", 29)
 
 # Don Pos
 DON_POS_NORMAL = (64, 42)
