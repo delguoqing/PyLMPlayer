@@ -184,8 +184,24 @@ class CMgr(object):
 					self._state.offset <= self._state.imo_break_high_time)
 				
 			# Add combo
-			if hitaway and ONP_SHORT[0] <= onp <= ONP_LONG[1]:
+			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
 				self._state.combo += 1
+				if hit_judge == HITJUDGE_RYO:
+					self._state.combo += 1
+					self._state.ryo += 1
+				elif hit_judge == HITJUDGE_KA:
+					self._state.combo += 1
+					self._state.ka += 1
+				elif hit_judge == HITJUDGE_RYO_DAI:
+					self._state.combo += 1
+					self._state.ryo += 1
+				elif hit_judge == HITJUDGE_KA_DAI:
+					self._state.combo += 1
+					self._state.ka += 1
+				elif hit_judge == HIT_JUDGE_FUKA:
+					self._state.combo = 0
+					self._state.fuka += 1
+					
 				self._scn.set_combo(self._state.combo)
 		else:
 			hit_keys = self._keys

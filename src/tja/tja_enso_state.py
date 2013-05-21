@@ -42,4 +42,5 @@ class CEnsoState(object):
 		self.ka = 0
 		self.fuka = 0	# include miss
 		self.tamashii = 0
+		self.score = 0
 		
