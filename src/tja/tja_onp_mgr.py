@@ -179,10 +179,14 @@ class CMgr(object):
 				if self._state.hit_onp_hits == 1:
 					self._scn.set_max_balloon(hits)
 				self._scn.set_balloon(hits - self._state.hit_onp_hits)
+			elif onp == ONP_IMO and hit_ok:
+				self._scn.set_imo(hits - self._state.hit_onp_hits,
+					self._state.offset <= self._state.imo_break_high_time)
 				
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
+		
 		
 		self._state.is_hitaway = hitaway
 			
@@ -196,6 +200,11 @@ class CMgr(object):
 			else:
 				self._scn.set_balloon(0)
 			self._state.is_hitaway = True
+			self._state.hitaway_off = off
+		# special case for missing ONP_IMO
+		elif onp == ONP_IMO and not hitaway and self._state.hit_onp_time < 1000.0 / 60.0:
+			self._scn.set_imo_miss()
+			self._state.is_hitaway
 			self._state.hitaway_off = off
 			
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
@@ -236,6 +245,8 @@ class CMgr(object):
 				if self._state.offset >= off:	# accept as new hit onp, but continue find
 					self._state.hit_onp = (off, onp, hits, spd)
 					self._state.hit_onp_time = 999999
+			elif onp == ONP_IMO_HIGH:
+				self._state.imo_break_high_time = off
 			
 		if self._state.hit_onp:
 			self._state.hit_onp_off = self._state.hit_onp[0]
@@ -246,6 +257,9 @@ class CMgr(object):
 			#print "no hit onp"
 		
 		if self._state.hit_onp_off != hit_onp_off: # clear hit count
+			if self._state.hit_onp and self._state.hit_onp[1] == ONP_IMO:
+				self._scn.set_max_imo(self._state.hit_onp[2])
+				self._state.imo_break_high_time = 999999
 			self._state.hit_onp_hits = 0
 			self._state.hit_onp_keys = 0
 			self._state.hit_onp_start = False
@@ -282,7 +296,7 @@ class CMgr(object):
 						ONP_RENDA_DAI1, ONP_RENDA_DAI2, ONP_RENDA_DAI3, x, end_x)
 				elif onp == ONP_GEKI and (off != self._state.hit_onp_off or self._state.hit_onp_hits == 0):
 					self.draw_geki_or_imo(render_state, operation, ONP_GEKI, x, end_x)
-				elif onp == ONP_IMO:
+				elif onp == ONP_IMO and (off > self._state.hit_onp_off):
 					self.draw_geki_or_imo(render_state, operation, ONP_IMO, x, end_x)
 	
 	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):

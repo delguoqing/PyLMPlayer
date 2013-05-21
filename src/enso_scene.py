@@ -338,9 +338,9 @@ def set_max_imo(imo):
 	movieclips[DON2].gotoAndPlay("imo_in")
 	
 	max_imo = imo
-	set_imo(imo)
+	set_imo(imo, True)
 	
-def set_imo(imo):
+def set_imo(imo, high):
 	global cur_imo, movieclips, max_imo
 	
 	if imo < 0: return
@@ -349,8 +349,12 @@ def set_imo(imo):
 	mc = movieclips[IMO]
 	
 	if imo == 0:
-		movieclips[DON2].gotoAndPlay("imo_break_high")
-		mc.gotoAndPlay("imo_break_high")
+		if high:
+			movieclips[DON2].gotoAndPlay("imo_break_high")
+			mc.gotoAndPlay("imo_break_high")
+		else:
+			movieclips[DON2].gotoAndPlay("imo_break_low")
+			mc.gotoAndPlay("imo_break_low")			
 		return
 		
 	# in case of overflow	
@@ -389,6 +393,15 @@ def set_imo(imo):
 	
 	movieclips[DON2].don.gotoAndPlay(0)
 	
+def set_imo_miss():
+	global movieclips, max_imo, cur_imo
+	
+	movieclips[DON2].gotoAndStop("imo_miss")
+	movieclips[DON2].don.gotoAndPlay(0)
+	movieclips[IMO].gotoAndStop("imo_miss")
+	progress = (max_imo - cur_imo) * 6 / max_imo + 1
+	movieclips[IMO].imo_miss.gotoAndPlay("imo0%d_miss" % progress)
+
 def on_imo_break_end(mc, data):
 	global max_imo, cur_imo, donchan_free
 	swap_depth(DON, DON2)
@@ -398,7 +411,7 @@ def on_imo_break_end(mc, data):
 	donchan_free = True
 	movieclips[DON].gotoAndPlay("normal")
 	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
-	
+
 def on_imo_in_end(mc, data):
 	global movieclips
 	
@@ -613,6 +626,7 @@ def build_scene(cfg, tja_file):
 	movieclips[DON].register_callback("baloon_success_end", on_balloon_end, None)
 	movieclips[DON].register_callback("balloon_miss_end", on_balloon_end, None)
 	movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
+	movieclips[DON].register_callback("imo_miss_end", on_imo_break_end, None)
 	movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
 	movieclips[DON].speed = 2.0
 		

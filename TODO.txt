@@ -18,11 +18,9 @@ http://ericlin2.tripod.com/
 #53. fix bug. Dancer Sync bad key frame.
 
 # Priority High
-#51. implement hit judge
 #52. implement fumen bunki
-#53. implement auto play
 #54. fix bug. hitjudge(ryo, ka, fuka) blend mode not correct.
-#55. renda speed too fast, too many onp_fly and renda_effects
+#55. implement score adding, and other statistics(base for fumen bunki)
 #56.
 #10000. optimize(Never do this when not neccesary!)
 
@@ -132,3 +130,9 @@ i can do drawing in the same visit.
 	Can only fix it by hardcoding.
 #48. makes a note sheet flow.
 	Tested all notes ok.(Except bunki syousetsu.)
+#55. renda speed too fast, too many onp_fly and renda_effects
+	Limit mecha don renda speed to 12hit/s
+#53. implement auto play
+	Now, mecha don can hit all onps correctly.
+#51. implement hit judge
+	Now, all onps can be judged correctly.

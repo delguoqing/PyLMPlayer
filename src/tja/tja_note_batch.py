@@ -63,6 +63,8 @@ class CNoteBatch(object):
 				self.log("ONP %s @off=%f" % (note, off))
 			elif note == "7" or note == "9":	# Balloon Renda or Imo Renda
 				if state.long_note:
+					if note == "9":
+						self.notes.append((off, self.trans_note("A"), 0, self.speed))
 					continue
 				hit_count = state.balloons.pop(0)
 				self.notes.append((off, self.trans_note(note), hit_count, self.speed))
