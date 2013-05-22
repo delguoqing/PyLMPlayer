@@ -119,6 +119,8 @@ class CMgr(object):
 	def _gen_auto_play(self):
 		if self._state.hit_onp is None:
 			return 0
+		if random.random() > 0.8:
+			return 0
 		off, onp, hits, spd = self._state.hit_onp
 		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:
 			return 0
@@ -189,26 +191,26 @@ class CMgr(object):
 				if hit_judge == HITJUDGE_RYO:
 					self._state.combo += 1
 					self._state.ryo += 1
-					self._state.tamashii += 1
+					self._state.tamashii = min(self._state.tamashii + 1, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_KA:
 					self._state.combo += 1
 					self._state.ka += 1
-					self._state.tamashii += 0.5
+					self._state.tamashii = min(self._state.tamashii + 0.5, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_RYO_DAI:
 					self._state.combo += 1
 					self._state.ryo += 1
-					self._state.tamashii += 1
+					self._state.tamashii = min(self._state.tamashii + 1, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_KA_DAI:
 					self._state.combo += 1
 					self._state.ka += 1
-					self._state.tamashii += 0.5
-				elif hit_judge == HIT_JUDGE_FUKA:
+					self._state.tamashii = min(self._state.tamashii + 0.5, self._state.tot_tamashii)
+				elif hit_judge == HITJUDGE_FUKA:
 					self._state.combo = 0
 					self._state.fuka += 1
 					self._state.tamashii = max(self._state.tamashii - 2, 0)
 					
 				self._scn.set_combo(self._state.combo)
-				self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
+				self._scn.set_tamashii(self._state.tamashii, self._state.tot_tamashii)
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
@@ -233,15 +235,18 @@ class CMgr(object):
 			self._state.is_hitaway
 			self._state.hitaway_off = off
 			
+	def reset(self, scn):
+		self._scn = scn
+		
+		self._scn.add_dancer()
+		
+		self._state.tamashii = 0
+		self._state.tot_tamashii = self._fumen.tot_combo * 0.6
+	
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:
 			return
 		
-		# init tamashii
-		if self._state.tamashii == -1:
-			self._state.tamashii = 0
-			self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
-			
 		self._state.offset += 1000.0 / 60.0
 		self._onps = []
 		
@@ -277,7 +282,7 @@ class CMgr(object):
 					self._state.combo = 0
 					self._state.tamashii = max(self._state.tamashii - 2, 0)
 					self._scn.set_combo(self._state.combo)
-					self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
+					self._scn.set_tamashii(self._state.tamashii, self._state.tot_tamashii)
 				else:
 					self._state.hit_onp = (off, onp, hits, spd) # accept as new hit onp
 					self._state.hit_onp_time = 0

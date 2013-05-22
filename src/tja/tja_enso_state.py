@@ -43,8 +43,9 @@ class CEnsoState(object):
 		self.ryo = 0
 		self.ka = 0
 		self.fuka = 0	# include miss
-		self.tamashii = -1
+		self.tamashii = 0
 		self.score = 0
+		self.tot_tamashii = -1
 		
 	def execute_command(self, cmd_name, args):
 		if cmd_name == "#GOGOSTART" and not self.gogotime:

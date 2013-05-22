@@ -27,8 +27,8 @@ cur_renda_effect = 1 # current renda_effect id
 first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
-cur_tamashii = None
-max_tamashii = None
+cur_tamashii = 0
+max_tamashii = 1
 cur_ggt = False
 
 # Dancer Pos
@@ -40,7 +40,7 @@ DANCER5_POS = (420, 270)
 
 def set_combo(combo):
 
-	global movieclips, cur_combo, cur_miss, cur_ggt
+	global movieclips, cur_combo, cur_miss, cur_ggt, cur_tamashii, max_tamashii
 	
 	num1000 = combo // 1000
 	num100 = (combo - num1000 * 1000) // 100
@@ -93,11 +93,20 @@ def set_combo(combo):
 	# Miss don animation
 	if not cur_ggt:
 		if first_miss:
-			movieclips[DON].gotoAndPlay("miss")
+			if cur_tamashii == max_tamashii:
+				movieclips[DON].gotoAndPlay("norm_idle")
+			else:
+				movieclips[DON].gotoAndPlay("miss")
 		elif cur_miss == 5 and miss:
 			movieclips[DON].gotoAndPlay("miss_6_1")
 		elif cur_miss > 0 and not miss:
 			movieclips[DON].gotoAndPlay("miss_normal")
+	if first_miss:
+		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		if now_gauge_num < 40:
+			movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
+		else:
+			movieclips[ENSO_UP_BG].gotoAndPlay("fever_miss")
 	
 	# Update data
 	cur_combo = combo
@@ -111,14 +120,14 @@ def play_fullcombo():
 	movieclips[FULLCOMBO].gotoAndPlay("run")
 
 def set_fukidashi_combo(num1000, num100, num10):
-	global movieclips, cur_ggt
+	global movieclips, cur_ggt, cur_tamashii, max_tamashii
 	
 	num1 = 0
 	
 	mc = movieclips[FUKIDASHI]
 	mc.gotoAndPlay("combo")
 	
-	if not cur_ggt:
+	if not cur_ggt and cur_tamashii != max_tamashii:
 		movieclips[DON].gotoAndPlay("combo")
 	
 	first = False
@@ -471,8 +480,15 @@ def on_miss2_end(mc, data):
 	movieclips[DON].gotoAndPlay("miss_6_2")
 
 def on_miss_normal_start_end(mc, data):
-	global movieclips
-	
+	reset_don()
+
+def on_norma_up_end(mc, data):
+	reset_don()
+
+def on_norma_down_end(mc, data):
+	reset_don()
+
+def on_full_gauge_start_end(mc, data):
 	reset_don()
 
 def play_onp_fly(onp_fly):
@@ -497,53 +513,75 @@ def play_onp_fly(onp_fly):
 def set_tamashii(tamashii, _max_tamashii):
 	global cur_tamashii, max_tamashii, movieclips, cur_dancer
 	max_tamashii = _max_tamashii
-	if cur_tamashii == None:
-		add_dancer()
-	else:
-		old_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
-		now_gauge_num = int(50.0 * tamashii / max_tamashii)
-		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
-		now_dancer_num = 1 + now_gauge_num // 8
-		if now_dancer_num > DANCER1 - cur_dancer + 1:
-			add_dancer()
-		
-		if old_gauge_num < 40 and now_gauge_num >= 40:
-			movieclips[DANCE_BG].gotoAndPlay("normal_fever")
-		elif old_gauge_num >= 40 and now_gauge_num < 40:
-			movieclips[DANCE_BG].gotoAndPlay("fever_normal")
-
-		if old_gauge_num < 50 and now_gauge_num >= 50:
-			movieclips[FEVER].fever.gotoAndPlay("fever_start")
-		elif old_gauge_num >= 50 and now_gauge_num < 50:
-			movieclips[FEVER].fever.gotoAndPlay("fever_end")
-			
+	old_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+	now_gauge_num = int(50.0 * tamashii / max_tamashii)
 	cur_tamashii = tamashii
-
+	now_dancer_num = 1 + now_gauge_num // 8
+	
+	movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
+	if now_dancer_num > DANCER1 - cur_dancer + 1:
+		add_dancer()
+	
+	if old_gauge_num < 40 and now_gauge_num >= 40:
+		movieclips[DANCE_BG].gotoAndPlay("normal_fever")
+		movieclips[DON].gotoAndStop("norm_up")
+		movieclips[ENSO_UP_BG].gotoAndPlay("normal_fever")
+	elif old_gauge_num >= 40 and now_gauge_num < 40:
+		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
+		movieclips[DON].gotoAndStop("norm_down")
+	elif old_gauge_num < 50 and now_gauge_num >= 50:
+		movieclips[FEVER].fever.gotoAndPlay("fever_start")
+		movieclips[DON].gotoAndStop("full_gage")
+		movieclips[DON].don.stop()
+	elif old_gauge_num >= 50 and now_gauge_num < 50:
+		movieclips[FEVER].fever.gotoAndPlay("fever_end")
+		reset_don()
+			
 def set_gogotime(is_ggt):
 	global movieclips, cur_ggt
+	global cur_tamashii, max_tamashii
+	
+	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
 	
 	if is_ggt:
 		cur_ggt = True
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
+		
+		if now_gauge_num >= 50:
+			movieclips[DON].gotoAndStop("full_sabi")
+		else:
+			movieclips[DON].gotoAndStop("sabi")
+		movieclips[DON].don.stop()
+		
 	else:
 		cur_ggt = False
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
 		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
+		reset_don()
+		
 
 def reset_don():
-	global movieclips, cur_tamashii, cur_ggt
+	global movieclips, cur_tamashii, cur_ggt, cur_miss
 	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
 	
 	don = movieclips[DON] or movieclips[DON2]
-	if now_gauge_num < 40:
+	if cur_miss >= 6:
+		don.gotoAndStop("miss_6_1")
+	elif now_gauge_num < 40:
 		if not cur_ggt:
 			don.gotoAndPlay("normal")
 		else:
-			don.gotoAndPlay("sabi")
-	else:
+			don.gotoAndStop("sabi")
+			don.don.stop()
+	elif now_gauge_num < 50:
 		if not cur_ggt:
 			don.gotoAndPlay("norm_idle")
+		else:
+			don.gotoAndPlay("full_sabi")
+	else:
+		if not cur_ggt:
+			don.gotoAndPlay("full_gage_idle")
 		else:
 			don.gotoAndPlay("full_sabi")
 		
@@ -638,7 +676,8 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		if mc: mc.gotoAndPlay(0)
 		
 def on_hit(keys):
-	global movieclips
+	global movieclips, cur_miss
+	
 	if keys & tja_consts.HIT_LEFT_DON:
 		movieclips[LEFT_DON].gotoAndPlay("left_don")
 	if keys & tja_consts.HIT_LEFT_KATSU:
@@ -648,6 +687,13 @@ def on_hit(keys):
 	if keys & tja_consts.HIT_RIGHT_KATSU:
 		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
 
+	if cur_miss > 0:
+		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		if now_gauge_num < 40:
+			movieclips[ENSO_UP_BG].gotoAndPlay("miss_normal")
+		else:
+			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")			
+		
 # Build up scene
 def build_scene(cfg, tja_file):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
@@ -743,6 +789,9 @@ def build_scene(cfg, tja_file):
 	movieclips[DON].register_callback("miss1_end", on_miss1_end, None)
 	movieclips[DON].register_callback("miss2_end", on_miss2_end, None)
 	movieclips[DON].register_callback("miss_normal_start_end", on_miss_normal_start_end, None)
+	movieclips[DON].register_callback("norma_up_end", on_norma_up_end, None)
+	movieclips[DON].register_callback("norma_down_end", on_norma_down_end, None)
+	movieclips[DON].register_callback("full_gauge_start_end", on_full_gauge_start_end, None)
 	movieclips[DON].speed = 1
 		
 	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
@@ -814,7 +863,7 @@ def build_scene(cfg, tja_file):
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, 0)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips

@@ -49,6 +49,7 @@ def on_key_press(symbol, modifiers):
 		pyglet.image.get_buffer_manager().get_color_buffer().save('enso%d.jpg' % scr_shot_id)
 		scr_shot_id += 1
 		
+		
 ###################################
 # Rendering
 ###################################
@@ -75,7 +76,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		#if movieclip not in (movieclips[MATO_GOGO], ): continue
+		#if movieclip not in (movieclips[DON], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -95,7 +96,7 @@ pyglet.clock.schedule(on_draw)
 render_state = lm_render_state.CObj()
 
 movieclips = enso_scene.build_scene(enso_cfg, sys.argv[1])
-movieclips[ONPS]._scn = enso_scene
+movieclips[ONPS].reset(enso_scene)
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
