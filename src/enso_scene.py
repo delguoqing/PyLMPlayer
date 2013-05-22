@@ -40,7 +40,7 @@ DANCER5_POS = (420, 270)
 
 def set_combo(combo):
 
-	global movieclips, cur_combo, cur_miss
+	global movieclips, cur_combo, cur_miss, cur_ggt
 	
 	num1000 = combo // 1000
 	num100 = (combo - num1000 * 1000) // 100
@@ -78,39 +78,48 @@ def set_combo(combo):
 	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
 		set_fukidashi_combo(num1000, num100, num10)
 		
-	if combo == 0:
-		cur_miss += 1
+	miss = (combo == 0)
+	first_miss = (cur_miss == 0 and miss)
+		
+	# Miss chibi
+	if miss:
 		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
 		if mc: mc.gotoAndPlay(0)
-	else:
-		if cur_miss > 0:
-			movieclips[DON].gotoAndStop("miss_normal")
-		cur_miss = 0
-		
-	if cur_miss == 1:
+	
+	# Miss fukidashi
+	if first_miss:
 		movieclips[FUKIDASHI].gotoAndPlay("miss")
-		movieclips[DON].gotoAndStop("miss")
-		movieclips[DON].don.gotoAndPlay(0)
-	elif cur_miss == 6:
-		movieclips[DON].gotoAndPlay("miss_6_1")
-		
+	
+	# Miss don animation
+	if not cur_ggt:
+		if first_miss:
+			movieclips[DON].gotoAndPlay("miss")
+		elif cur_miss == 5 and miss:
+			movieclips[DON].gotoAndPlay("miss_6_1")
+		elif cur_miss > 0 and not miss:
+			movieclips[DON].gotoAndPlay("miss_normal")
+	
+	# Update data
 	cur_combo = combo
+	if cur_combo == 0:
+		cur_miss += 1
+	else:
+		cur_miss = 0
 	
 def play_fullcombo():
 	global movieclips
 	movieclips[FULLCOMBO].gotoAndPlay("run")
 
 def set_fukidashi_combo(num1000, num100, num10):
-	global movieclips
+	global movieclips, cur_ggt
 	
 	num1 = 0
 	
 	mc = movieclips[FUKIDASHI]
 	mc.gotoAndPlay("combo")
 	
-	don = movieclips[DON]
-	don.gotoAndStop("combo")
-	don.don.gotoAndPlay(0)
+	if not cur_ggt:
+		movieclips[DON].gotoAndPlay("combo")
 	
 	first = False
 
@@ -734,7 +743,7 @@ def build_scene(cfg, tja_file):
 	movieclips[DON].register_callback("miss1_end", on_miss1_end, None)
 	movieclips[DON].register_callback("miss2_end", on_miss2_end, None)
 	movieclips[DON].register_callback("miss_normal_start_end", on_miss_normal_start_end, None)
-	movieclips[DON].speed = 2.0
+	movieclips[DON].speed = 1
 		
 	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
 	movieclips[BALLOON]._visible = False
