@@ -12,6 +12,7 @@ class CEnsoState(object):
 		self.level = "normal"
 		self.offset = -header["OFFSET"] * 1000
 		
+		self.gogotime_dirty = False
 		###########################
 		# Runtime variable
 		###########################
@@ -45,3 +46,11 @@ class CEnsoState(object):
 		self.tamashii = -1
 		self.score = 0
 		
+	def execute_command(self, cmd_name, args):
+		if cmd_name == "#GOGOSTART" and not self.gogotime:
+			self.gogotime = True
+			self.gogotime_dirty = True
+		elif cmd_name == "#GOGOEND" and self.gogotime:
+			self.gogotime = False
+			self.gogotime_dirty = True
+	

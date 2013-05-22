@@ -251,7 +251,9 @@ class CMgr(object):
 		
 		self._fumen.update(self._state, self._onps)
 		#self.log_onps(self._onps)
-		
+		if self._state.gogotime_dirty:
+			self._state.gogotime_dirty = False
+			self._scn.set_gogotime(self._state.gogotime)
 		
 		# Remove hitawayed hit onp
 		if self._state.is_hitaway:

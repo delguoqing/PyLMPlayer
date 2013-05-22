@@ -22,7 +22,7 @@ class CNoteBatch(object):
 	def log(self, str):
 		return
 		print str
-			
+		
 	def trans_note(self, str):
 		TABLE = {
 			"1": ONP_DON,
@@ -157,6 +157,17 @@ class CNoteBatch(object):
 			
 	def update(self, state, onps):
 			
+		# executing command
+		out_idx = 0
+		for off, cmd_name, args in self.commands:
+			if state.offset >= off:
+				state.execute_command(cmd_name, args)
+				out_idx += 1
+			else:
+				break
+		if out_idx > 0:
+			self.commands = self.commands[out_idx:]
+		
 		# Checking for new notes
 		out_idx = 0
 		for off, note, hits, spd in self.notes:

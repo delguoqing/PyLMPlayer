@@ -28,6 +28,8 @@ first_unsync_dancer = -1 # current unsync_dancer
 last_unsync_dancer = -1 # last unsync_dancer
 donchan_free = True
 cur_tamashii = None
+max_tamashii = None
+cur_ggt = False
 
 # Dancer Pos
 DANCER1_POS = (240, 270)
@@ -346,7 +348,7 @@ def on_balloon_end(mc, data):
 	max_balloon = -1
 	cur_balloon = 0
 	donchan_free = True
-	movieclips[DON].gotoAndPlay("normal")
+	reset_don()
 	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
 
 def set_max_imo(imo):
@@ -436,9 +438,10 @@ def on_imo_break_end(mc, data):
 	max_imo = -1
 	cur_imo = 0
 	donchan_free = True
-	movieclips[DON].gotoAndPlay("normal")
 	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
-
+	
+	reset_don()
+	
 def on_imo_in_end(mc, data):
 	global movieclips
 	
@@ -447,11 +450,12 @@ def on_imo_in_end(mc, data):
 def on_combo_end(mc, data):
 	global movieclips
 	
-	movieclips[DON].gotoAndPlay("normal")
+	reset_don()
 
 def on_miss1_end(mc, data):
 	global movieclips
-	movieclips[DON].gotoAndPlay("normal")
+	
+	reset_don()
 	
 def on_miss2_end(mc, data):
 	global movieclips
@@ -459,7 +463,8 @@ def on_miss2_end(mc, data):
 
 def on_miss_normal_start_end(mc, data):
 	global movieclips
-	movieclips[DON].gotoAndPlay("normal")
+	
+	reset_don()
 
 def play_onp_fly(onp_fly):
 	if onp_fly == tja_consts.ONP_FLY_DON:
@@ -480,8 +485,9 @@ def play_onp_fly(onp_fly):
 	if onp_fly != tja_consts.ONP_FLY_GEKI:
 		movieclips[COURSE].gotoAndPlay("hit")
 	
-def set_tamashii(tamashii, max_tamashii):
-	global cur_tamashii, movieclips, cur_dancer
+def set_tamashii(tamashii, _max_tamashii):
+	global cur_tamashii, max_tamashii, movieclips, cur_dancer
+	max_tamashii = _max_tamashii
 	if cur_tamashii == None:
 		add_dancer()
 	else:
@@ -504,6 +510,34 @@ def set_tamashii(tamashii, max_tamashii):
 			
 	cur_tamashii = tamashii
 
+def set_gogotime(is_ggt):
+	global movieclips, cur_ggt
+	
+	if is_ggt:
+		cur_ggt = True
+		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
+		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
+	else:
+		cur_ggt = False
+		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
+		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
+
+def reset_don():
+	global movieclips, cur_tamashii, cur_ggt
+	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+	
+	don = movieclips[DON] or movieclips[DON2]
+	if now_gauge_num < 40:
+		if not cur_ggt:
+			don.gotoAndPlay("normal")
+		else:
+			don.gotoAndPlay("sabi")
+	else:
+		if not cur_ggt:
+			don.gotoAndPlay("norm_idle")
+		else:
+			don.gotoAndPlay("full_sabi")
+		
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	
