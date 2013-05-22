@@ -208,7 +208,6 @@ class CMgr(object):
 					self._state.tamashii = max(self._state.tamashii - 2, 0)
 					
 				self._scn.set_combo(self._state.combo)
-				print self._state.combo
 				self._scn.set_tamashii(self._state.tamashii, self._fumen.tot_combo)
 		else:
 			hit_keys = self._keys

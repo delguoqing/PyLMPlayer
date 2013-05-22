@@ -496,6 +496,11 @@ def set_tamashii(tamashii, max_tamashii):
 			movieclips[DANCE_BG].gotoAndPlay("normal_fever")
 		elif old_gauge_num >= 40 and now_gauge_num < 40:
 			movieclips[DANCE_BG].gotoAndPlay("fever_normal")
+
+		if old_gauge_num < 50 and now_gauge_num >= 50:
+			movieclips[FEVER].fever.gotoAndPlay("fever_start")
+		elif old_gauge_num >= 50 and now_gauge_num < 50:
+			movieclips[FEVER].fever.gotoAndPlay("fever_end")
 			
 	cur_tamashii = tamashii
 
