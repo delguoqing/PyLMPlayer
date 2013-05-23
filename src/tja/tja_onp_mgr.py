@@ -396,31 +396,3 @@ if __name__ == '__main__':
 	onp_mgr = CMgr(fumen, options=0)
 	while onp_mgr.update(None):
 		pass
-
-"""
-		movieclips[COURSE].gotoAndPlay("hit")
-		
-		chibi = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
-		if chibi is not None: chibi.gotoAndPlay(0)
-
-		onp_fly_kats = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
-		onp_fly_kats.gotoAndPlay("katsu_hit")
-"""
-"""
-		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
-		movieclips[MATO].gotoAndPlay("hit_dai_ryo")		
-		movieclips[HITEFFECTS].gotoAndPlay("katsu_s")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ryo_big")
-		
-		onp_fly_geki = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
-		onp_fly_geki.gotoAndPlay("geki_hit")
-"""
-"""
-		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
-		movieclips[MATO].gotoAndPlay("hit_dai_ka")
-		movieclips[HITJUDGE].gotoAndPlay("hit_ka_big")
-		movieclips[HITEFFECTS].gotoAndPlay("katsu_b")		
-		
-		onp_fly_don_dai = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
-		onp_fly_don_dai.gotoAndPlay("don_d_hit")
-"""
