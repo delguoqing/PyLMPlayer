@@ -43,11 +43,11 @@ class CNoteSection(object):
 	
 	def _insert_active_batch(self, src_batch):
 		for ins_pos, dst_batch in enumerate(self._active_batch):
-			if src_batch.offset > dst_batch.offset:
+			if dst_batch.offset > src_batch.offset:
 				break
 		else:
-			ins_pos = -1
-		self._active_batch.insert(ins_pos + 1, src_batch)
+			ins_pos = len(self._active_batch)
+		self._active_batch.insert(ins_pos, src_batch)
 		
 	def update(self, state, onps):
 		# check if new batch will be activated
