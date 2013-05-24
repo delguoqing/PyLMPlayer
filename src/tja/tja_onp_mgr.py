@@ -119,7 +119,7 @@ class CMgr(object):
 	def _gen_auto_play(self):
 		if self._state.hit_onp is None:
 			return 0
-		if random.random() > 0.8:
+		if random.random() > 1:
 			return 0
 		off, onp, hits, spd = self._state.hit_onp
 		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:

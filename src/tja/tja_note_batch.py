@@ -146,7 +146,7 @@ class CNoteBatch(object):
 			# note_dist = 26
 			# time = time_per_beat * 0.25
 			# speed = note_dist / time
-			self.speed = self.scroll * 26 / (60000.0 * 0.25 / self.bpm)
+			self.speed = self.scroll * 24 / (60000.0 * 0.25 / self.bpm)
 			
 			# 104: hit pos x
 			# 480: screen border x
