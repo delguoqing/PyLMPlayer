@@ -138,7 +138,8 @@ class CObj(lm_drawable_container.CDrawable):
 				self._play_head += 1
 				#self.log("playing %d" % self._play_head)
 				if self._play_head >= self._total_frame:
-					self.init()
+					self.gotoAndPlay(0)
+					self._init_frame = True
 				else:
 					self._frame_tags[self._play_head].execute(target=self)
 			

@@ -532,7 +532,6 @@ def set_tamashii(tamashii, _max_tamashii):
 	elif old_gauge_num < 50 and now_gauge_num >= 50:
 		movieclips[FEVER].fever.gotoAndPlay("fever_start")
 		movieclips[DON].gotoAndStop("full_gage")
-		movieclips[DON].don.stop()
 	elif old_gauge_num >= 50 and now_gauge_num < 50:
 		movieclips[FEVER].fever.gotoAndPlay("fever_end")
 		reset_don()
@@ -552,7 +551,6 @@ def set_gogotime(is_ggt):
 			movieclips[DON].gotoAndStop("full_sabi")
 		else:
 			movieclips[DON].gotoAndStop("sabi")
-		movieclips[DON].don.stop()
 		
 	else:
 		cur_ggt = False
@@ -573,7 +571,6 @@ def reset_don():
 			don.gotoAndPlay("normal")
 		else:
 			don.gotoAndStop("sabi")
-			don.don.stop()
 	elif now_gauge_num < 50:
 		if not cur_ggt:
 			don.gotoAndPlay("norm_idle")
@@ -863,7 +860,7 @@ def build_scene(cfg, tja_file):
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, 0)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips
