@@ -1,16 +1,15 @@
 import os
 import random
 
-import enso_layout
-
-from tja import tja_onp_mgr, tja_fumen, tja_reader, tja_consts
-from lm.type import lm_type_color
-from lm.type import lm_type_mat
 from enso_layout import *
-from pyglet.gl import *
-from ctypes import *
-
+from tja import tja_onp_mgr
+from tja import tja_fumen
+from tja import tja_reader
+from tja import tja_consts
 from lm import lm_loader
+
+WIDTH = 480
+HEIGHT = 272
 
 movieclips = None
 enso_cfg = None # current enso_cfg

@@ -18,7 +18,7 @@ from lm import lm_loader
 from lm.drawable import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(enso_scene.WIDTH, enso_scene.HEIGHT)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 ###################################
@@ -64,7 +64,7 @@ def on_draw(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(0, 480, 272, 0, -1, 1)
+	glOrtho(0, enso_scene.WIDTH, enso_scene.HEIGHT, 0, -1, 1)
 	
 	#glClearColor(1, 1, 1, 1)
 	#window.clear()

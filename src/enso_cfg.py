@@ -140,7 +140,6 @@ ONPS = (
 	r"pack42/ONP_D_RENDA02.LM",
 	r"pack42/ONP_D_RENDA03.LM",
 )
-# =========> onps <====================
 
 # The taiko.
 TAIKO = r"pack44/ENSO_TAIKO.LM"
