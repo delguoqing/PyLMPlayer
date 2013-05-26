@@ -4,7 +4,7 @@ LM_PACK_ROOT = r"../wii_packages"
 DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)
 
-DON_COS = r"don/cos/cos_013/cos_013_1p/cos_013_1p.lm"
+DON_COS = r"don/cos/cos_007/cos_007_4p/cos_007_4p.lm"
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
 DON_IMO = r"don/don_imo_1p/don_imo_1p.lm"
 
@@ -16,8 +16,10 @@ CHOCHIN = r"enso/chochin_miku/chochin_miku.lm"
 CHOCHIN_POS = (-1, 435)
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG = r"enso/bg/enso_1p_bg_12/enso_1p_bg_12.lm"
+ENSO_UP_BG_POS = (0, 0)
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI = r"enso/sabi_1p/sabi_1p.lm"
+BG_SAB_EFFECTI_POS = (0, 0)
 
 # Renda effect,
 # This is really weird!!! Renda effects are not made in the same standard!
@@ -41,21 +43,29 @@ DANCER4 = r"enso_dance/dance_miku_vdon/dance_miku_vdon.lm"
 DANCER3 = r"enso_dance/dance_miku_ydon/dance_miku_ydon.lm"
 DANCER2 = r"enso_dance/dance_miku_pdon/dance_miku_pdon.lm"
 DANCER1 = r"enso_dance/dance_miku/dance_miku.lm"
+DANCER5_POS = (580, 436)
+DANCER4_POS = (60, 436)
+DANCER3_POS = (450, 436)
+DANCER2_POS = (190, 436)
+DANCER1_POS = (320, 436)
 
 # Fever(Appear when tamashii gauge is full.)
 FEVER = r"enso/fever/fever_mikul/fever_mikul.lm"
+FEVER_POS = (0, 301)
 
 # Course icon. not affected by sabi effect.
 COURSE = r"enso/course_oni/course_oni.lm"
 COURSE_POS = (86, -70)
 # The tamashi gauge
 GAUGE = r"enso/gage_don_h/gage_don_h.lm"
+GAUGE_POS = (264.5, 17)
 
 CHIBI = (
 	r"enso_chibi/chibi_1p_miku_01/chibi_1p_miku_01.lm",
 )
 
 CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01.lm"
+CHIBI_MISS_POS = (0, 0)
 
 LANE = r"enso/enso_lane/enso_lane.lm"
 LANE_POS = (104, 107)
@@ -63,9 +73,10 @@ MATO = r"enso/enso_lane_hit/enso_lane_hit.lm"
 MATO_POS = (150, 154)
 
 FULLCOMBO = r"enso/fullcombo1/fullcombo1.lm"
+FULLCOMBO_POS = (104, 107)
 
 ONPS = (
-	r"enso/onp/onp_don/onp_don.lm",
+	r"enso/onp/onp_don/onp_don.lm", 
 	r"enso/onp/onp_katsu/onp_katsu.lm",
 	r"enso/onp/onp_don_dai/onp_don_dai.lm",
 	r"enso/onp/onp_katsu_dai/onp_katsu_dai.lm",
@@ -84,18 +95,24 @@ ONPS = (
 # The taiko.(No taiko, just mii)
 TAIKO = r"enso/enso_1p_taiko/enso_1p_taiko.lm"
 TAIKO_POS = (-10, 102)
+
 MEKAKUSHI = r"enso/mekakushi_1p_kingyo/mekakushi_1p_kingyo.lm"
+MEKAKUSHI_POS = (0, 0)
 
 # Combo number and Cherry(every 100 combo).
 COMBO = r"enso/enso_number/enso_number.lm"
+COMBO_POS = (-10, 64)
 
 # onp flys are combined in only one file
 ONP_FLY = r"enso/onp/onp_hit_don_2p/onp_hit_don_2p.lm"
+ONP_FLY_POS = (149, 154)
 
 # Hitjudge
 HITJUDGE = r"enso/enso_lane_hit_effect/enso_lane_hit_effect.lm"
+HITJUDGE_POS = (149, 154)
 
 IMO = r"enso/imo_1p/imo_1p.lm"
+IMO_POS = (-107, 0)
 
 #######################
 # HUD Part!
@@ -106,7 +123,10 @@ IMO = r"enso/imo_1p/imo_1p.lm"
 # Fukidashi: The current combo(every 10 combo), Level up, Level down, Miss
 # Renda Num: The current hit of the renda onp
 FUKIDASHI = r"enso/don_1p_fukidashi.lm"
-
+FUKIDASHI_POS = (-30, -60)
 RENDA_NUM = r"enso/renda_num/renda_num.lm"
+RENDA_NUM_POS = (-32, -45)
 SCORE_ADD = r"enso/enso_score_add/enso_score_add.lm"
+SCORE_ADD_POS = (464, 78)
 SCORE_MAIN = r"enso/enso_score/enso_score.lm"
+SCORE_MAIN_POS = (464, 78)

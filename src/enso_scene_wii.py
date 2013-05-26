@@ -31,13 +31,6 @@ cur_tamashii = 0
 max_tamashii = 1
 cur_ggt = False
 
-# Dancer Pos
-DANCER1_POS = (240, 270)
-DANCER2_POS = (150, 270)
-DANCER3_POS = (330, 270)
-DANCER4_POS = (60, 270)
-DANCER5_POS = (420, 270)
-
 def set_combo(combo):
 
 	global movieclips, cur_combo, cur_miss, cur_ggt, cur_tamashii, max_tamashii
@@ -717,30 +710,28 @@ def build_scene(cfg, tja_file):
 	movieclips[LANE] = LMC(cfg.LANE, cfg.LANE_POS)
 	movieclips[MATO] = LMC(cfg.MATO, cfg.MATO_POS)
 	movieclips[DON] = loader.load_movie_cos(cfg.DON, cfg.DON_COS, 4, cfg.DON_POS)
+	movieclips[DON].speed = 1.5
+	movieclips[COMBO] = LMC(cfg.COMBO, cfg.COMBO_POS)
+	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE, cfg.HITJUDGE_POS)
+	movieclips[GAUGE] = LMC(cfg.GAUGE, cfg.GAUGE_POS)
+	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO, cfg.FULLCOMBO_POS)
+	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI, cfg.BG_SAB_EFFECTI_POS)
+	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_POS)
+	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
+	movieclips[FEVER].speed = 2
+	movieclips[DANCER1] = LMC(cfg.DANCER1, cfg.DANCER1_POS)
+	movieclips[DANCER1].speed = 1.46
+	movieclips[DANCER2] = LMC(cfg.DANCER2, cfg.DANCER2_POS)
+	movieclips[DANCER2].speed = 1.46
+	movieclips[DANCER3] = LMC(cfg.DANCER3, cfg.DANCER3_POS)
+	movieclips[DANCER3].speed = 1.46
+	movieclips[DANCER4] = LMC(cfg.DANCER4, cfg.DANCER4_POS)
+	movieclips[DANCER4].speed = 1.46
+	movieclips[DANCER5] = LMC(cfg.DANCER5, cfg.DANCER5_POS)
+	movieclips[DANCER5].speed = 1.46
 	
 	return movieclips
 	
-	
-	movieclips[COMBO] = LMC(cfg.COMBO)
-	
-	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE)
-	movieclips[GAUGE] = LMC(cfg.GAUGE)
-	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO)
-	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI)
-	movieclips[DON] = LMC(cfg.DON, cfg.DON_POS_NORMAL)
-	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN)
-	movieclips[FEVER] = LMC(cfg.FEVER)
-	movieclips[FEVER].speed = 2
-	movieclips[DANCER1] = LMC(cfg.DANCER1, DANCER1_POS)
-	movieclips[DANCER1].speed = 1.46
-	movieclips[DANCER2] = LMC(cfg.DANCER2, DANCER2_POS)
-	movieclips[DANCER2].speed = 1.46
-	movieclips[DANCER3] = LMC(cfg.DANCER3, DANCER3_POS)
-	movieclips[DANCER3].speed = 1.46
-	movieclips[DANCER4] = LMC(cfg.DANCER4, DANCER4_POS)
-	movieclips[DANCER4].speed = 1.46
-	movieclips[DANCER5] = LMC(cfg.DANCER5, DANCER5_POS)
-	movieclips[DANCER5].speed = 1.46
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI)
 	movieclips[IMO] = LMC(cfg.IMO)

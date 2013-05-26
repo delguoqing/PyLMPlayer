@@ -77,6 +77,6 @@ IMO,
 # Renda Num: The current hit of the renda onp
 FUKIDASHI,
 RENDA_NUM, 
-SCORE_ADD, SCORE_MAIN,
+SCORE_MAIN, SCORE_ADD,
 
 ) = range(NUM_MOVIECLIP)
