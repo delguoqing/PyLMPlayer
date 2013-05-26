@@ -732,25 +732,21 @@ def build_scene(cfg, tja_file):
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
 	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
-	
-	return movieclips
-	
-	
-	
-	
-	
+
 	# Load score add
-	_def = (((cfg.SCORE_ADD, 30),),)
+	_def = (((cfg.SCORE_ADD, 30, cfg.SCORE_ADD_POS),),)
 	movieclips[SCORE_ADD] = LMP(_def)
 	INDEX_SCORE_ADD, = range(len(_def))
-	
+
 	# Load chibi
-	_def = ([], ((cfg.CHIBI_MISS, 40),),)
+	_def = ([], ((cfg.CHIBI_MISS, 40, cfg.CHIBI_MISS_POS),),)
 	for chibi_lm in cfg.CHIBI:
 		_def[0].append((chibi_lm, 40 / len(cfg.CHIBI)))
 	movieclips[CHIBI] = LMP(_def)
 	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
 	movieclips[CHIBI].speed = 1.46
+	
+	return movieclips
 	
 	# Load renda effect
 	_def = (((cfg.RENDA_EFFECT, 30),),)

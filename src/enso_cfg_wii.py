@@ -64,7 +64,7 @@ CHIBI = (
 	r"enso_chibi/chibi_1p_miku_01/chibi_1p_miku_01.lm",
 )
 
-CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01.lm"
+CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01/chibi_1p_tama_01.lm"
 CHIBI_MISS_POS = (0, 0)
 
 LANE = r"enso/enso_lane/enso_lane.lm"
@@ -122,7 +122,7 @@ IMO_POS = (-107, 0)
 # Score Main: The total score.
 # Fukidashi: The current combo(every 10 combo), Level up, Level down, Miss
 # Renda Num: The current hit of the renda onp
-FUKIDASHI = r"enso/don_1p_fukidashi.lm"
+FUKIDASHI = r"enso/don_1p_fukidashi/don_1p_fukidashi.lm"
 FUKIDASHI_POS = (-30, -60)
 RENDA_NUM = r"enso/renda_num/renda_num.lm"
 RENDA_NUM_POS = (-32, -45)
