@@ -716,7 +716,7 @@ def build_scene(cfg, tja_file):
 	movieclips[GAUGE] = LMC(cfg.GAUGE, cfg.GAUGE_POS)
 	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO, cfg.FULLCOMBO_POS)
 	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI, cfg.BG_SAB_EFFECTI_POS)
-	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_POS)
+	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_MAIN_POS)
 	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
 	movieclips[FEVER].speed = 2
 	movieclips[DANCER1] = LMC(cfg.DANCER1, cfg.DANCER1_POS)
@@ -729,12 +729,15 @@ def build_scene(cfg, tja_file):
 	movieclips[DANCER4].speed = 1.46
 	movieclips[DANCER5] = LMC(cfg.DANCER5, cfg.DANCER5_POS)
 	movieclips[DANCER5].speed = 1.46
+	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
+	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
+	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
 	
 	return movieclips
 	
-	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM)
-	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI)
-	movieclips[IMO] = LMC(cfg.IMO)
+	
+	
+	
 	
 	# Load score add
 	_def = (((cfg.SCORE_ADD, 30),),)
