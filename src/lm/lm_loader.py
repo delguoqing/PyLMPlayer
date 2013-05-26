@@ -16,6 +16,26 @@ class CLoader(object):
 		self.platform = platform
 		self.lm_root = lm_root
 		
+	def load_movie_cos(self, name, cos, cos_id, translate=(0, 0)):
+		filename = os.path.join(self.lm_root, name)
+		img_root = os.path.split(filename)[0]
+		
+		cos_filename = os.path.join(self.lm_root, cos)
+		cos_img_root = os.path.split(cos_filename)[0]
+		
+		ctx = load(filename, img_root, self.platform, self.texture_bin)
+		ctx_cos = load(cos_filename, cos_img_root, self.platform, self.texture_bin)
+		ctx.set_character(cos_id, ctx_cos.get_character(ctx_cos.stage_info.start_character_id))
+		
+		char_id = ctx.stage_info.start_character_id
+		char_tag = ctx.get_character(char_id)
+		
+		movieclip = char_tag.instantiate(0, 0, parent=None)
+		movieclip.init()
+		movieclip.set_matrix(lm_type_mat.CType(translate))
+		movieclip.ctx = ctx
+		return movieclip
+	
 	def load_movie(self, name, translate=(0, 0)):
 		
 		filename = os.path.join(self.lm_root, name)
@@ -120,6 +140,10 @@ class CContex(object):
 	def get_character(self, character_id):
 		return self.char_dict.get(character_id)
 		
+	# Used by costume change?
+	def set_character(self, character_id, tag):
+		self.char_dict[character_id] = tag
+	
 	def add_super_tag(self, tag, sub_cnt, callback):
 		self._super_tag_stack.append((tag, sub_cnt, callback))
 	

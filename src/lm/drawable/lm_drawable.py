@@ -36,8 +36,8 @@ class CDrawable(object):
 		raise NotImplementedError
 	
 	def log(self, str):
-#		if self.char_id == 19:
-		print "[sprite %d] " % self.char_id, str
+		if self.char_id == 4:
+			print "[sprite %d] " % self.char_id, str
 				
 	def set_cxform(self, cadd, cmul):
 		if cadd:

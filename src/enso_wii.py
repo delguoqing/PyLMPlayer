@@ -6,9 +6,10 @@ import cProfile
 import pyglet
 import gc
 import random
-import enso_cfg
+import enso_cfg_wii
+import enso_scene_wii
 
-from enso_layout import *
+from enso_layout_wii import *
 from pyglet.gl import *
 from ctypes import *
 
@@ -17,7 +18,7 @@ from lm import lm_loader
 from lm.drawable import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(enso_scene.WIDTH, enso_scene.HEIGHT)
+window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 ###################################
@@ -47,8 +48,7 @@ def on_key_press(symbol, modifiers):
 		global scr_shot_id
 		pyglet.image.get_buffer_manager().get_color_buffer().save('enso%d.jpg' % scr_shot_id)
 		scr_shot_id += 1
-		
-		
+	
 ###################################
 # Rendering
 ###################################
@@ -63,7 +63,7 @@ def on_draw(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(0, enso_scene.WIDTH, enso_scene.HEIGHT, 0, -1, 1)
+	glOrtho(-108, enso_scene_wii.WIDTH-108, enso_scene_wii.HEIGHT, 0, -1, 1)
 	
 	#glClearColor(1, 1, 1, 1)
 	#window.clear()
@@ -75,6 +75,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
+		#if movieclip in (movieclips[ONPS], ): continue
 		#if movieclip not in (movieclips[DON], ): continue
 		movieclip.update(render_state)
 	
@@ -94,8 +95,8 @@ pyglet.clock.schedule(on_draw)
 # global render state control
 render_state = lm_render_state.CObj()
 
-movieclips = enso_scene.build_scene(enso_cfg, sys.argv[1])
-movieclips[ONPS].reset(enso_scene)
+movieclips = enso_scene_wii.build_scene(enso_cfg_wii, sys.argv[1])
+#movieclips[ONPS].reset(enso_scene_wii)
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

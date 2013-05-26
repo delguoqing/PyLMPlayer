@@ -1,14 +1,15 @@
 import os
 import random
 
-from tja import tja_onp_mgr, tja_fumen, tja_reader, tja_consts
+from tja import tja_onp_mgr
+from tja import tja_fumen
+from tja import tja_reader
+from tja import tja_consts
 from enso_layout_wii import *
-from pyglet.gl import *
-from ctypes import *
 
 from lm import lm_loader
 
-WIDTH = 640
+WIDTH = 856
 HEIGHT = 480
 
 movieclips = None
@@ -695,37 +696,35 @@ def build_scene(cfg, tja_file):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
 	global INDEX_RENDA_EFFECT
 	global INDEX_SCORE_ADD
-	global INDEX_ONP_FLY_DON, INDEX_ONP_FLY_DON_DAI
-	global INDEX_ONP_FLY_KATS, INDEX_ONP_FLY_KATS_DAI
-	global INDEX_ONP_FLY_GEKI
+	global INDEX_ONP_FLY
 	global enso_cfg
 	global movieclips
 	
 	enso_cfg = cfg
 	
-	loader = lm_loader.CLoader("pspdx", cfg.LM_PACK_ROOT)
+	loader = lm_loader.CLoader("wii", cfg.LM_PACK_ROOT)
 	LMC = loader.load_movie
 	LMCS = loader.load_multi_movie
 	LMP = loader.load_movie_pool
 	
 	movieclips = [None] * NUM_MOVIECLIP
-	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG)
+	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG, cfg.DANCE_BG_POS)
 	movieclips[ENSO_UP_BG] = LMC(cfg.ENSO_UP_BG)
-	movieclips[COURSE] = LMC(cfg.COURSE)
-	movieclips[LANE] = LMC(cfg.LANE)
-	movieclips[HITEFFECTS] = LMC(cfg.HITEFFECTS)
-	movieclips[TAIKO] = LMC(cfg.TAIKO)
+	movieclips[COURSE] = LMC(cfg.COURSE, cfg.COURSE_POS)
+	movieclips[MEKAKUSHI] = LMC(cfg.MEKAKUSHI)
+	movieclips[CHOCHIN] = LMC(cfg.CHOCHIN, cfg.CHOCHIN_POS)
+	movieclips[TAIKO] = LMC(cfg.TAIKO, cfg.TAIKO_POS)
+	movieclips[LANE] = LMC(cfg.LANE, cfg.LANE_POS)
+	movieclips[MATO] = LMC(cfg.MATO, cfg.MATO_POS)
+	movieclips[DON] = loader.load_movie_cos(cfg.DON, cfg.DON_COS, 4, cfg.DON_POS)
+	
+	return movieclips
+	
+	
 	movieclips[COMBO] = LMC(cfg.COMBO)
-	movieclips[MATO_GOGO] = LMC(cfg.MATO_GOGO)
-	movieclips[MATO] = LMC(cfg.MATO)
+	
 	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE)
-	movieclips[LEFT_DON] = LMC(cfg.LEFT_DON)
-	movieclips[LEFT_KATS] = LMC(cfg.LEFT_KATS)
-	movieclips[RIGHT_DON] = LMC(cfg.RIGHT_DON)
-	movieclips[RIGHT_KATS] = LMC(cfg.RIGHT_KATS)
 	movieclips[GAUGE] = LMC(cfg.GAUGE)
-	movieclips[BUNKI] = LMC(cfg.BUNKI)
-	movieclips[BUNKI_MOJI] = LMC(cfg.BUNKI_MOJI)
 	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO)
 	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI)
 	movieclips[DON] = LMC(cfg.DON, cfg.DON_POS_NORMAL)
@@ -744,7 +743,6 @@ def build_scene(cfg, tja_file):
 	movieclips[DANCER5].speed = 1.46
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI)
-	movieclips[BALLOON] = LMC(cfg.BALLOON)
 	movieclips[IMO] = LMC(cfg.IMO)
 	
 	# Load score add
@@ -766,88 +764,16 @@ def build_scene(cfg, tja_file):
 	INDEX_RENDA_EFFECT, = range(len(_def))
 	
 	# Load onp fly
-	_def = (((cfg.ONP_FLY[0], 30),), ((cfg.ONP_FLY[1], 30),), ((cfg.ONP_FLY[2], 30),), ((cfg.ONP_FLY[3], 30),), ((cfg.ONP_FLY[4], 10),),)
+	_def = (((cfg.ONP_FLY, 30),),)
 	movieclips[ONP_FLY] = LMP(_def)
-	INDEX_ONP_FLY_DON, INDEX_ONP_FLY_DON_DAI, INDEX_ONP_FLY_KATS, INDEX_ONP_FLY_KATS_DAI, INDEX_ONP_FLY_GEKI = range(len(_def))
+	INDEX_ONP_FLY, = range(len(_def))
 	
 	# Register callbacks
 	for dancer in xrange(DANCER1, DANCER1 - 5, -1):
 		mc = movieclips[dancer]
 		mc.register_callback("in_end", on_dancer_in_end, dancer)
 		mc.register_callback("dance_sync", on_dancer_sync, dancer)
-	
-	movieclips[DON].register_callback("baloon_success_end", on_balloon_end, None)
-	movieclips[DON].register_callback("balloon_miss_end", on_balloon_end, None)
-	movieclips[DON].register_callback("imo_break_end", on_imo_break_end, None)
-	movieclips[DON].register_callback("imo_miss_end", on_imo_break_end, None)
-	movieclips[DON].register_callback("imo_in_end", on_imo_in_end, None)
-	movieclips[DON].register_callback("combo_end", on_combo_end, None)
-	movieclips[DON].register_callback("miss1_end", on_miss1_end, None)
-	movieclips[DON].register_callback("miss2_end", on_miss2_end, None)
-	movieclips[DON].register_callback("miss_normal_start_end", on_miss_normal_start_end, None)
-	movieclips[DON].register_callback("norma_up_end", on_norma_up_end, None)
-	movieclips[DON].register_callback("norma_down_end", on_norma_down_end, None)
-	movieclips[DON].register_callback("full_gauge_start_end", on_full_gauge_start_end, None)
-	movieclips[DON].speed = 1
-		
-	movieclips[BALLOON].ctx.set_global("don", movieclips[DON])
-	movieclips[BALLOON]._visible = False
-	
-	DON_KARADA_MAPPING = (
-		(0, "karada_01b"),
-		(3, "karada_01a"),
-		(6, "karada_02b"),
-		(9, "karada_02a"),
-		(13, "karada_03b"),
-		(16, "karada_03a"),
-		(26, "karada_04b"),
-		(29, "karada_04a"),
-		(35, "karada_09b"),
-		(38, "karada_09a"),
 
-		(44, "karada_06b"),
-		(47, "karada_06a"),
-		(50, "karada_07b"),
-		(53, "karada_07a"),
-		
-		(55, "karada_05b"),
-		(58, "karada_05a"),
-		(60, "karada_08b"),
-		(63, "karada_08a"),
-	)
-	DON_ATAMA_MAPPING = (
-		(1, "atama_01b"),
-		(4, "atama_01a"),
-		(7, "atama_02b"),
-		(10, "atama_02a"),
-		(14, "atama_03b"),
-		(17, "atama_03a"),
-		(27, "atama_04b"),
-		(30, "atama_04a"),
-		(36, "atama_09b"),
-		(39, "atama_09a"),
-
-		(43, "atama_06b"),
-		(46, "atama_06a"),
-		(49, "atama_07b"),
-		(52, "atama_07a"),
-		
-		(56, "atama_05b"),
-		(59, "atama_05a"),
-		(61, "atama_08b"),
-		(64, "atama_08a"),
-		
-		(20, "gum"),
-	)
-	
-	# Don change costume
-	if cfg.DON_COS:
-		_ctx = movieclips[DON].ctx
-		for idx, part in DON_KARADA_MAPPING:
-			_ctx.replace_texture(idx, os.path.join(cfg.DON_KARADA[0], "cos_%02d_%s.png" % (cfg.DON_KARADA[1], part)))
-		for idx, part in DON_ATAMA_MAPPING:
-			_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
-	
 	# ONPS
 	reader = tja_reader.CReader()
 	reader.set_file(tja_file)

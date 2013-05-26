@@ -1,4 +1,4 @@
-NUM_MOVIECLIP = 37
+NUM_MOVIECLIP = 31
 (
 #######################
 # BG Part!

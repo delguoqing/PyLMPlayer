@@ -99,7 +99,7 @@ class CObj(lm_drawable_container.CDrawable):
 		# Remove those not existed frame
 		to_remove = []
 		for drawable in self:
-			if drawable.depth not in key_frame._allowed_depth:
+			if drawable.depth not in key_frame._allowed_depth and not drawable.forbid_timeline:
 				to_remove.append(drawable.depth)
 		for depth in to_remove:
 			self.remove_drawable(depth)	
@@ -133,7 +133,7 @@ class CObj(lm_drawable_container.CDrawable):
 			if self.onEnterFrame:
 				self.onEnterFrame(self, None)
 	
-			# if a movieclip has only one frame, then it won't play
+			#if a movieclip has only one frame, then it won't play
 			if self._is_playing and self._total_frame > 1:
 				self._play_head += 1
 				#self.log("playing %d" % self._play_head)
@@ -149,6 +149,7 @@ class CObj(lm_drawable_container.CDrawable):
 			render_state.push_cxform(self.color_add, self.color_mul)
 			render_state.push_blend_mode(self.blend_mode)
 		
+		#self.log("rendering frame %d" % self._play_head)
 		clip_depth = 0
 		for drawable in self:
 			if drawable.clip_depth > 0:
@@ -210,7 +211,7 @@ class CObj(lm_drawable_container.CDrawable):
 		
 		self.goto_frame(frame_id)
 		
-#		self.log("After gotoAndPlay, play_head = %d" % self._play_head)
+		#self.log("After gotoAndPlay, play_head = %d" % self._play_head)
 #		self.log("After gotoAndPlay, movie is playing = %r" % self._is_playing)
 		
 	def gotoAndStop(self, frame_id):
@@ -224,7 +225,7 @@ class CObj(lm_drawable_container.CDrawable):
 		
 		self.goto_frame(frame_id)
 
-#		self.log("After gotoAndStop, play_head = %d" % self._play_head)
+		#self.log("After gotoAndStop, play_head = %d" % self._play_head)
 			
 	def play(self):
 		self._is_playing = True

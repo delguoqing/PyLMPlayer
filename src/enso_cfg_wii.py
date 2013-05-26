@@ -2,22 +2,26 @@ LM_PACK_ROOT = r"../wii_packages"
 
 # Character don.
 DON = r"don/don_1p/don_1p.lm"
-DON_COS = r"don/cos/cos_000_1p/cos_000_1p.lm"
+DON_POS = (-37, -69)
+
+DON_COS = r"don/cos/cos_013/cos_013_1p/cos_013_1p.lm"
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
 DON_IMO = r"don/don_imo_1p/don_imo_1p.lm"
 
 # Dance BG
 DANCE_BG = r"enso_dance/dance_bg_miku/dance_bg_miku.lm"
+DANCE_BG_POS = (0, 253)
 # Chochin
 CHOCHIN = r"enso/chochin_miku/chochin_miku.lm"
+CHOCHIN_POS = (-1, 435)
 # Enso up bg. Scrolling from left to right.
-ENSO_UP_BG = r"enso/bg/enso_1p_bg_01/enso_1p_bg_01.lm"
+ENSO_UP_BG = r"enso/bg/enso_1p_bg_12/enso_1p_bg_12.lm"
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI = r"enso/sabi_1p/sabi_1p.lm"
 
 # Renda effect,
 # This is really weird!!! Renda effects are not made in the same standard!
-def RENDA_EFFECT_FUN3(mc, style):
+def RENDA_EFFECT_FUNC3(mc, style):
 	mc.gotoAndPlay("p1")
 	mc.p1.gotoAndPlay("eff_0%d" % style)
 
@@ -43,7 +47,7 @@ FEVER = r"enso/fever/fever_mikul/fever_mikul.lm"
 
 # Course icon. not affected by sabi effect.
 COURSE = r"enso/course_oni/course_oni.lm"
-
+COURSE_POS = (86, -70)
 # The tamashi gauge
 GAUGE = r"enso/gage_don_h/gage_don_h.lm"
 
@@ -54,7 +58,10 @@ CHIBI = (
 CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01.lm"
 
 LANE = r"enso/enso_lane/enso_lane.lm"
+LANE_POS = (104, 107)
 MATO = r"enso/enso_lane_hit/enso_lane_hit.lm"
+MATO_POS = (150, 154)
+
 FULLCOMBO = r"enso/fullcombo1/fullcombo1.lm"
 
 ONPS = (
@@ -76,7 +83,9 @@ ONPS = (
 
 # The taiko.(No taiko, just mii)
 TAIKO = r"enso/enso_1p_taiko/enso_1p_taiko.lm"
+TAIKO_POS = (-10, 102)
 MEKAKUSHI = r"enso/mekakushi_1p_kingyo/mekakushi_1p_kingyo.lm"
+
 # Combo number and Cherry(every 100 combo).
 COMBO = r"enso/enso_number/enso_number.lm"
 
