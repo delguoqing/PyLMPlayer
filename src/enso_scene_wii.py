@@ -766,6 +766,8 @@ def build_scene(cfg, tja_file):
 	onp_lumens = []
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
+	onp_lumens[tja_consts.ONP_SYOUSETSU].gotoAndStop("normal")
+	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
 	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)

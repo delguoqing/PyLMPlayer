@@ -67,9 +67,6 @@ class CMgr(object):
 		
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
-	
-		self._onp_lumens[ONP_SYOUSETSU_NORMAL].gotoAndPlay("normal")
-		self._onp_lumens[ONP_SYOUSETSU_BUNKI].gotoAndPlay("bunki")
 		
 	def log_onps(self, onps):
 		print "active onps:"
