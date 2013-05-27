@@ -272,7 +272,7 @@ class CObj(object):
 		color_add, color_mul = self._color_stack[-1]
 		matrix = self._matrix_stack[-1]
 
-		_is_texture_dirty = self._texture is None or (self._texture.id != self._texture.id)
+		_is_texture_dirty = self._texture is None or (self._texture.id != texture.id)
 		_is_blend_mode_dirty = (blend_mode != self._blend_mode)
 					
 		# if render contex changes, flush buffer, and set up new contex
