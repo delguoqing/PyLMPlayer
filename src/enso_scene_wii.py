@@ -746,23 +746,15 @@ def build_scene(cfg, tja_file):
 	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
 	movieclips[CHIBI].speed = 1.46
 	
-	return movieclips
-	
 	# Load renda effect
 	_def = (((cfg.RENDA_EFFECT, 30),),)
 	movieclips[RENDA_EFFECT] = LMP(_def)
 	INDEX_RENDA_EFFECT, = range(len(_def))
 	
 	# Load onp fly
-	_def = (((cfg.ONP_FLY, 30),),)
+	_def = (((cfg.ONP_FLY, 30, cfg.ONP_FLY_POS),),)
 	movieclips[ONP_FLY] = LMP(_def)
 	INDEX_ONP_FLY, = range(len(_def))
-	
-	# Register callbacks
-	for dancer in xrange(DANCER1, DANCER1 - 5, -1):
-		mc = movieclips[dancer]
-		mc.register_callback("in_end", on_dancer_in_end, dancer)
-		mc.register_callback("dance_sync", on_dancer_sync, dancer)
 
 	# ONPS
 	reader = tja_reader.CReader()
@@ -777,5 +769,13 @@ def build_scene(cfg, tja_file):
 	
 	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
+	
+	# DON_GEKI
+	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
+	movieclips[DON_GEKI].stop()
+	movieclips[DON_GEKI].visible = False
+	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
+	movieclips[DON_IMO].stop()
+	movieclips[DON_IMO].visible = False	
 	
 	return movieclips

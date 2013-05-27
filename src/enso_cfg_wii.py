@@ -5,8 +5,12 @@ DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)
 
 DON_COS = r"don/cos/cos_007/cos_007_4p/cos_007_4p.lm"
+
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
+DON_GEKI_POS = (36, 57)
+
 DON_IMO = r"don/don_imo_1p/don_imo_1p.lm"
+DON_IMO_POS = (0, 0)
 
 # Dance BG
 DANCE_BG = r"enso_dance/dance_bg_miku/dance_bg_miku.lm"
@@ -87,9 +91,9 @@ ONPS = (
 	r"enso/onp/onp_geki01/onp_geki01.lm",
 	r"enso/onp/onp_imo/onp_imo.lm",
 	r"enso/onp/onp_renda02/onp_renda02.lm",
-	r"enso/onp/onp_renda02/onp_renda03.lm",
+	r"enso/onp/onp_renda03/onp_renda03.lm",
 	r"enso/onp/onp_d_renda02/onp_d_renda02.lm",
-	r"enso/onp/onp_d_renda02/onp_d_renda03.lm",
+	r"enso/onp/onp_d_renda03/onp_d_renda03.lm",
 )
 
 # The taiko.(No taiko, just mii)

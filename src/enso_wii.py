@@ -96,7 +96,7 @@ pyglet.clock.schedule(on_draw)
 render_state = lm_render_state.CObj()
 
 movieclips = enso_scene_wii.build_scene(enso_cfg_wii, sys.argv[1])
-#movieclips[ONPS].reset(enso_scene_wii)
+movieclips[ONPS].reset(enso_scene_wii)
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

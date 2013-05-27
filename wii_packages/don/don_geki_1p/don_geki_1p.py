@@ -1,3 +1,5 @@
+hit_count = 0
+
 def func0(this, _global):
 	this.stop()
 	this.costume.gotoAndStop(0)
@@ -180,131 +182,36 @@ def func44(this, _global):
 def func45(this, _global):
 	this.stop()
 	this.costume.gotoAndStop(43)
-
+	
 def func46(this, _global):
-	#_global.bTransAnimation = False
-	pass
+	global hit_count
+	hit_count += 1
+	this.don.gotoAndStop(23 + hit_count % 2)
 	
 def func47(this, _global):
-	this.don.gotoAndStop(0)
-	this.log("1")
+	this.stop()
 	
 def func48(this, _global):
-	this.don.gotoAndStop(1)
-	this.log("2")	
+	this.don.gotoAndStop(24)
 	
 def func49(this, _global):
-	this.don.gotoAndStop(2)
-	this.log("3")	
-	
+	this._parent.gotoAndPlay("sleep")
+	this.stop()
+
 def func50(this, _global):
-	this.don.gotoAndStop(3)
-	this.log("4")	
+	this.don.gotoAndStop(23)
 
 def func51(this, _global):
-	this.gotoAndPlay("normal_start")
-	
+	this.don.gotoAndStop(25)
+		
 def func52(this, _global):
-	#_global.bTransAnimation = True
-	pass
-	
+	this.don.gotoAndStop(26)
+		
 def func53(this, _global):
-	this.don.gotoAndStop(7)	
+	global hit_count
+	#_lockroot = True
+	hit_count = 0
 	
-def func54(this, _global):
-	#_global.bTransAnimation = False
-	this.stop()
-	
-def func55(this, _global):
-	this.don.gotoAndStop(4)
-	
-def func56(this, _global):
-	this.don.gotoAndStop(5)
-	
-def func57(this, _global):
-	this.gotoAndPlay("miss_1-5")
-	
-def func58(this, _global):
-	this.stop()
-
-def func59(this, _global):
-	this.don.gotoAndStop(27)
-	
-def func60(this, _global):
-	this.don.gotoAndStop(28)
-	
-def func61(this, _global):
-	this.don.gotoAndStop(29)		
-	
-def func62(this, _global):
-	this.gotoAndPlay("norm_loop")
-	
-def func63(this, _global):
-	this.don.gotoAndStop(8)
-	
-def func64(this, _global):
-	this.don.gotoAndStop(9)		
-	
-def func65(this, _global):
-	this.don.gotoAndStop(10)		
-	
-def func66(this, _global):
-	this.don.gotoAndStop(11)		
-	
-def func67(this, _global):
-	this.don.gotoAndStop(12)		
-	
-def func68(this, _global):
-	this.don.gotoAndStop(13)		
-	
-def func69(this, _global):
-	this.don.gotoAndStop(14)
-	
-def func70(this, _global):
-	this.don.gotoAndStop(15)
-	
-def func71(this, _global):
-	this.don.gotoAndStop(16)
-	
-def func72(this, _global):
-	this.gotoAndPlay("full_loop")
-	
-def func73(this, _global):
-	this.don.gotoAndStop(17)
-	
-def func74(this, _global):
-	this.don.gotoAndStop(18)
-	
-def func75(this, _global):
-	this.don.gotoAndStop(19)
-	
-def func76(this, _global):
-	this.don.gotoAndStop(20)
-	
-def func77(this, _global):
-	this.don.gotoAndStop(21)
-
-def func78(this, _global):
-	#_global.bTransAnimation = True
-	#_global._lookroot = True
-	pass
-	
-def func79(this, _global):
-	this.gotoAndPlay("full_gage")
-	
-def func80(this, _global):
-	this.gotoAndPlay("full_gage_idle")
-	
-def func81(this, _global):
-	#this.stop()
-	this.gotoAndPlay("full_combo")
-	
-def func82(this, _global):
-	this.gotoAndPlay("full_sabi")
-	
-def func83(this, _global):
-	this.gotoAndPlay("full_sabi_start")
-
 DATA = (
 	func0,
 	func1,
@@ -359,35 +266,5 @@ DATA = (
 	func50,
 	func51,
 	func52,
-	func53,					
-	func54,	
-	func55,		
-	func56,
-	func57,
-	func58,
-	func59,	
-	func60,
-	func61,
-	func62,
-	func63,					
-	func64,	
-	func65,		
-	func66,
-	func67,
-	func68,
-	func69,	
-	func70,
-	func71,
-	func72,
-	func73,					
-	func74,	
-	func75,		
-	func76,
-	func77,
-	func78,
-	func79,	
-	func80,
-	func81,
-	func82,
-	func83,					
-)
+	func53,		
+)	
