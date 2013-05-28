@@ -287,14 +287,12 @@ def swap_depth(depth1, depth2):
 def set_balloon_miss():
 	global movieclips, max_balloon, cur_balloon
 	
-	movieclips[DON2].gotoAndStop("balloon_miss")
-	movieclips[DON2].don.gotoAndPlay(0)
-	movieclips[BALLOON].gotoAndStop("geki_miss")
+	movieclips[DON_GEKI].gotoAndPlay("geki_miss")
 	progress = (max_balloon - cur_balloon) * 6 / max_balloon + 1
 	if progress != 3:
-		movieclips[BALLOON].geki_miss.gotoAndPlay("geki0%d_miss" % progress)
+		movieclips[DON_GEKI].geki_miss.gotoAndPlay("geki0%d_miss" % progress)
 	else:
-		movieclips[BALLOON].geki_miss.gotoAndPlay("geki_03_miss")
+		movieclips[DON_GEKI].geki_miss.gotoAndPlay("geki_03_miss")
 		
 def set_max_balloon(balloon):
 	global max_balloon, cur_balloon, donchan_free
@@ -305,13 +303,10 @@ def set_max_balloon(balloon):
 	if balloon == 0: return
 
 	donchan_free = False
-	# This goes first
-	mc = movieclips[BALLOON]
-	mc._visible = True	
-	mc.gotoAndPlay("geki_hit")
 	
-	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_BALLOON
+	movieclips[DON]._visible = False
+	movieclips[DON_GEKI]._visible = True
+	movieclips[DON_GEKI].gotoAndPlay("init")
 		
 	max_balloon = balloon
 	set_balloon(balloon)
@@ -322,13 +317,14 @@ def set_balloon(balloon):
 	if balloon < 0: return
 	if balloon == cur_balloon: return
 	
-	mc = movieclips[BALLOON]
-	
+	mc = movieclips[DON_GEKI]
+
 	if balloon == 0:
-		movieclips[DON2].gotoAndPlay("balloon_succsess")
 		mc.gotoAndPlay("geki_break")
 		return
-		
+	
+	mc.gotoAndPlay("geki_hit")
+	
 	# in case of overflow	
 	if balloon >= 1000: balloon = 999
 
@@ -353,24 +349,17 @@ def set_balloon(balloon):
 	# 6 level in total
 	progress = (max_balloon - balloon) * 6 / max_balloon + 1
 	mc.geki_don.gotoAndPlay("geki_0%d" % progress)
-	
-	if progress == 6:
-		movieclips[DON2].gotoAndStop("balloon_6")
-	else:
-		movieclips[DON2].gotoAndStop("balloon_1")
-	movieclips[DON2].don.gotoAndPlay(0)
 		
 	cur_balloon = balloon
 
 def on_balloon_end(mc, data):
 	global max_balloon, cur_balloon, donchan_free
-	swap_depth(DON, DON2)
 	# should gotoAndPlay old animation
 	max_balloon = -1
 	cur_balloon = 0
 	donchan_free = True
+	movieclips[DON]._visible = True
 	reset_don()
-	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
 
 def set_max_imo(imo):
 	global max_imo, cur_imo, donchan_free
@@ -776,13 +765,15 @@ def build_scene(cfg, tja_file):
 	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, 0)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# DON_GEKI
 	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
 	movieclips[DON_GEKI].stop()
 	movieclips[DON_GEKI]._visible = False
+	movieclips[DON_GEKI].register_callback("on_geki_end", on_balloon_end, None)
+	
 	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
 	movieclips[DON_IMO].stop()
 	movieclips[DON_IMO]._visible = False	

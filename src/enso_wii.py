@@ -75,8 +75,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		#if movieclip in (movieclips[ONPS], ): continue
-		#if movieclip not in (movieclips[DON], ): continue
+		#if movieclip not in (movieclips[DON_GEKI], movieclips[ONPS],): continue
 		movieclip.update(render_state)
 	
 	render_state.end()

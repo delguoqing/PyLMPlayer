@@ -105,6 +105,9 @@ class CObj(lm_drawable_container.CDrawable):
 			self.remove_drawable(depth)	
 #			self.log("remove out of key frame %d" % depth)
 		
+		# Key Frame is always missing action?
+		self._frame_tags[frame_id].do_actions(target=self)
+		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if self.speed != 1:
 			self._frames += self.speed

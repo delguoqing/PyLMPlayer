@@ -49,3 +49,9 @@ class CTag(lm_tag_base.CTag):
 	
 	def get_id(cls):
 		return lm_consts.TAG_FRAME
+	
+	def do_actions(self, target=None):
+		if not target: return
+		for tag in self._as_tags:
+			tag.execute(target=target)
+	

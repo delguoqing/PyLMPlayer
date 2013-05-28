@@ -186,7 +186,7 @@ def func45(this, _global):
 def func46(this, _global):
 	global hit_count
 	hit_count += 1
-	this.don.gotoAndStop(23 + hit_count % 2)
+	this.don.gotoAndStop(22 + hit_count % 2)
 	
 def func47(this, _global):
 	this.stop()
@@ -196,6 +196,7 @@ def func48(this, _global):
 	
 def func49(this, _global):
 	this._parent.gotoAndPlay("sleep")
+	this._root.fscommand("callback", "on_geki_end")
 	this.stop()
 
 def func50(this, _global):
