@@ -8,6 +8,7 @@ from tja import tja_consts
 from enso_layout_wii import *
 
 from lm import lm_loader
+from lm import lm_consts
 
 WIDTH = 856
 HEIGHT = 480
@@ -564,6 +565,9 @@ def reset_don():
 		else:
 			don.gotoAndPlay("full_sabi")
 		
+def set_renda_red(head, body, tail, hit_cnt):
+	return
+
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	
@@ -663,6 +667,30 @@ def on_hit(keys):
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_normal")
 		else:
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")			
+		
+def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
+	if x > ONP_HIT_X:
+		lumen.matrix.translate = (x, ONP_Y)
+	elif end_x > ONP_HIT_X:
+		lumen.matrix.translate = (ONP_HIT_X, ONP_Y)
+	else:
+		lumen.matrix.translate = (end_x, ONP_Y)
+	lumen.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, end_x):
+	body_len = end_x - x
+	
+	set_renda_red(lumen_head, lumen_body, lumen_tail, 0)
+	
+	lumen_body.matrix.translate = (x, ONP_Y)
+	lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
+	lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+	lumen_head.matrix.translate = (x, ONP_Y)
+	lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+	lumen_tail.matrix.translate = (end_x, ONP_Y)
+	lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 		
 # Build up scene
 def build_scene(cfg, tja_file):

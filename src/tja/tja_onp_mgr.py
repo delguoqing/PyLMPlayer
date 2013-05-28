@@ -248,8 +248,8 @@ class CMgr(object):
 		if first_batch:
 			self._state.offset -= first_batch.in_off
 		
-		self._state.tamashii = self._fumen.tot_combo * 0.5
-		self._state.tot_tamashii = self._fumen.tot_combo * 0.6
+		self._state.tamashii = 0
+		self._state.tot_tamashii = self._fumen.tot_combo * 0.9
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:
@@ -333,7 +333,7 @@ class CMgr(object):
 		end_note = None
 		for off, onp, hits, spd in reversed(self._onps):
 			x = self._onp_hit_x + (off - self._state.offset) * spd
-			end_x = 480
+			end_x = self._state.onp_in_x
 			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
 				or (ONP_SYOUSETSU[0] <= onp <= ONP_SYOUSETSU[1] and self._state.barline_on):
 				lumen = self._onp_lumens[onp]
@@ -346,48 +346,20 @@ class CMgr(object):
 					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
 					end_note = None
 				if onp == ONP_RENDA1:
-					self.draw_renda(render_state, operation,
-						ONP_RENDA1, ONP_RENDA2, ONP_RENDA3, x, end_x)
+					self._scn.draw_renda(render_state, operation,
+						self._onp_lumens[ONP_RENDA1], self._onp_lumens[ONP_RENDA2], self._onp_lumens[ONP_RENDA3], x, end_x)
 				elif onp == ONP_RENDA_DAI1:
-					self.draw_renda(render_state, operation,
-						ONP_RENDA_DAI1, ONP_RENDA_DAI2, ONP_RENDA_DAI3, x, end_x)
+					self._scn.draw_renda(render_state, operation,
+						self._onp_lumens[ONP_RENDA_DAI1], self._onp_lumens[ONP_RENDA_DAI2], self._onp_lumens[ONP_RENDA_DAI3], x, end_x)
 				elif onp == ONP_GEKI and (off != self._state.hit_onp_off or self._state.hit_onp_hits == 0):
-					self.draw_geki_or_imo(render_state, operation, ONP_GEKI, x, end_x)
+					self._scn.draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_GEKI], x, end_x)
 				elif onp == ONP_IMO and (off > self._state.hit_onp_off):
-					self.draw_geki_or_imo(render_state, operation, ONP_IMO, x, end_x)
+					self._scn.draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_IMO], x, end_x)
 	
 		# judge full combo
 		if self._fumen.empty() and self._state.fuka == 0:
 			self._scn.play_fullcombo()
 			self.active = False
-			
-	def draw_geki_or_imo(self, render_state, operation, index, x, end_x):
-		lumen = self._onp_lumens[index]
-		if x > self._onp_hit_x:
-			lumen.matrix.translate = (x, self._onp_y)
-		elif end_x > self._onp_hit_x:
-			lumen.matrix.translate = (self._onp_hit_x, self._onp_y)
-		else:
-			lumen.matrix.translate = (end_x, self._onp_y)
-		lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-		
-	def draw_renda(self, render_state, operation, head, body, tail, x, end_x):
-		body_len = end_x - x
-		
-		lumen_body = self._onp_lumens[body]
-		lumen_body.matrix.translate = ((x + end_x) * 0.5, self._onp_y)
-		lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
-		lumen_body.renda.gotoAndStop("yellow")
-		lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
-		
-		lumen_head = self._onp_lumens[head]
-		lumen_head.matrix.translate = (x, self._onp_y)
-		lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
-		
-		lumen_tail = self._onp_lumens[tail]
-		lumen_tail.renda.gotoAndStop("yellow")
-		lumen_tail.matrix.translate = (end_x, self._onp_y)
-		lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 	
 if __name__ == '__main__':
 	import tja_reader

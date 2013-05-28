@@ -3,10 +3,10 @@ import random
 
 from enso_layout import *
 from tja import tja_onp_mgr
-from tja import tja_fumen
-from tja import tja_reader
 from tja import tja_consts
+
 from lm import lm_loader
+from lm import lm_consts
 
 WIDTH = 480
 HEIGHT = 272
@@ -691,6 +691,35 @@ def on_hit(keys):
 		else:
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")			
 		
+def set_renda_red(head, body, tail, hit_cnt):
+	body.renda.gotoAndStop("yellow")
+	tail.renda.gotoAndStop("yellow")
+	return
+
+def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
+	if x > ONP_HIT_X:
+		lumen.matrix.translate = (x, ONP_Y)
+	elif end_x > ONP_HIT_X:
+		lumen.matrix.translate = (ONP_HIT_X, ONP_Y)
+	else:
+		lumen.matrix.translate = (end_x, ONP_Y)
+	lumen.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, end_x):
+	body_len = end_x - x
+	
+	set_renda_red(lumen_head, lumen_body, lumen_tail, 0)
+	
+	lumen_body.matrix.translate = ((x + end_x) * 0.5, ONP_Y)
+	lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
+	lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+	lumen_head.matrix.translate = (x, ONP_Y)
+	lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
+	
+	lumen_tail.matrix.translate = (end_x, ONP_Y)
+	lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
+	
 # Build up scene
 def build_scene(cfg, tja_file):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
