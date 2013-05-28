@@ -1,6 +1,6 @@
 class CEnsoState(object):
 	
-	def __init__(self, header):
+	def __init__(self, header, dist_cfg):
 		###########################
 		# Variables shared in Preprocess and Runtime
 		###########################
@@ -34,6 +34,8 @@ class CEnsoState(object):
 		self.branch_bar = False	# is the next bar a start of new branch
 		self.balloons = list(header["BALLOON"])
 		self.tot_combo = 0
+		
+		self.onp_dist, self.onp_in_x, self.onp_hit_x, self.onp_out_x, self.onp_y = dist_cfg
 		
 		###########################
 		# Statistic Variable

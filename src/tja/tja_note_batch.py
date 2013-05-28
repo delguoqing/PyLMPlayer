@@ -146,14 +146,14 @@ class CNoteBatch(object):
 			# note_dist = 26
 			# time = time_per_beat * 0.25
 			# speed = note_dist / time
-			self.speed = self.scroll * 24 / (60000.0 * 0.25 / self.bpm)
+			self.speed = self.scroll * state.onp_dist / (60000.0 * 0.25 / self.bpm)
 			
 			# 104: hit pos x
 			# 480: screen border x
 			# 32: padding
 			# 80: taiko right border(disappear pos)
-			self.in_off = (32 + 480 - 104) / self.speed
-			self.out_off = (32 + 104 - 80) / self.speed
+			self.in_off = (32 + state.onp_in_x - state.onp_hit_x) / self.speed
+			self.out_off = (32 + state.onp_hit_x - state.onp_out_x) / self.speed
 			
 	def update(self, state, onps):
 			

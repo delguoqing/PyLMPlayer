@@ -3,6 +3,8 @@ sys.path.append("..")
 
 import random
 import tja_enso_state
+import tja_reader
+import tja_fumen
 
 from lm import lm_consts
 from tja_consts import *
@@ -47,10 +49,7 @@ class CMgr(object):
 		self._onp_rand = 0
 		self._onp_rand_func = onp_rand_none
 		self._fumen = fumen
-		self._state = tja_enso_state.CEnsoState(self._fumen.header)
 		self._onps = []
-		self._onp_y = 107
-		self._onp_hit_x = 104
 		
 		self._judge_ryo = 50 * 0.5
 		self._judge_ka = 150 * 0.5
@@ -61,9 +60,6 @@ class CMgr(object):
 		self.active = True
 		
 		self.set_option(options)
-		first_batch = self._fumen.get_first_batch()
-		if first_batch:
-			self._state.offset -= first_batch.in_off
 		
 	def set_onp_lumens(self, lumens):
 		self._onp_lumens = lumens
@@ -102,7 +98,18 @@ class CMgr(object):
 	
 	def add_key(self, key):
 		self._keys |= key
-	
+		if key & HIT_LEFT_DON:
+			self._onp_hit_x -= 1
+		elif key & HIT_RIGHT_DON:
+			self._onp_hit_x += 1
+		if key & HIT_LEFT_KATSU:
+			self._onp_y -= 1
+		elif key & HIT_RIGHT_KATSU:
+			self._onp_y += 1
+		
+		if self._keys:
+			print self._onp_hit_x, self._onp_y
+			
 	def _get_hitjudge(self, onp_off, hit_off):
 		off_delta = abs(onp_off - hit_off)
 		if off_delta <= self._judge_ryo:
@@ -237,9 +244,24 @@ class CMgr(object):
 		
 		self._scn.add_dancer()
 		
+		reader = tja_reader.CReader()
+		reader.set_file(self._fumen)
+		fumen = tja_fumen.CFumen(self._scn.DIST_CFG)
+		fumen.read_header(reader)
+		fumen.read_fumen(reader)	
+		self._state = tja_enso_state.CEnsoState(fumen.header, self._scn.DIST_CFG)
+		self._fumen = fumen
+		
+		self._onp_hit_x = self._state.onp_hit_x
+		self._onp_y = self._state.onp_y
+		
+		first_batch = self._fumen.get_first_batch()
+		if first_batch:
+			self._state.offset -= first_batch.in_off
+		
 		self._state.tamashii = 0
 		self._state.tot_tamashii = self._fumen.tot_combo * 0.6
-	
+		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:
 			return

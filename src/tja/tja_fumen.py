@@ -9,18 +9,19 @@ SECTION_MASTER = 4
 
 class CFumen(object):
 	
-	def __init__(self):
+	def __init__(self, dist_cfg):
 		self.header = tja_header.CData()
 		self.sections = []
 		self._active_sections = []
 		self.tot_combo = 0
+		self.dist_cfg = dist_cfg
 		
 	def read_header(self, reader):
 		self.header.read(reader)
 		self.header.refresh()
 		
 	def read_fumen(self, reader):
-		curr_state = tja_enso_state.CEnsoState(self.header)
+		curr_state = tja_enso_state.CEnsoState(self.header, self.dist_cfg)
 		next_state = None
 		
 		while not reader.check_command("#END"):

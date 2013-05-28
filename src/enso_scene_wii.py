@@ -12,6 +12,15 @@ from lm import lm_loader
 WIDTH = 856
 HEIGHT = 480
 
+
+ONP_HIT_X = 143
+ONP_Y = 153
+ONP_IN_X = 640
+ONP_OUT_X = 0
+ONP_DIST = 30
+
+DIST_CFG = (ONP_DIST, ONP_IN_X, ONP_HIT_X, ONP_OUT_X, ONP_Y)
+
 movieclips = None
 enso_cfg = None # current enso_cfg
 cur_combo = 0	# current combo
@@ -45,28 +54,30 @@ def set_combo(combo):
 	_num10 = (cur_combo - _num1000 * 1000 - _num100 * 100) // 10
 			
 	if combo < 10:
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo0-9")
+		movieclips[COMBO].gotoAndPlay("combo0-9")
 	elif combo < 100:
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo10-99")		
-		movieclips[COMBO].enso_combo.num1.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].gotoAndPlay("combo10-99")		
+		movieclips[COMBO].num1.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].num10.gotoAndPlay("number_%d" % num10)
 		
 	elif combo < 1000:
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo100-999color")
-		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
-		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)		
+		movieclips[COMBO].gotoAndPlay("combo100-999color")
+		movieclips[COMBO].num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].num100color.gotoAndPlay("number_%d" % num100)		
 			
 	elif combo < 10000:
 		
-		movieclips[COMBO].enso_combo.gotoAndPlay("combo1000-9999color")
-		movieclips[COMBO].enso_combo.num1color.gotoAndPlay("number_%d" % num1)
-		movieclips[COMBO].enso_combo.num10color.gotoAndPlay("number_%d" % num10)
-		movieclips[COMBO].enso_combo.num100color.gotoAndPlay("number_%d" % num100)
-		movieclips[COMBO].enso_combo.num1000color.gotoAndPlay("number_%d" % num1000)
+		movieclips[COMBO].gotoAndPlay("combo1000-9999color")
+		movieclips[COMBO].num1color.gotoAndPlay("number_%d" % num1)
+		movieclips[COMBO].num10color.gotoAndPlay("number_%d" % num10)
+		movieclips[COMBO].num100color.gotoAndPlay("number_%d" % num100)
+		movieclips[COMBO].num1000color.gotoAndPlay("number_%d" % num1000)
+
+	return
 
 	if _num100 != num100 and num100 != 0:
-		movieclips[COMBO].enso_combo.cherry.gotoAndPlay("in")
+		movieclips[COMBO].cherry.gotoAndPlay("in")
 		set_fukidashi_combo(num1000, num100, num10)
 	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
 		set_fukidashi_combo(num1000, num100, num10)
@@ -485,21 +496,18 @@ def on_full_gauge_start_end(mc, data):
 	reset_don()
 
 def play_onp_fly(onp_fly):
+	mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY)
+	if not mc: return
 	if onp_fly == tja_consts.ONP_FLY_DON:
-		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON)
-		if mc: mc.gotoAndPlay("don_hit")
+		mc.gotoAndPlay("don_hit")
 	elif onp_fly == tja_consts.ONP_FLY_KATSU:
-		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
-		if mc: mc.gotoAndPlay("katsu_hit")
+		mc.gotoAndPlay("katsu_hit")
 	elif onp_fly == tja_consts.ONP_FLY_DON_DAI:
-		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
-		if mc: mc.gotoAndPlay("don_d_hit")
+		mc.gotoAndPlay("don_d_hit")
 	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI:
-		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS_DAI)
-		if mc: mc.gotoAndPlay("katsu_d_hit")
+		mc.gotoAndPlay("katsu_d_hit")
 	elif onp_fly == tja_consts.ONP_FLY_GEKI:
-		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_GEKI)
-		if mc: mc.gotoAndPlay("geki_hit")
+		mc.gotoAndPlay("geki_hit")
 	if onp_fly != tja_consts.ONP_FLY_GEKI:
 		movieclips[COURSE].gotoAndPlay("hit")
 	
@@ -538,7 +546,7 @@ def set_gogotime(is_ggt):
 	if is_ggt:
 		cur_ggt = True
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_start")
-		movieclips[MATO_GOGO].gotoAndPlay("sabi_in")
+		movieclips[MATO].gotoAndPlay("sabi_in")
 		
 		if now_gauge_num >= 50:
 			movieclips[DON].gotoAndStop("full_sabi")
@@ -548,7 +556,7 @@ def set_gogotime(is_ggt):
 	else:
 		cur_ggt = False
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
-		movieclips[MATO_GOGO].gotoAndPlay("sabi_out")
+		movieclips[MATO].gotoAndPlay("sabi_out")
 		reset_don()
 		
 
@@ -636,14 +644,16 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		#print enso_mato, enso_hiteffects, enso_hitjudge, onp_fly
 	
 	if enso_hitjudge != "hit_no":
-		movieclips[HITJUDGE].gotoAndPlay(enso_hitjudge)
+		movieclips[HITJUDGE].hit.gotoAndPlay(enso_hitjudge)
 	if enso_hiteffects != "none":
-		movieclips[HITEFFECTS].gotoAndPlay(enso_hiteffects)
+		movieclips[LANE].effect.gotoAndPlay(enso_hiteffects)
 	if enso_mato != "hit_no":
-		movieclips[MATO].gotoAndPlay(enso_mato)
+		movieclips[MATO].hit.gotoAndPlay(enso_mato)
 	if onp_fly != tja_consts.ONP_FLY_NONE:
 		play_onp_fly(onp_fly)
 	
+	return
+
 	# chibi and rendaeffects
 	if hit_judge == tja_consts.HITJUDGE_NO:
 		pass
@@ -668,15 +678,6 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 def on_hit(keys):
 	global movieclips, cur_miss
 	
-	if keys & tja_consts.HIT_LEFT_DON:
-		movieclips[LEFT_DON].gotoAndPlay("left_don")
-	if keys & tja_consts.HIT_LEFT_KATSU:
-		movieclips[LEFT_KATS].gotoAndPlay("left_kats")
-	if keys & tja_consts.HIT_RIGHT_DON:
-		movieclips[RIGHT_DON].gotoAndPlay("right_don")
-	if keys & tja_consts.HIT_RIGHT_KATSU:
-		movieclips[RIGHT_KATS].gotoAndPlay("right_kats")
-
 	if cur_miss > 0:
 		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
 		if now_gauge_num < 40:
@@ -719,16 +720,17 @@ def build_scene(cfg, tja_file):
 	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_MAIN_POS)
 	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
 	movieclips[FEVER].speed = 2
+	
 	movieclips[DANCER1] = LMC(cfg.DANCER1, cfg.DANCER1_POS)
-	movieclips[DANCER1].speed = 1.46
 	movieclips[DANCER2] = LMC(cfg.DANCER2, cfg.DANCER2_POS)
-	movieclips[DANCER2].speed = 1.46
 	movieclips[DANCER3] = LMC(cfg.DANCER3, cfg.DANCER3_POS)
-	movieclips[DANCER3].speed = 1.46
 	movieclips[DANCER4] = LMC(cfg.DANCER4, cfg.DANCER4_POS)
-	movieclips[DANCER4].speed = 1.46
 	movieclips[DANCER5] = LMC(cfg.DANCER5, cfg.DANCER5_POS)
-	movieclips[DANCER5].speed = 1.46
+	for dancer in xrange(DANCER5, DANCER1 + 1):
+		movieclips[dancer].speed = 1.46
+		movieclips[dancer].stop()
+		movieclips[dancer].visible = False
+	
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
 	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
@@ -757,19 +759,14 @@ def build_scene(cfg, tja_file):
 	INDEX_ONP_FLY, = range(len(_def))
 
 	# ONPS
-	reader = tja_reader.CReader()
-	reader.set_file(tja_file)
-	fumen = tja_fumen.CFumen()
-	fumen.read_header(reader)
-	fumen.read_fumen(reader)
 	
 	onp_lumens = []
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
-	onp_lumens[tja_consts.ONP_SYOUSETSU].gotoAndStop("normal")
+	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# DON_GEKI

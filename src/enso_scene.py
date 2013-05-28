@@ -11,6 +11,14 @@ from lm import lm_loader
 WIDTH = 480
 HEIGHT = 272
 
+ONP_HIT_X = 104
+ONP_Y = 107
+ONP_IN_X = 480
+ONP_OUT_X = 0
+ONP_DIST = 24
+
+DIST_CFG = (ONP_DIST, ONP_IN_X, ONP_HIT_X, ONP_OUT_X, ONP_Y)
+
 movieclips = None
 enso_cfg = None # current enso_cfg
 cur_combo = 0	# current combo
@@ -842,19 +850,13 @@ def build_scene(cfg, tja_file):
 			_ctx.replace_texture(idx, os.path.join(cfg.DON_ATAMA[0], "cos_%02d_%s.png" % (cfg.DON_ATAMA[1], part)))
 	
 	# ONPS
-	reader = tja_reader.CReader()
-	reader.set_file(tja_file)
-	fumen = tja_fumen.CFumen()
-	fumen.read_header(reader)
-	fumen.read_fumen(reader)
-	
 	onp_lumens = []
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
-	onp_lumens[tja_consts.ONP_SYOUSETSU].gotoAndStop("normal")
+	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(fumen, None, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips
