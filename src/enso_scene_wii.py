@@ -129,9 +129,12 @@ def set_fukidashi_combo(num1000, num100, num10):
 	mc = movieclips[FUKIDASHI]
 	mc.gotoAndPlay("combo")
 	
-	if not cur_ggt and cur_tamashii != max_tamashii:
-		movieclips[DON].gotoAndPlay("combo")
-	
+	if not cur_ggt:
+		if cur_tamashii != max_tamashii:
+			movieclips[DON].gotoAndPlay("combo")
+		else:
+			movieclips[DON].gotoAndPlay("full_combo")
+			
 	first = False
 
 	if num1000 != 0:	
@@ -463,20 +466,6 @@ def on_imo_in_end(mc, data):
 	global movieclips
 	
 	movieclips[DON2].gotoAndPlay("imo_eat")
-	
-def on_combo_end(mc, data):
-	global movieclips
-	
-	reset_don()
-
-def on_miss1_end(mc, data):
-	global movieclips
-	
-	reset_don()
-	
-def on_miss2_end(mc, data):
-	global movieclips
-	movieclips[DON].gotoAndPlay("miss_6_2")
 
 def on_trans_animation_end(mc, data):
 	reset_don()
@@ -558,7 +547,7 @@ def reset_don():
 	
 	don = movieclips[DON]
 	if cur_miss >= 6:
-		don.gotoAndStop("miss_6_1")
+		don.gotoAndStop("miss_6")
 	elif now_gauge_num < 40:
 		if not cur_ggt:
 			don.gotoAndPlay("normal")
@@ -643,8 +632,6 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		movieclips[MATO].hit.gotoAndPlay(enso_mato)
 	if onp_fly != tja_consts.ONP_FLY_NONE:
 		play_onp_fly(onp_fly)
-	
-	return
 
 	# chibi and rendaeffects
 	if hit_judge == tja_consts.HITJUDGE_NO:
@@ -761,7 +748,7 @@ def build_scene(cfg, tja_file):
 	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, 0)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# DON_GEKI
