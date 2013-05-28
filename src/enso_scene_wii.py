@@ -80,35 +80,35 @@ def set_combo(combo):
 	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
 		set_fukidashi_combo(num1000, num100, num10)
 
-	#miss = (combo == 0)
-	#first_miss = (cur_miss == 0 and miss)
-	#	
-	## Miss chibi
-	#if miss:
-	#	mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
-	#	if mc: mc.gotoAndPlay(0)
-	#
-	## Miss fukidashi
-	#if first_miss:
-	#	movieclips[FUKIDASHI].gotoAndPlay("miss")
-	#
+	miss = (combo == 0)
+	first_miss = (cur_miss == 0 and miss)
+		
+	# Miss chibi
+	if miss:
+		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+		if mc: mc.gotoAndPlay(0)
+	
+	# Miss fukidashi
+	if first_miss:
+		movieclips[FUKIDASHI].gotoAndPlay("miss")
+	
 	## Miss don animation
-	#if not cur_ggt:
-	#	if first_miss:
-	#		if cur_tamashii == max_tamashii:
-	#			movieclips[DON].gotoAndPlay("norm_idle")
-	#		else:
-	#			movieclips[DON].gotoAndPlay("miss")
-	#	elif cur_miss == 5 and miss:
-	#		movieclips[DON].gotoAndPlay("miss_6_1")
-	#	elif cur_miss > 0 and not miss:
-	#		movieclips[DON].gotoAndPlay("miss_normal")
-	#if first_miss:
-	#	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
-	#	if now_gauge_num < 40:
-	#		movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
-	#	else:
-	#		movieclips[ENSO_UP_BG].gotoAndPlay("fever_miss")
+	if not cur_ggt:
+		if first_miss:
+			if cur_tamashii == max_tamashii:
+				movieclips[DON].gotoAndPlay("norm_idle")
+			else:
+				movieclips[DON].gotoAndPlay("miss")
+		elif cur_miss == 5 and miss:
+			movieclips[DON].gotoAndPlay("miss_6")
+		elif cur_miss > 0 and not miss:
+			movieclips[DON].gotoAndPlay("miss_normal")
+	if first_miss:
+		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		if now_gauge_num < 40:
+			movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
+		else:
+			movieclips[ENSO_UP_BG].gotoAndPlay("fever_miss")
 	
 	# Update data
 	cur_combo = combo
@@ -210,9 +210,6 @@ def set_score(score):
 	score >= 10000000 and mc.num_10000000.gotoAndPlay("number_%d" % num_10000000)
 	
 	cur_score = score
-
-def dancer_log(i, str):
-	print "[DANCER%d] %s" % (5 - i + DANCER5, str)
 
 def add_dancer():
 	global cur_dancer, movieclips
