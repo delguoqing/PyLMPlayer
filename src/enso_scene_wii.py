@@ -505,7 +505,9 @@ def set_tamashii(tamashii, _max_tamashii):
 	cur_tamashii = tamashii
 	now_dancer_num = 1 + now_gauge_num // 8
 	
-	movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
+	if old_gauge_num != now_gauge_num:
+		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
+		
 	if now_dancer_num > DANCER1 - cur_dancer + 1:
 		add_dancer()
 	
@@ -517,10 +519,14 @@ def set_tamashii(tamashii, _max_tamashii):
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[DON].gotoAndStop("norm_down")
 	elif old_gauge_num < 50 and now_gauge_num >= 50:
-		movieclips[FEVER].fever.gotoAndPlay("fever_start")
+		movieclips[FEVER].fever.gotoAndPlay("feverWide_start")
 		movieclips[DON].gotoAndStop("full_gage")
+		movieclips[GAUGE].fever.gotoAndPlay("fever_start")
+		movieclips[GAUGE].fever_gage.gotoAndPlay("toFever")
 	elif old_gauge_num >= 50 and now_gauge_num < 50:
-		movieclips[FEVER].fever.gotoAndPlay("fever_end")
+		movieclips[FEVER].fever.gotoAndPlay("feverWide_end")
+		movieclips[GAUGE].fever.gotoAndPlay("fever_end")
+		movieclips[GAUGE].fever_gage.gotoAndPlay("toNormal")
 		reset_don()
 			
 def set_gogotime(is_ggt):
@@ -755,7 +761,7 @@ def build_scene(cfg, tja_file):
 	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, 0)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# DON_GEKI

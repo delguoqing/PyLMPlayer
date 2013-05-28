@@ -98,17 +98,6 @@ class CMgr(object):
 	
 	def add_key(self, key):
 		self._keys |= key
-		if key & HIT_LEFT_DON:
-			self._onp_hit_x -= 1
-		elif key & HIT_RIGHT_DON:
-			self._onp_hit_x += 1
-		if key & HIT_LEFT_KATSU:
-			self._onp_y -= 1
-		elif key & HIT_RIGHT_KATSU:
-			self._onp_y += 1
-		
-		if self._keys:
-			print self._onp_hit_x, self._onp_y
 			
 	def _get_hitjudge(self, onp_off, hit_off):
 		off_delta = abs(onp_off - hit_off)
@@ -259,7 +248,7 @@ class CMgr(object):
 		if first_batch:
 			self._state.offset -= first_batch.in_off
 		
-		self._state.tamashii = 0
+		self._state.tamashii = self._fumen.tot_combo * 0.5
 		self._state.tot_tamashii = self._fumen.tot_combo * 0.6
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
