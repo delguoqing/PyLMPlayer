@@ -370,92 +370,91 @@ def set_max_imo(imo):
 	donchan_free = False
 	
 	mc = movieclips[IMO]
-	mc.gotoAndPlay("imo_start")
+	mc.gotoAndPlay("start")
 	
-	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_IMO
-	movieclips[DON2].gotoAndPlay("imo_in")
+	movieclips[DON]._visible = False
+	movieclips[DON_IMO]._visible = True
+	movieclips[DON_IMO].gotoAndPlay(0)
 	
 	max_imo = imo
-	set_imo(imo, True)
+	cur_imo = max_imo
+	#set_imo(0, True)
 	
 def set_imo(imo, high):
-	global cur_imo, movieclips, max_imo
+	global cur_imo, movieclips, max_imo, cur_ggt
 	
 	if imo < 0: return
-	if imo == cur_imo: return
 	
 	mc = movieclips[IMO]
 	
 	if imo == 0:
 		if high:
-			movieclips[DON2].gotoAndPlay("imo_break_high")
-			mc.gotoAndPlay("imo_break_high")
+			movieclips[DON_IMO].gotoAndPlay("geki_break_high")
+			movieclips[DON_IMO].geki_break_high.gotoAndPlay(0)
+			mc.gotoAndPlay("geki_break_high")
 		else:
-			movieclips[DON2].gotoAndPlay("imo_break_low")
-			mc.gotoAndPlay("imo_break_low")			
+			movieclips[DON_IMO].gotoAndPlay("geki_break_low")
+			movieclips[DON_IMO].geki_break_low.gotoAndPlay(0)
+			mc.gotoAndPlay("geki_break_low")
+		if cur_ggt:
+			mc.kusudama.score.gotoAndPlay("gogotime")
+		else:
+			mc.kusudama.score.gotoAndPlay("normal")
 		return
 		
 	# in case of overflow	
 	if imo >= 1000: imo = 999
-
+	
+	movieclips[DON_IMO].gotoAndPlay("geki_hit")
+	mc.gotoAndPlay("geki_hit")
+	mc_geki_num = mc.kusudama_counter
 	num100 = imo // 100
 	num10 = (imo - num100 * 100) // 10
-	num1 = imo - num100 * 100 - num10 * 10
-	
-	if imo == max_imo: # not event begin to eat
-		cur_imo = imo
-		return
-	elif cur_imo == max_imo: # the first bite
-		mc.gotoAndPlay("imo_hit")
-		movieclips[DON2].gotoAndPlay("imo_eat")
-	
+	num1 = imo - num100 * 100 - num10 * 10	
+	if imo < 10:
+		mc_geki_num.gotoAndPlay("figure1")
+		mc_geki_num.digit1.gotoAndPlay("number_%d" % num1)
+	elif imo < 100:
+		mc_geki_num.gotoAndPlay("figure2")
+		mc_geki_num.digit1.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.digit2.gotoAndPlay("number_%d" % num10)
+	elif imo < 1000:
+		mc_geki_num.gotoAndPlay("figure3")	
+		mc_geki_num.digit1.gotoAndPlay("number_%d" % num1)
+		mc_geki_num.digit2.gotoAndPlay("number_%d" % num10)		
+		mc_geki_num.digit3.gotoAndPlay("number_%d" % num100)
 	cur_imo = imo
 	
-	mc_geki_num = mc.imo_num_100
-	if imo < 10:
-		mc_geki_num.gotoAndPlay("1digit")
-		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
-	elif imo < 100:
-		mc_geki_num.gotoAndPlay("2digit")
-		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
-		mc_geki_num.num_Layer2_num_2.gotoAndPlay("number_%d" % num10)
-	elif imo < 1000:
-		mc_geki_num.gotoAndPlay("3digit")	
-		mc_geki_num.num_Layer2_num_1.gotoAndPlay("number_%d" % num1)
-		mc_geki_num.num_Layer2_num_2.gotoAndPlay("number_%d" % num10)		
-		mc_geki_num.num_Layer2_num_3.gotoAndPlay("number_%d" % num100)		
+	if imo == max_imo: # not event begin to eat
+		return
+	
+	movieclips[DON_IMO].geki_don.play()
 	
 	# 6 level in total
 	progress = (max_imo - imo) * 6 / max_imo + 1
-	mc.imo_don.gotoAndPlay("geki_0%d" % progress)
-	
-	movieclips[DON2].don.gotoAndPlay(0)
+	mc.kusudama.gotoAndPlay("geki_0%d" % progress)
 	
 def set_imo_miss():
 	global movieclips, max_imo, cur_imo
 	
-	movieclips[DON2].gotoAndStop("imo_miss")
-	movieclips[DON2].don.gotoAndPlay(0)
-	movieclips[IMO].gotoAndStop("imo_miss")
+	movieclips[DON_IMO].gotoAndPlay("geki_miss")
+	movieclips[IMO].gotoAndPlay("geki_miss")
 	progress = (max_imo - cur_imo) * 6 / max_imo + 1
-	movieclips[IMO].imo_miss.gotoAndPlay("imo0%d_miss" % progress)
+	movieclips[IMO].kusudama.gotoAndPlay("geki0%d_miss" % progress)
 
 def on_imo_break_end(mc, data):
 	global max_imo, cur_imo, donchan_free
-	swap_depth(DON, DON2)
+	
 	# should gotoAndPlay old animation
 	max_imo = -1
 	cur_imo = 0
 	donchan_free = True
-	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
-	
+	movieclips[DON]._visible = True
 	reset_don()
-	
+
 def on_imo_in_end(mc, data):
-	global movieclips
-	
-	movieclips[DON2].gotoAndPlay("imo_eat")
+	global cur_imo
+	set_imo(cur_imo, True)
 
 def on_trans_animation_end(mc, data):
 	reset_don()
@@ -733,6 +732,7 @@ def build_scene(cfg, tja_file):
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
 	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
+	movieclips[IMO].register_callback("on_imo_in_end", on_imo_in_end, None)
 
 	# Load score add
 	_def = (((cfg.SCORE_ADD, 30, cfg.SCORE_ADD_POS),),)
@@ -765,7 +765,7 @@ def build_scene(cfg, tja_file):
 	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
 	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
 	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, 0)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# DON_GEKI
@@ -776,6 +776,7 @@ def build_scene(cfg, tja_file):
 	
 	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
 	movieclips[DON_IMO].stop()
-	movieclips[DON_IMO]._visible = False	
+	movieclips[DON_IMO]._visible = False
+	movieclips[DON_IMO].register_callback("on_imo_end", on_imo_break_end, None)
 	
 	return movieclips

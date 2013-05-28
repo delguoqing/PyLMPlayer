@@ -4,7 +4,7 @@ LM_PACK_ROOT = r"../wii_packages"
 DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)
 
-DON_COS = r"don/cos/cos_007/cos_007_4p/cos_007_4p.lm"
+DON_COS = r"don/cos/cos_008/cos_008_4p/cos_008_4p.lm"
 
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
 DON_GEKI_POS = (36, 57)

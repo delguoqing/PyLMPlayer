@@ -43,6 +43,7 @@ def func11(this, _global):
 	
 def func12(this, _global):	
 	#SetState(STATE_HIT);
+	this._root.fscommand("callback", "on_imo_in_end")
 	pass
 	
 def func13(this, _global):	

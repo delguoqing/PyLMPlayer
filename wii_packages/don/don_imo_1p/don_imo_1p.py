@@ -195,6 +195,7 @@ def func48(this, _global):
 
 def func49(this, _global):
 	this._parent.gotoAndPlay("sleep")
+	this._root.fscommand("callback", "on_imo_end")
 	this.stop()
 	
 def func50(this, _global):
