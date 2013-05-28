@@ -74,43 +74,41 @@ def set_combo(combo):
 		movieclips[COMBO].num100color.gotoAndPlay("number_%d" % num100)
 		movieclips[COMBO].num1000color.gotoAndPlay("number_%d" % num1000)
 
-	return
-
 	if _num100 != num100 and num100 != 0:
 		movieclips[COMBO].cherry.gotoAndPlay("in")
 		set_fukidashi_combo(num1000, num100, num10)
 	elif (_num10 != num10 and num10 != 0) or (_num1000 != num1000 and num1000 != 0):
 		set_fukidashi_combo(num1000, num100, num10)
-		
-	miss = (combo == 0)
-	first_miss = (cur_miss == 0 and miss)
-		
-	# Miss chibi
-	if miss:
-		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
-		if mc: mc.gotoAndPlay(0)
-	
-	# Miss fukidashi
-	if first_miss:
-		movieclips[FUKIDASHI].gotoAndPlay("miss")
-	
-	# Miss don animation
-	if not cur_ggt:
-		if first_miss:
-			if cur_tamashii == max_tamashii:
-				movieclips[DON].gotoAndPlay("norm_idle")
-			else:
-				movieclips[DON].gotoAndPlay("miss")
-		elif cur_miss == 5 and miss:
-			movieclips[DON].gotoAndPlay("miss_6_1")
-		elif cur_miss > 0 and not miss:
-			movieclips[DON].gotoAndPlay("miss_normal")
-	if first_miss:
-		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
-		if now_gauge_num < 40:
-			movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
-		else:
-			movieclips[ENSO_UP_BG].gotoAndPlay("fever_miss")
+
+	#miss = (combo == 0)
+	#first_miss = (cur_miss == 0 and miss)
+	#	
+	## Miss chibi
+	#if miss:
+	#	mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
+	#	if mc: mc.gotoAndPlay(0)
+	#
+	## Miss fukidashi
+	#if first_miss:
+	#	movieclips[FUKIDASHI].gotoAndPlay("miss")
+	#
+	## Miss don animation
+	#if not cur_ggt:
+	#	if first_miss:
+	#		if cur_tamashii == max_tamashii:
+	#			movieclips[DON].gotoAndPlay("norm_idle")
+	#		else:
+	#			movieclips[DON].gotoAndPlay("miss")
+	#	elif cur_miss == 5 and miss:
+	#		movieclips[DON].gotoAndPlay("miss_6_1")
+	#	elif cur_miss > 0 and not miss:
+	#		movieclips[DON].gotoAndPlay("miss_normal")
+	#if first_miss:
+	#	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+	#	if now_gauge_num < 40:
+	#		movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
+	#	else:
+	#		movieclips[ENSO_UP_BG].gotoAndPlay("fever_miss")
 	
 	# Update data
 	cur_combo = combo
@@ -483,16 +481,7 @@ def on_miss2_end(mc, data):
 	global movieclips
 	movieclips[DON].gotoAndPlay("miss_6_2")
 
-def on_miss_normal_start_end(mc, data):
-	reset_don()
-
-def on_norma_up_end(mc, data):
-	reset_don()
-
-def on_norma_down_end(mc, data):
-	reset_don()
-
-def on_full_gauge_start_end(mc, data):
+def on_trans_animation_end(mc, data):
 	reset_don()
 
 def play_onp_fly(onp_fly):
@@ -564,7 +553,7 @@ def reset_don():
 	global movieclips, cur_tamashii, cur_ggt, cur_miss
 	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
 	
-	don = movieclips[DON] or movieclips[DON2]
+	don = movieclips[DON]
 	if cur_miss >= 6:
 		don.gotoAndStop("miss_6_1")
 	elif now_gauge_num < 40:
@@ -710,8 +699,11 @@ def build_scene(cfg, tja_file):
 	movieclips[TAIKO] = LMC(cfg.TAIKO, cfg.TAIKO_POS)
 	movieclips[LANE] = LMC(cfg.LANE, cfg.LANE_POS)
 	movieclips[MATO] = LMC(cfg.MATO, cfg.MATO_POS)
+	
 	movieclips[DON] = loader.load_movie_cos(cfg.DON, cfg.DON_COS, 4, cfg.DON_POS)
 	movieclips[DON].speed = 1.5
+	movieclips[DON].register_callback("on_trans_animation_end", on_trans_animation_end, None)
+	
 	movieclips[COMBO] = LMC(cfg.COMBO, cfg.COMBO_POS)
 	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE, cfg.HITJUDGE_POS)
 	movieclips[GAUGE] = LMC(cfg.GAUGE, cfg.GAUGE_POS)
@@ -729,7 +721,7 @@ def build_scene(cfg, tja_file):
 	for dancer in xrange(DANCER5, DANCER1 + 1):
 		movieclips[dancer].speed = 1.46
 		movieclips[dancer].stop()
-		movieclips[dancer].visible = False
+		movieclips[dancer]._visible = False
 	
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
@@ -772,9 +764,9 @@ def build_scene(cfg, tja_file):
 	# DON_GEKI
 	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
 	movieclips[DON_GEKI].stop()
-	movieclips[DON_GEKI].visible = False
+	movieclips[DON_GEKI]._visible = False
 	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
 	movieclips[DON_IMO].stop()
-	movieclips[DON_IMO].visible = False	
+	movieclips[DON_IMO]._visible = False	
 	
 	return movieclips

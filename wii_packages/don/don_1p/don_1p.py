@@ -1,3 +1,5 @@
+bTransAnimation = False
+
 def func0(this, _global):
 	this.stop()
 	this.costume.gotoAndStop(0)
@@ -187,32 +189,31 @@ def func46(this, _global):
 	
 def func47(this, _global):
 	this.don.gotoAndStop(0)
-	this.log("1")
 	
 def func48(this, _global):
 	this.don.gotoAndStop(1)
-	this.log("2")	
 	
 def func49(this, _global):
 	this.don.gotoAndStop(2)
-	this.log("3")	
 	
 def func50(this, _global):
 	this.don.gotoAndStop(3)
-	this.log("4")	
 
 def func51(this, _global):
 	this.gotoAndPlay("normal_start")
 	
 def func52(this, _global):
-	#_global.bTransAnimation = True
-	pass
+	global bTransAnimation
+	bTransAnimation = True
 	
 def func53(this, _global):
 	this.don.gotoAndStop(7)	
 	
 def func54(this, _global):
-	#_global.bTransAnimation = False
+	global bTransAnimation
+	if bTransAnimation:
+		bTransAnimation = True
+		this._root.fscommand("callback", "on_trans_animation_end")
 	this.stop()
 	
 def func55(this, _global):
@@ -255,7 +256,7 @@ def func67(this, _global):
 	this.don.gotoAndStop(12)		
 	
 def func68(this, _global):
-	this.don.gotoAndStop(13)		
+	this.don.gotoAndStop(13)
 	
 def func69(this, _global):
 	this.don.gotoAndStop(14)
@@ -285,9 +286,9 @@ def func77(this, _global):
 	this.don.gotoAndStop(21)
 
 def func78(this, _global):
-	#_global.bTransAnimation = True
+	global bTransAnimation
+	bTransAnimation = True
 	#_global._lookroot = True
-	pass
 	
 def func79(this, _global):
 	this.gotoAndPlay("full_gage")
@@ -296,7 +297,7 @@ def func80(this, _global):
 	this.gotoAndPlay("full_gage_idle")
 	
 def func81(this, _global):
-	#this.stop()
+	this.stop()
 	this.gotoAndPlay("full_combo")
 	
 def func82(this, _global):
