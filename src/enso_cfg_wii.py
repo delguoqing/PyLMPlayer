@@ -65,7 +65,7 @@ GAUGE = r"enso/gage_don_h/gage_don_h.lm"
 GAUGE_POS = (264.5, 17)
 
 CHIBI = (
-	r"enso_chibi/chibi_1p_miku_01/chibi_1p_miku_01.lm",
+	(r"enso_chibi/chibi_1p_miku_01/chibi_1p_miku_01.lm", 0, -32),
 )
 
 CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01/chibi_1p_tama_01.lm"

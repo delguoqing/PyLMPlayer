@@ -39,7 +39,7 @@ def onp_rand_srandom(onp):
 
 class CMgr(object):
 	
-	def __init__(self, fumen, scn, options=0):
+	def __init__(self, fumen, options=0):
 		self._glb_scroll = 1.0
 		
 		self._auto = False
@@ -56,7 +56,7 @@ class CMgr(object):
 		self._judge_fuka = 217 * 0.5
 		
 		self._keys = 0
-		self._scn = scn
+		self._scn = None
 		self.active = True
 		
 		self.set_option(options)
@@ -275,7 +275,7 @@ class CMgr(object):
 		if first_batch:
 			self._state.offset -= first_batch.in_off
 		
-		self._state.tamashii = self._fumen.tot_combo * 0.8
+		self._state.tamashii = 0
 		self._state.tot_tamashii = self._fumen.tot_combo * 0.9
 		self._scn.set_score(0)
 		

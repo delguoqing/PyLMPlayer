@@ -8,15 +8,18 @@ NUM_MOVIECLIP = 32
 # Dance BG
 DANCE_BG,
 # Enso up bg. Scrolling from left to right.
-ENSO_UP_BG, 
-CHOCHIN,
-
+ENSO_UP_BG,
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI,
-
+# Course icon. not affected by sabi effect.
+COURSE,
+# Character don.(At normal states)
+DON,
+# The tamashi gauge
+GAUGE,
 # Renda effect, 
 RENDA_EFFECT,
-
+# ==============> SONG_NAME <=================
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
 DANCER5,
@@ -24,55 +27,30 @@ DANCER4,
 DANCER3,
 DANCER2,
 DANCER1,
-# Fever(Appear when tamashii gauge is full.)
-FEVER,
-
-# Course icon. not affected by sabi effect.
-COURSE, 
-# Character don.(At normal states)
-DON,
-# The tamashi gauge
-GAUGE,
-
-CHIBI,
-
-########################
-# Enso Part!
-# Enso parts rules.hit judge effect can be the most top.
-# The onp_fly animation is on top of the gauge and something else
-########################
+# ==============> OPTION <=================
 LANE, 
-MATO, 
-FULLCOMBO,
-
+MATO,
 ONPS,
-
+FULLCOMBO,
 # The taiko.
 TAIKO,
-MEKAKUSHI,
 # Combo number and Cherry(every 100 combo).
 COMBO,
-
-ONP_FLY,
-
 # Hitjudge
-HITJUDGE, 
-
+HITJUDGE,
+# Chochin(Padding part at the bottom of the screen)
+CHOCHIN,
+CHIBI,
+ONP_FLY,
+RENDA_NUM,
+FUKIDASHI,
+SCORE_MAIN, SCORE_ADD,
 DON_GEKI,
+MEKAKUSHI,
+# Fever(Appear when tamashii gauge is full.)
+FEVER,
 DON_IMO,
 IMO,
-
 SPLASH,
-#######################
-# HUD Part!
-#######################
-# Scores.
-# Score Add: How many score is added in the last hit
-# Score Main: The total score.
-# Fukidashi: The current combo(every 10 combo), Level up, Level down, Miss
-# Renda Num: The current hit of the renda onp
-FUKIDASHI,
-RENDA_NUM, 
-SCORE_MAIN, SCORE_ADD,
-
+# ======================> Lyrics <======================
 ) = range(NUM_MOVIECLIP)

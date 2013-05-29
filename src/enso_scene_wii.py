@@ -721,26 +721,16 @@ def build_scene(cfg, tja_file):
 	movieclips = [None] * NUM_MOVIECLIP
 	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG, cfg.DANCE_BG_POS)
 	movieclips[ENSO_UP_BG] = LMC(cfg.ENSO_UP_BG)
+	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI, cfg.BG_SAB_EFFECTI_POS)
 	movieclips[COURSE] = LMC(cfg.COURSE, cfg.COURSE_POS)
-	movieclips[MEKAKUSHI] = LMC(cfg.MEKAKUSHI)
-	movieclips[CHOCHIN] = LMC(cfg.CHOCHIN, cfg.CHOCHIN_POS)
-	movieclips[TAIKO] = LMC(cfg.TAIKO, cfg.TAIKO_POS)
-	movieclips[LANE] = LMC(cfg.LANE, cfg.LANE_POS)
-	movieclips[MATO] = LMC(cfg.MATO, cfg.MATO_POS)
-	
 	movieclips[DON] = loader.load_movie_cos(cfg.DON, cfg.DON_COS, 4, cfg.DON_POS)
 	movieclips[DON].speed = 1.5
 	movieclips[DON].register_callback("on_trans_animation_end", on_trans_animation_end, None)
-	
-	movieclips[COMBO] = LMC(cfg.COMBO, cfg.COMBO_POS)
-	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE, cfg.HITJUDGE_POS)
 	movieclips[GAUGE] = LMC(cfg.GAUGE, cfg.GAUGE_POS)
-	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO, cfg.FULLCOMBO_POS)
-	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI, cfg.BG_SAB_EFFECTI_POS)
-	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_MAIN_POS)
-	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
-	movieclips[FEVER].speed = 2
-	
+	# Load renda effect
+	_def = (((cfg.RENDA_EFFECT, 30),),)
+	movieclips[RENDA_EFFECT] = LMP(_def)
+	INDEX_RENDA_EFFECT, = range(len(_def))
 	movieclips[DANCER1] = LMC(cfg.DANCER1, cfg.DANCER1_POS)
 	movieclips[DANCER2] = LMC(cfg.DANCER2, cfg.DANCER2_POS)
 	movieclips[DANCER3] = LMC(cfg.DANCER3, cfg.DANCER3_POS)
@@ -749,55 +739,53 @@ def build_scene(cfg, tja_file):
 	for dancer in xrange(DANCER5, DANCER1 + 1):
 		movieclips[dancer].active = False
 		movieclips[dancer].register_callback("on_dancer_in_end", on_dancer_in_end, dancer)
-	
-	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
-	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
-	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
-	movieclips[IMO].register_callback("on_imo_in_end", on_imo_in_end, None)
-
-	movieclips[SPLASH] = LMC(cfg.SPLASH, cfg.SPLASH_POS)
-	
-	# Load score add
-	_def = (((cfg.SCORE_ADD, 10, cfg.SCORE_ADD_POS),),)
-	movieclips[SCORE_ADD] = LMP(_def)
-	INDEX_SCORE_ADD, = range(len(_def))
-
-	# Load chibi
-	_def = ([], ((cfg.CHIBI_MISS, 40, cfg.CHIBI_MISS_POS),),)
-	for chibi_lm in cfg.CHIBI:
-		_def[0].append((chibi_lm, 40 / len(cfg.CHIBI)))
-	movieclips[CHIBI] = LMP(_def)
-	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
-	movieclips[CHIBI].speed = 1.46
-	
-	# Load renda effect
-	_def = (((cfg.RENDA_EFFECT, 30),),)
-	movieclips[RENDA_EFFECT] = LMP(_def)
-	INDEX_RENDA_EFFECT, = range(len(_def))
-	
-	# Load onp fly
-	_def = (((cfg.ONP_FLY, 30, cfg.ONP_FLY_POS),),)
-	movieclips[ONP_FLY] = LMP(_def)
-	INDEX_ONP_FLY, = range(len(_def))
-
-	# ONPS
-	
+	movieclips[LANE] = LMC(cfg.LANE, cfg.LANE_POS)
+	movieclips[MATO] = LMC(cfg.MATO, cfg.MATO_POS)
+	# ONPS	
 	onp_lumens = []
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
 	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
-	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")
-	
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, None, tja_consts.OPTION_AUTO)
-	movieclips[ONPS].set_onp_lumens(onp_lumens)
-	
+	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")	
+	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO, cfg.FULLCOMBO_POS)
+	movieclips[TAIKO] = LMC(cfg.TAIKO, cfg.TAIKO_POS)
+	movieclips[COMBO] = LMC(cfg.COMBO, cfg.COMBO_POS)
+	movieclips[HITJUDGE] = LMC(cfg.HITJUDGE, cfg.HITJUDGE_POS)
+	movieclips[CHOCHIN] = LMC(cfg.CHOCHIN, cfg.CHOCHIN_POS)
+	# Load chibi
+	_def = ([], ((cfg.CHIBI_MISS, 40, cfg.CHIBI_MISS_POS),),)
+	for chibi_lm, chibi_x, chibi_y in cfg.CHIBI:
+		_def[0].append((chibi_lm, 40 / len(cfg.CHIBI), (chibi_x, chibi_y)))
+	movieclips[CHIBI] = LMP(_def)
+	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
+	movieclips[CHIBI].speed = 1.46
+	# Load onp fly
+	_def = (((cfg.ONP_FLY, 30, cfg.ONP_FLY_POS),),)
+	movieclips[ONP_FLY] = LMP(_def)
+	INDEX_ONP_FLY, = range(len(_def))
+	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
+	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
+	movieclips[SCORE_MAIN] = LMC(cfg.SCORE_MAIN, cfg.SCORE_MAIN_POS)
+	# Load score add
+	_def = (((cfg.SCORE_ADD, 10, cfg.SCORE_ADD_POS),),)
+	movieclips[SCORE_ADD] = LMP(_def)
+	INDEX_SCORE_ADD, = range(len(_def))
 	# DON_GEKI
 	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
 	movieclips[DON_GEKI].active = False
 	movieclips[DON_GEKI].register_callback("on_geki_end", on_balloon_end, None)
-	
+	movieclips[MEKAKUSHI] = LMC(cfg.MEKAKUSHI)
+	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
+	movieclips[FEVER].speed = 2
 	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
 	movieclips[DON_IMO].active = False
-	movieclips[DON_IMO].register_callback("on_imo_end", on_imo_break_end, None)
+	movieclips[DON_IMO].register_callback("on_imo_end", on_imo_break_end, None)	
+	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
+	movieclips[IMO].register_callback("on_imo_in_end", on_imo_in_end, None)
+	movieclips[SPLASH] = LMC(cfg.SPLASH, cfg.SPLASH_POS)
+	
+	# Init fumen
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, tja_consts.OPTION_AUTO)
+	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	return movieclips
