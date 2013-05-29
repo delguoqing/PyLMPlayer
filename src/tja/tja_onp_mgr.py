@@ -142,6 +142,7 @@ class CMgr(object):
 		hit_ok = hit_big = hitaway = False
 		onp = ONP_NONE
 		hit_judge = None
+		score_inc = 0
 		# judge
 		if self._state.hit_onp:
 			off, onp, hits, spd = self._state.hit_onp
@@ -175,25 +176,40 @@ class CMgr(object):
 				if self._state.hit_onp_hits == 1:
 					self._scn.set_max_balloon(hits)
 				self._scn.set_balloon(hits - self._state.hit_onp_hits)
+				if hits == self._state.hit_onp_hits:
+					score_inc = 5000
+				else:
+					score_inc = 300
 			elif onp == ONP_IMO and hit_ok:
-				self._scn.set_imo(hits - self._state.hit_onp_hits,
-					self._state.offset <= self._state.imo_break_high_time)
+				break_high = self._state.offset <= self._state.imo_break_high_time
+				self._scn.set_imo(hits - self._state.hit_onp_hits, break_high)
+				if hits == self._state.hit_onp_hits:
+					if break_high:
+						score_inc = 5000
+					else:
+						score_inc = 1000
+				else:
+					score_inc = 300
 				
 			# Add combo
 			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
 				if hit_judge == HITJUDGE_RYO:
+					score_inc = self._state.base_score
 					self._state.combo += 1
 					self._state.ryo += 1
 					self._state.tamashii = min(self._state.tamashii + 1, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_KA:
+					score_inc = self._state.base_score * 0.5
 					self._state.combo += 1
 					self._state.ka += 1
 					self._state.tamashii = min(self._state.tamashii + 0.5, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_RYO_DAI:
+					score_inc = self._state.base_score * 2
 					self._state.combo += 1
 					self._state.ryo += 1
 					self._state.tamashii = min(self._state.tamashii + 1, self._state.tot_tamashii)
 				elif hit_judge == HITJUDGE_KA_DAI:
+					score_inc = self._state.base_score
 					self._state.combo += 1
 					self._state.ka += 1
 					self._state.tamashii = min(self._state.tamashii + 0.5, self._state.tot_tamashii)
@@ -201,9 +217,19 @@ class CMgr(object):
 					self._state.combo = 0
 					self._state.fuka += 1
 					self._state.tamashii = max(self._state.tamashii - 2, 0)
-					
+				
+				self._state.base_score = self._state.scoreinit \
+					+ min(100, self._state.combo) / 10 * self._state.scorediff
 				self._scn.set_combo(self._state.combo)
 				self._scn.set_tamashii(self._state.tamashii, self._state.tot_tamashii)
+				
+			if self._state.gogotime:
+				score_inc *= 1.2
+			if score_inc > 0:
+				score_inc = int(score_inc) - (int(score_inc) % 10)
+				self._scn.add_score(score_inc)
+				self._state.score += score_inc
+				
 		else:
 			hit_keys = self._keys
 			hit_judge = HITJUDGE_NO
@@ -248,8 +274,9 @@ class CMgr(object):
 		if first_batch:
 			self._state.offset -= first_batch.in_off
 		
-		self._state.tamashii = 0
+		self._state.tamashii = self._fumen.tot_combo * 0.8
 		self._state.tot_tamashii = self._fumen.tot_combo * 0.9
+		self._scn.set_score(0)
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:

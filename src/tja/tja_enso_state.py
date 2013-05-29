@@ -11,7 +11,8 @@ class CEnsoState(object):
 		self.barline_on = True
 		self.level = "normal"
 		self.offset = -header["OFFSET"] * 1000
-		
+		self.scoreinit = header["SCOREINIT"]
+		self.scorediff = header["SCOREDIFF"]
 		self.gogotime_dirty = False
 		###########################
 		# Runtime variable
@@ -25,6 +26,7 @@ class CEnsoState(object):
 		self.hit_onp_start = False
 		self.hit_onp_time = 0
 		self.imo_break_high_time = 999999
+		self.base_score = self.scoreinit
 		
 		###########################
 		# Preprocessing variable

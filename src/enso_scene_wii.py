@@ -12,7 +12,7 @@ from lm import lm_consts
 
 WIDTH = 856
 HEIGHT = 480
-
+EPS = 0.000001
 
 ONP_HIT_X = 143
 ONP_Y = 153
@@ -105,7 +105,7 @@ def set_combo(combo):
 		elif cur_miss > 0 and not miss:
 			movieclips[DON].gotoAndPlay("miss_normal")
 	if first_miss:
-		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
 		if now_gauge_num < 40:
 			movieclips[ENSO_UP_BG].gotoAndPlay("normal_miss")
 		else:
@@ -470,12 +470,14 @@ def play_onp_fly(onp_fly):
 def set_tamashii(tamashii, _max_tamashii):
 	global cur_tamashii, max_tamashii, movieclips, cur_dancer
 	max_tamashii = _max_tamashii
-	old_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
-	now_gauge_num = int(50.0 * tamashii / max_tamashii)
+	old_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
+	now_gauge_num = int(50.0 * tamashii / max_tamashii + EPS)
 	cur_tamashii = tamashii
 	now_dancer_num = 1 + now_gauge_num // 8
 	
+	print tamashii, max_tamashii
 	if old_gauge_num != now_gauge_num:
+		print now_gauge_num
 		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
 		
 	if now_dancer_num > DANCER1 - cur_dancer + 1:
@@ -503,7 +505,7 @@ def set_gogotime(is_ggt):
 	global movieclips, cur_ggt
 	global cur_tamashii, max_tamashii
 	
-	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
 	
 	if is_ggt:
 		cur_ggt = True
@@ -524,7 +526,7 @@ def set_gogotime(is_ggt):
 
 def reset_don():
 	global movieclips, cur_tamashii, cur_ggt, cur_miss
-	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+	now_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
 	
 	don = movieclips[DON]
 	if cur_miss >= 6:
@@ -642,7 +644,7 @@ def on_hit(keys):
 	global movieclips, cur_miss
 	
 	if cur_miss > 0:
-		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii)
+		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
 		if now_gauge_num < 40:
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_normal")
 		else:
@@ -726,7 +728,7 @@ def build_scene(cfg, tja_file):
 	movieclips[IMO].register_callback("on_imo_in_end", on_imo_in_end, None)
 
 	# Load score add
-	_def = (((cfg.SCORE_ADD, 30, cfg.SCORE_ADD_POS),),)
+	_def = (((cfg.SCORE_ADD, 10, cfg.SCORE_ADD_POS),),)
 	movieclips[SCORE_ADD] = LMP(_def)
 	INDEX_SCORE_ADD, = range(len(_def))
 
