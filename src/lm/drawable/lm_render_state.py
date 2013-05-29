@@ -266,6 +266,10 @@ class CObj(object):
 #			self.log("%r" % self._vertex_list.vertices[:])
 			self._vertex_idx = 0
 		
+			# do statistic B
+			if self._is_enable_statistic:
+				self._draw_count += 1
+					
 	def draw_image(self, texture, vertex_list, tex_coords):
 		texture = texture
 		blend_mode = self._blend_mode_stack[-1]
@@ -293,10 +297,6 @@ class CObj(object):
 		colors = [color_mul.r, color_mul.g, color_mul.b, color_mul.a] * n
 		secondary_colors = [color_add.r, color_add.g, color_add.b] * n
 		self._append(vertex_list, colors, tex_coords, secondary_colors)
-		
-		# do statistic B
-		if self._is_enable_statistic:
-			self._draw_count += 1
 					
 	def set_mask(self, drawable):
 		if not drawable:
