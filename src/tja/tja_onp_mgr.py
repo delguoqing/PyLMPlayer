@@ -166,7 +166,6 @@ class CMgr(object):
 				hit_judge = HITJUDGE_NO
 			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
 				hit_judge = HITJUDGE_HIT
-				self._scn.set_renda_num(self._state.hit_onp_hits)
 			else:
 				hit_judge = self._get_hitjudge(off, self._state.offset)
 				if hit_big and hit_judge != HITJUDGE_FUKA:
@@ -191,6 +190,12 @@ class CMgr(object):
 						score_inc = 1000
 				else:
 					score_inc = 300
+			elif onp == ONP_RENDA1 and hit_ok:
+				self._scn.set_renda_num(self._state.hit_onp_hits)
+				score_inc = 300
+			elif onp == ONP_RENDA_DAI1 and hit_ok:
+				self._scn.set_renda_num(self._state.hit_onp_hits)
+				score_inc = 360
 				
 			# Add combo
 			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:

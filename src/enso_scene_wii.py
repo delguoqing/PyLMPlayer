@@ -175,8 +175,9 @@ def add_score(score):
 	_s -= num_1 * 1	
 	
 	mc = movieclips[SCORE_ADD].alloc(INDEX_SCORE_ADD)
-	if mc is not None: mc.gotoAndPlay("score")
+	if mc is None: return
 	
+	mc.gotoAndPlay("score")
 	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
 	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
 	score >= 100 and mc.num_100.gotoAndPlay("number_%d" % num_100)
@@ -241,36 +242,6 @@ def on_dancer_in_end(mc, dancer):
 	
 	if dancer != DANCER1:
 		mc.dance.gotoAndPlay(movieclips[DANCER1].dance._play_head)
-		
-def set_renda(renda):
-	global movieclips, cur_renda
-	mc = movieclips[RENDA_NUM]
-	
-	if renda == cur_renda: return
-	if renda == 0: mc.gotoAndPlay("renda_out"); return
-	if cur_renda == 0: mc.gotoAndPlay("renda_hit")
-	
-	num100 = renda // 100
-	num10 = (renda - num100 * 100) // 10
-	num1 = renda - num100 * 100 - num10 * 10
-	
-	if num100 != 0:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_100")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
-		mc.renda_hukidashi.geki_num_100.gotoAndStop("number_%d" % num100)
-	elif num10 != 0:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_10")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
-	else:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_00")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-	cur_renda = renda
-	
-def swap_depth(depth1, depth2):
-	global movieclips
-	movieclips[depth1], movieclips[depth2] = movieclips[depth2], movieclips[depth1]
 		
 def set_balloon_miss():
 	global movieclips, max_balloon, cur_balloon
@@ -545,8 +516,10 @@ def reset_don():
 		else:
 			don.gotoAndPlay("full_sabi")
 		
+
 def set_renda_num(num):
-	global movieclips
+	global movieclips, cur_renda
+	cur_renda = num
 	
 	num100 = num // 100
 	num10 = (num - num100 * 100) // 10
@@ -570,10 +543,11 @@ def set_renda_num(num):
 		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
 		
 def set_renda_out():
-	global movieclips
-	mc = movieclips[RENDA_NUM]
-	
-	mc.gotoAndPlay("renda_out")
+	global movieclips, cur_renda
+	if cur_renda > 0:
+		cur_renda = 0
+		mc = movieclips[RENDA_NUM]
+		mc.gotoAndPlay("renda_out")
 	
 def set_renda_red(head, body, tail, hit_cnt):
 	return
