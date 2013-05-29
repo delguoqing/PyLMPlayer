@@ -6,20 +6,24 @@ import cProfile
 import pyglet
 import gc
 import random
-import enso_cfg_wii
 import enso_scene_wii
-
 from enso_layout_wii import *
+
 from pyglet.gl import *
 from ctypes import *
 
 from lm import lm_loader
-
 from lm.drawable import lm_render_state
 
 # standard resolution for psp
 window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
+
+# setting up config
+if len(sys.argv) > 2:
+	cfg = __import__(sys.argv[2])
+else:
+	cfg = __import__("enso_cfg_wii")
 
 ###################################
 # Game Logic
@@ -94,7 +98,7 @@ pyglet.clock.schedule(on_draw)
 # global render state control
 render_state = lm_render_state.CObj()
 
-movieclips = enso_scene_wii.build_scene(enso_cfg_wii, sys.argv[1])
+movieclips = enso_scene_wii.build_scene(cfg, sys.argv[1])
 movieclips[ONPS].reset(enso_scene_wii)
 
 # Texture env
