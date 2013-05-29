@@ -134,3 +134,6 @@ SCORE_ADD = r"enso/enso_score_add/enso_score_add.lm"
 SCORE_ADD_POS = (464, 78)
 SCORE_MAIN = r"enso/enso_score/enso_score.lm"
 SCORE_MAIN_POS = (464, 78)
+
+SPLASH = r"enso/combo_splash/combo_splash.lm"
+SPLASH_POS = (0, 0)

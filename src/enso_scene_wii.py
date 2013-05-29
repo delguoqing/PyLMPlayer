@@ -476,7 +476,6 @@ def set_tamashii(tamashii, _max_tamashii):
 	now_dancer_num = 1 + now_gauge_num // 8
 	
 	if old_gauge_num != now_gauge_num:
-		print now_gauge_num
 		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
 		
 	if now_dancer_num > DANCER1 - cur_dancer + 1:
@@ -515,7 +514,7 @@ def set_gogotime(is_ggt):
 			movieclips[DON].gotoAndStop("full_sabi")
 		else:
 			movieclips[DON].gotoAndStop("sabi")
-		
+		movieclips[SPLASH].gotoAndPlay("splashStartWide")
 	else:
 		cur_ggt = False
 		movieclips[BG_SAB_EFFECTI].gotoAndPlay("sabi_end")
@@ -756,6 +755,8 @@ def build_scene(cfg, tja_file):
 	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)
 	movieclips[IMO].register_callback("on_imo_in_end", on_imo_in_end, None)
 
+	movieclips[SPLASH] = LMC(cfg.SPLASH, cfg.SPLASH_POS)
+	
 	# Load score add
 	_def = (((cfg.SCORE_ADD, 10, cfg.SCORE_ADD_POS),),)
 	movieclips[SCORE_ADD] = LMP(_def)

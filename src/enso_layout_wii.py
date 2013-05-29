@@ -1,4 +1,4 @@
-NUM_MOVIECLIP = 31
+NUM_MOVIECLIP = 32
 (
 #######################
 # BG Part!
@@ -7,9 +7,10 @@ NUM_MOVIECLIP = 31
 #######################
 # Dance BG
 DANCE_BG,
-CHOCHIN,
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG, 
+CHOCHIN,
+
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI,
 
@@ -61,6 +62,7 @@ DON_GEKI,
 DON_IMO,
 IMO,
 
+SPLASH,
 #######################
 # HUD Part!
 #######################
