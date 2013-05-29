@@ -166,6 +166,7 @@ class CMgr(object):
 				hit_judge = HITJUDGE_NO
 			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
 				hit_judge = HITJUDGE_HIT
+				self._scn.set_renda_num(self._state.hit_onp_hits)
 			else:
 				hit_judge = self._get_hitjudge(off, self._state.offset)
 				if hit_big and hit_judge != HITJUDGE_FUKA:
@@ -324,6 +325,8 @@ class CMgr(object):
 					break
 			elif onp == ONP_END:
 				if self._state.offset > off:	# miss the whole long onp
+					if self._state.hit_onp_hits > 0:
+						self._scn.set_renda_out()
 					self._state.hit_onp = None
 				else:	# the long onp still holds
 					self._state.hit_onp_time = off - self._state.offset

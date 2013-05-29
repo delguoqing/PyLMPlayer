@@ -475,7 +475,6 @@ def set_tamashii(tamashii, _max_tamashii):
 	cur_tamashii = tamashii
 	now_dancer_num = 1 + now_gauge_num // 8
 	
-	print tamashii, max_tamashii
 	if old_gauge_num != now_gauge_num:
 		print now_gauge_num
 		movieclips[GAUGE].gotoAndStop("gage_%02d" % now_gauge_num)
@@ -547,6 +546,36 @@ def reset_don():
 		else:
 			don.gotoAndPlay("full_sabi")
 		
+def set_renda_num(num):
+	global movieclips
+	
+	num100 = num // 100
+	num10 = (num - num100 * 100) // 10
+	num1 = num - num100 * 100 - num10 * 10
+	
+	mc = movieclips[RENDA_NUM]
+	mc.gotoAndPlay("renda_hit")
+	
+	mc_number = mc.renda_hukidashi
+	if num100 > 0:
+		mc_number.gotoAndPlay("renda_hit_100")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_number.geki_num_10.gotoAndPlay("number_%d" % num10)
+		mc_number.geki_num_100.gotoAndPlay("number_%d" % num100)
+	elif num10 > 0:
+		mc_number.gotoAndPlay("renda_hit_10")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_number.geki_num_10.gotoAndPlay("number_%d" % num10)
+	else:
+		mc_number.gotoAndPlay("renda_hit_00")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		
+def set_renda_out():
+	global movieclips
+	mc = movieclips[RENDA_NUM]
+	
+	mc.gotoAndPlay("renda_out")
+	
 def set_renda_red(head, body, tail, hit_cnt):
 	return
 
