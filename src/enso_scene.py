@@ -250,32 +250,6 @@ def on_dancer_sync(mc, dancer):
 		for dancer in xrange(b, a + 1):
 			movieclips[dancer].gotoAndPlay("dance")
 			movieclips[dancer].dancer.gotoAndPlay(sync_to)
-			
-def set_renda(renda):
-	global movieclips, cur_renda
-	mc = movieclips[RENDA_NUM]
-	
-	if renda == cur_renda: return
-	if renda == 0: mc.gotoAndPlay("renda_out"); return
-	if cur_renda == 0: mc.gotoAndPlay("renda_hit")
-	
-	num100 = renda // 100
-	num10 = (renda - num100 * 100) // 10
-	num1 = renda - num100 * 100 - num10 * 10
-	
-	if num100 != 0:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_100")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
-		mc.renda_hukidashi.geki_num_100.gotoAndStop("number_%d" % num100)
-	elif num10 != 0:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_10")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-		mc.renda_hukidashi.geki_num_10.gotoAndStop("number_%d" % num10)
-	else:
-		mc.renda_hukidashi.gotoAndPlay("renda_hit_00")
-		mc.renda_hukidashi.geki_num_00.gotoAndStop("number_%d" % num1)
-	cur_renda = renda
 	
 def swap_depth(depth1, depth2):
 	global movieclips
@@ -720,6 +694,38 @@ def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, e
 	lumen_tail.matrix.translate = (end_x, ONP_Y)
 	lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 	
+def set_renda_num(num):
+	global movieclips, cur_renda
+	cur_renda = num
+	
+	num100 = num // 100
+	num10 = (num - num100 * 100) // 10
+	num1 = num - num100 * 100 - num10 * 10
+	
+	mc = movieclips[RENDA_NUM]
+	mc.gotoAndPlay("renda_hit")
+	
+	mc_number = mc.renda_hukidashi
+	if num100 > 0:
+		mc_number.gotoAndPlay("renda_hit_100")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_number.geki_num_10.gotoAndPlay("number_%d" % num10)
+		mc_number.geki_num_100.gotoAndPlay("number_%d" % num100)
+	elif num10 > 0:
+		mc_number.gotoAndPlay("renda_hit_10")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		mc_number.geki_num_10.gotoAndPlay("number_%d" % num10)
+	else:
+		mc_number.gotoAndPlay("renda_hit_00")
+		mc_number.geki_num_00.gotoAndPlay("number_%d" % num1)
+		
+def set_renda_out():
+	global movieclips, cur_renda
+	if cur_renda > 0:
+		cur_renda = 0
+		mc = movieclips[RENDA_NUM]
+		mc.gotoAndPlay("renda_out")
+		
 # Build up scene
 def build_scene(cfg, tja_file):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
