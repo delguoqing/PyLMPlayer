@@ -288,7 +288,8 @@ class CMgr(object):
 		if not self.active:
 			return
 		
-		self._state.offset += 1000.0 / 60.0
+		if operation & lm_consts.MASK_UPDATE:
+			self._state.offset += 1000.0 / 60.0
 		self._onps = []
 		
 		# update onp lumens without drawing
