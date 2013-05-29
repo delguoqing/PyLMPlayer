@@ -225,6 +225,7 @@ def add_dancer():
 		return
 	
 	# add `cur_dancer`
+	movieclips[cur_dancer].active = True
 	movieclips[cur_dancer].gotoAndPlay("in")
 	
 def remove_dancer():
@@ -236,24 +237,11 @@ def remove_dancer():
 		cur_dancer += 1
 		
 def on_dancer_in_end(mc, dancer):
-	global movieclips, first_unsync_dancer, last_unsync_dancer
-	if dancer == DANCER1:	# if it is the first dancer, then start dance at once
-		movieclips[dancer].gotoAndPlay("dance")
-	elif dancer >= cur_dancer:
-		if first_unsync_dancer == -1:
-			first_unsync_dancer = dancer
-		last_unsync_dancer = dancer
-
-def on_dancer_sync(mc, dancer):
-	global first_unsync_dancer, last_unsync_dancer, movieclips
-	if first_unsync_dancer != -1:
-		sync_to = movieclips[dancer].dancer._play_head
-		a, b = first_unsync_dancer, last_unsync_dancer
-		first_unsync_dancer = -1
-		for dancer in xrange(b, a + 1):
-			movieclips[dancer].gotoAndPlay("dance")
-			movieclips[dancer].dancer.gotoAndPlay(sync_to)
-			
+	global movieclips
+	
+	if dancer != DANCER1:
+		mc.dance.gotoAndPlay(movieclips[DANCER1].dance._play_head)
+		
 def set_renda(renda):
 	global movieclips, cur_renda
 	mc = movieclips[RENDA_NUM]
@@ -304,8 +292,8 @@ def set_max_balloon(balloon):
 
 	donchan_free = False
 	
-	movieclips[DON]._visible = False
-	movieclips[DON_GEKI]._visible = True
+	movieclips[DON].active = False
+	movieclips[DON_GEKI].active = True
 	movieclips[DON_GEKI].gotoAndPlay("init")
 		
 	max_balloon = balloon
@@ -358,7 +346,7 @@ def on_balloon_end(mc, data):
 	max_balloon = -1
 	cur_balloon = 0
 	donchan_free = True
-	movieclips[DON]._visible = True
+	movieclips[DON].active = True
 	reset_don()
 
 def set_max_imo(imo):
@@ -372,8 +360,8 @@ def set_max_imo(imo):
 	mc = movieclips[IMO]
 	mc.gotoAndPlay("start")
 	
-	movieclips[DON]._visible = False
-	movieclips[DON_IMO]._visible = True
+	movieclips[DON].active = False
+	movieclips[DON_IMO].active = True
 	movieclips[DON_IMO].gotoAndPlay(0)
 	
 	max_imo = imo
@@ -449,7 +437,7 @@ def on_imo_break_end(mc, data):
 	max_imo = -1
 	cur_imo = 0
 	donchan_free = True
-	movieclips[DON]._visible = True
+	movieclips[DON].active = True
 	reset_don()
 
 def on_imo_in_end(mc, data):
@@ -466,10 +454,14 @@ def play_onp_fly(onp_fly):
 		mc.gotoAndPlay("don_hit")
 	elif onp_fly == tja_consts.ONP_FLY_KATSU:
 		mc.gotoAndPlay("katsu_hit")
-	elif onp_fly == tja_consts.ONP_FLY_DON_DAI:
+	elif onp_fly == tja_consts.ONP_FLY_DON_DAI_BIG:
 		mc.gotoAndPlay("don_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI:
+	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI_BIG:
 		mc.gotoAndPlay("katsu_d_hit")
+	elif onp_fly == tja_consts.ONP_FLY_DON_DAI_SMALL:
+		mc.gotoAndPlay("don_renda_d_hit")
+	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI_SMALL:
+		mc.gotoAndPlay("katsu_renda_d_hit")
 	elif onp_fly == tja_consts.ONP_FLY_GEKI:
 		mc.gotoAndPlay("geki_hit")
 	if onp_fly != tja_consts.ONP_FLY_GEKI:
@@ -725,9 +717,8 @@ def build_scene(cfg, tja_file):
 	movieclips[DANCER4] = LMC(cfg.DANCER4, cfg.DANCER4_POS)
 	movieclips[DANCER5] = LMC(cfg.DANCER5, cfg.DANCER5_POS)
 	for dancer in xrange(DANCER5, DANCER1 + 1):
-		movieclips[dancer].speed = 1.46
-		movieclips[dancer].stop()
-		movieclips[dancer]._visible = False
+		movieclips[dancer].active = False
+		movieclips[dancer].register_callback("on_dancer_in_end", on_dancer_in_end, dancer)
 	
 	movieclips[RENDA_NUM] = LMC(cfg.RENDA_NUM, cfg.RENDA_NUM_POS)
 	movieclips[FUKIDASHI] = LMC(cfg.FUKIDASHI, cfg.FUKIDASHI_POS)
@@ -770,13 +761,11 @@ def build_scene(cfg, tja_file):
 	
 	# DON_GEKI
 	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
-	movieclips[DON_GEKI].stop()
-	movieclips[DON_GEKI]._visible = False
+	movieclips[DON_GEKI].active = False
 	movieclips[DON_GEKI].register_callback("on_geki_end", on_balloon_end, None)
 	
 	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
-	movieclips[DON_IMO].stop()
-	movieclips[DON_IMO]._visible = False
+	movieclips[DON_IMO].active = False
 	movieclips[DON_IMO].register_callback("on_imo_end", on_imo_break_end, None)
 	
 	return movieclips

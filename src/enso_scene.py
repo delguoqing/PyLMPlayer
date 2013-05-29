@@ -498,10 +498,10 @@ def play_onp_fly(onp_fly):
 	elif onp_fly == tja_consts.ONP_FLY_KATSU:
 		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS)
 		if mc: mc.gotoAndPlay("katsu_hit")
-	elif onp_fly == tja_consts.ONP_FLY_DON_DAI:
+	elif onp_fly == tja_consts.ONP_FLY_DON_DAI_BIG or onp_fly == tja_consts.ONP_FLY_DON_DAI_SMALL:
 		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_DON_DAI)
 		if mc: mc.gotoAndPlay("don_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI:
+	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI_BIG or onp_fly == tja_consts.ONP_FLY_KATSU_DAI_SMALL:
 		mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY_KATS_DAI)
 		if mc: mc.gotoAndPlay("katsu_d_hit")
 	elif onp_fly == tja_consts.ONP_FLY_GEKI:

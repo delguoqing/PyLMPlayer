@@ -55,3 +55,6 @@ class CTag(lm_tag_base.CTag):
 		for tag in self._as_tags:
 			tag.execute(target=target)
 	
+	def empty(self):
+		return self.get_sub_tag_cnt() == 0
+	

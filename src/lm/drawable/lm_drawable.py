@@ -21,6 +21,7 @@ class CDrawable(object):
 		self.depth = depth
 		self._as_tween_only = False
 		self._visible = True
+		self.active = True
 	
 	def is_movieclip(self):
 		return False

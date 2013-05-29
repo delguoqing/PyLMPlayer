@@ -86,12 +86,20 @@ class CObj(lm_drawable_container.CDrawable):
 	# Play mode: jump!
 	def goto_frame(self, frame_id):
 		key_frame = None
+		nearest = None
 		for key_frame_tag in self._key_frame_tags:
-			if key_frame_tag.get_frame_id() == frame_id:
+			key_frame_id = key_frame_tag.get_frame_id()
+			if key_frame_id < frame_id:
+				nearest = key_frame_tag
+			elif key_frame_id == frame_id:
 				key_frame = key_frame_tag
+				break
+			else:
 				break
 		if key_frame is None:
 			key_frame = self._frame_tags[frame_id]
+			if key_frame.empty() and nearest is not None:
+				key_frame = nearest
 		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
 		key_frame.execute(target=self)
 		
@@ -109,6 +117,9 @@ class CObj(lm_drawable_container.CDrawable):
 		self._frame_tags[frame_id].do_actions(target=self)
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if not self.active:
+			return
+		
 		if self.speed != 1:
 			self._frames += self.speed
 			if self._frames < 1: return
@@ -200,7 +211,7 @@ class CObj(lm_drawable_container.CDrawable):
 		for drawable in self:
 			if not drawable.forbid_timeline:
 				drawable.init()
-				
+	
 	# Movieclip property and method!!		
 	def gotoAndPlay(self, frame_id):
 		if isinstance(frame_id, str):
