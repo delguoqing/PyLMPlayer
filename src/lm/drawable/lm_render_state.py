@@ -1,7 +1,6 @@
 import collections
 import pyglet
 
-from lm.util import lm_shader
 from lm.type import lm_type_color
 from lm.type import lm_type_blend_mode
 from lm.type import lm_type_mat
@@ -14,8 +13,7 @@ from pyglet.gl import *
 class CObj(object):
 
 	def __init__(self):
-		self._shader = lm_shader.cxform_shader
-		
+	
 		self._color_stack = collections.deque()
 		self._color_stack.append((lm_glb.null_cadd, lm_glb.null_cmul))		
 		self._color_pool = collections.deque()

@@ -1,8 +1,3 @@
-import ctypes
-from pyglet.gl import *
-# TODO:
-#    1. May optimize this class by Cython?
-
 class CType(object):
 	
 	def __init__(self, translate=None, scale=None, rotateskew=None):
@@ -33,14 +28,6 @@ class CType(object):
 		self._r = rotateskew
 
 	rotateskew = property(_get_rotateskew, _set_rotateskew)
-			
-	def get_ctype(self):
-		return (ctypes.c_float * 16)(
-			self._s[0], self._r[0], 0, 0,
-			self._r[1], self._s[1], 0, 0,
-			0, 0, 1, 0,
-			self._t[0], self._t[1], 0, 1,
-		)
 		
 	def __repr__(self):
 		return "%f %f \n%f %f \n%f %f" % (self._t + self._s + self._r)
