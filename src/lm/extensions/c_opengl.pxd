@@ -19,7 +19,7 @@
 
 ctypedef void (*_GLUfuncptr)()
 
-cdef extern from "gl.h":
+cdef extern from "glew.h":
 	ctypedef unsigned int		GLenum
 	ctypedef unsigned char  GLboolean
 	ctypedef unsigned int		GLbitfield
@@ -1129,7 +1129,7 @@ cdef extern from "gl.h":
 	cdef void glGetColorTable(GLenum target, GLenum format, GLenum type, GLvoid *table)
 	cdef void glGetColorTableParameterfv(GLenum target, GLenum pname, GLfloat *params)
 	cdef void glGetColorTableParameteriv(GLenum target, GLenum pname, GLint *params)
-	cdef void glBlendEquation(GLenum mode)
+
 	cdef void glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 	cdef void glHistogram(GLenum target, GLsizei width, GLenum internalformat, GLboolean sink)
 	cdef void glResetHistogram(GLenum target)
@@ -1493,7 +1493,9 @@ cdef extern from "gl.h":
 	int GL_MAX_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB
 	int GL_MAX_TEXTURE_COORDS_ARB
 	int GL_MAX_TEXTURE_IMAGE_UNITS_ARB
+	int GL_COLOR_SUM_EXT
 	
+	cdef void glBlendEquation(GLenum mode)
 	# cdef void glGetObjectParameterivARB(GLhandleARB object, GLenum pname, GLint *params)
 	# cdef void glGetInfoLogARB(GLhandleARB object, GLsizei maxLength, GLsizei *length, GLchar *infoLog)
 	# cdef void glShaderSourceARB(GLhandleARB shader, GLsizei nstrings, GLchar** strings, GLint *lengths)
@@ -1513,6 +1515,23 @@ cdef extern from "gl.h":
 	cdef void glGetProgramStringARB(GLenum target, GLenum pname, void* string)
 	
 	#cdef void init_advanced_opengl()
-
+	
 cdef extern from "glext.h":
-	int GL_COLOR_SUM_EXT
+	ctypedef unsigned int		GLenum
+	ctypedef unsigned char  GLboolean
+	ctypedef unsigned int		GLbitfield
+	ctypedef void						GLvoid
+	ctypedef signed char    GLbyte
+	ctypedef short					GLshort
+	ctypedef int						GLint
+	ctypedef unsigned char  GLubyte
+	ctypedef unsigned short	GLushort
+	ctypedef unsigned int		GLuint
+	ctypedef int						GLsizei
+	ctypedef float					GLfloat
+	ctypedef float					GLclampf
+	ctypedef double					GLdouble
+	ctypedef double					GLclampd
+	ctypedef char 					GLchar
+	ctypedef unsigned int   GLhandleARB	
+	cdef void glSecondaryColorPointerEXT(GLint size, GLenum type, GLsizei stride, GLvoid *ptr)	
