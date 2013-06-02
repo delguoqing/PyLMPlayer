@@ -60,6 +60,8 @@ cdef class CRenderer:
 	cdef int _tex_tgt
 	cdef int _tex_id
 	cdef int _blend_mode
+	cdef int _is_blend_mode_dirty
+	cdef int _is_texture_dirty	
 	
 	cdef stack[CColor*] stk_cadd
 	cdef stack[CColor*] stk_cmul
@@ -159,6 +161,8 @@ cdef class CRenderer:
 		self._blend_mode = -1
 		self.vbuf_size = 0
 		self.mask_active = False
+		self._is_texture_dirty = False
+		self._is_blend_mode_dirty = False
 		
 	def push_state(self, int cadd_idx, int cmul_idx, int mat_idx, int blend_mode_idx):
 		cdef CColor *color
@@ -211,9 +215,9 @@ cdef class CRenderer:
 		cdef CMat *m
 		cdef float xmin, xmax, ymin, ymax
 		if coord_idx < 0:
-			self.mask_active = 0
+			self.mask_active = False
 		else:
-			self.mask_active = 1
+			self.mask_active = True
 			coord = self.vec_coords[coord_idx]
 			m = self.stk_mat.top()
 			if coord.x0 < coord.x2:
@@ -346,46 +350,26 @@ cdef class CRenderer:
 			gl.glVertexPointer(2, gl.GL_FLOAT, stride, &self.vbuf[0].x)
 			gl.glTexCoordPointer(2, gl.GL_FLOAT, stride, &self.vbuf[0].u)
 			gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, stride, &self.vbuf[0].color)
-			gl.glSecondaryColorPointerEXT(3, gl.GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)
+			gl.glSecondaryColorPointer(3, gl.GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)
 			gl.glDrawArrays(gl.GL_QUADS, 0, self.vbuf_head)
 			self.vbuf_head = 0
 			
 	def draw_image(self, tex_tgt, tex_id, coord_idx, tex_coord_idx):
-		pass
+		cdef int _is_texture_dirty = self._tex_id != tex_id
+		cdef int _is_blend_mode_dirty = self.stk_blend_mode.top() != self._blend_mode
+		
+		if _is_texture_dirty or _is_blend_mode_dirty or self.vbuf_head >= 1000:
+			self._flush()
+			self._is_texture_dirty = _is_texture_dirty
+			self._is_blend_mode_dirty = _is_blend_mode_dirty
+			self._tex_tgt = tex_tgt
+			self._tex_id = tex_id
+		self._append(coord_idx, tex_coord_idx)
 	
-#	def draw_image(self, texture, vertex_list, tex_coords):
-#		texture = texture
-#		blend_mode = self._blend_mode_stack[-1]
-#		color_add, color_mul = self._color_stack[-1]
-#		matrix = self._matrix_stack[-1]
-#
-#		_is_texture_dirty = self._texture is None or (self._texture.id != texture.id)
-#		_is_blend_mode_dirty = (blend_mode != self._blend_mode)
-#					
-#		# if render contex changes, flush buffer, and set up new contex
-#		n = len(vertex_list) / 2
-#		if _is_texture_dirty\
-#			or _is_blend_mode_dirty \
-#			or self._vertex_idx + n > self._vertex_count:
-#			
-#			self._flush()
-#			
-#			self._is_texture_dirty = _is_texture_dirty
-#			self._is_blend_mode_dirty = _is_blend_mode_dirty
-#
-#			self._texture = texture
-#			self._blend_mode = blend_mode
-#			
-#		# any way, append vertex data
-#		colors = [color_mul.r, color_mul.g, color_mul.b, color_mul.a] * n
-#		secondary_colors = [color_add.r, color_add.g, color_add.b] * n
-#		self._append(vertex_list, colors, tex_coords, secondary_colors)
-#		
-#	def end(self):
-#
-#		# flush buffer anyway
-#		self._flush()
-#			
+	def end(self):
+		# flush buffer anyway
+		self._flush()
+			
 
 	####################################
 	# Preloading all rendering data

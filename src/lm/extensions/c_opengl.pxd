@@ -1495,7 +1495,6 @@ cdef extern from "glew.h":
 	int GL_MAX_TEXTURE_IMAGE_UNITS_ARB
 	int GL_COLOR_SUM_EXT
 	
-	cdef void glBlendEquation(GLenum mode)
 	# cdef void glGetObjectParameterivARB(GLhandleARB object, GLenum pname, GLint *params)
 	# cdef void glGetInfoLogARB(GLhandleARB object, GLsizei maxLength, GLsizei *length, GLchar *infoLog)
 	# cdef void glShaderSourceARB(GLhandleARB shader, GLsizei nstrings, GLchar** strings, GLint *lengths)
@@ -1516,22 +1515,5 @@ cdef extern from "glew.h":
 	
 	#cdef void init_advanced_opengl()
 	
-cdef extern from "glext.h":
-	ctypedef unsigned int		GLenum
-	ctypedef unsigned char  GLboolean
-	ctypedef unsigned int		GLbitfield
-	ctypedef void						GLvoid
-	ctypedef signed char    GLbyte
-	ctypedef short					GLshort
-	ctypedef int						GLint
-	ctypedef unsigned char  GLubyte
-	ctypedef unsigned short	GLushort
-	ctypedef unsigned int		GLuint
-	ctypedef int						GLsizei
-	ctypedef float					GLfloat
-	ctypedef float					GLclampf
-	ctypedef double					GLdouble
-	ctypedef double					GLclampd
-	ctypedef char 					GLchar
-	ctypedef unsigned int   GLhandleARB	
-	cdef void glSecondaryColorPointerEXT(GLint size, GLenum type, GLsizei stride, GLvoid *ptr)	
+	cdef void glBlendEquation(GLenum mode)
+	cdef void glSecondaryColorPointer(GLint size, GLenum type, GLsizei stride, GLvoid *ptr)	
