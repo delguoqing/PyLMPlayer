@@ -23,6 +23,12 @@ class CDrawable(object):
 		self._visible = True
 		self.active = True
 	
+		# indexed data
+		self.blend_mode_index = -1
+		self.matrix_index = -1
+		self.color_add_index = -1
+		self.color_mul_index = -1
+		
 	def is_movieclip(self):
 		return False
 		
@@ -80,3 +86,17 @@ class CDrawable(object):
 		
 	def clear(self):
 		pass
+	
+	# indexed interface
+	def set_blend_mode_index(self, blend_mode_index):
+		self.blend_mode_index = blend_mode_index
+	
+	def set_matrix_index(self, matrix_index):
+		if matrix_index != -1:
+			self.matrix_index = matrix_index
+	
+	def set_cxform_index(self, color_add_index, color_mul_index):
+		if color_add_index != -1:
+			self.color_add_index = color_add_index
+		if color_mul_index != -1:
+			self.color_mul_index = color_mul_index

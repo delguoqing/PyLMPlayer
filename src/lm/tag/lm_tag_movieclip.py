@@ -48,7 +48,6 @@ class CTag(lm_tag_base.CTag):
 	def _add_key_frame_tag(self, tag):
 		self._key_frame_tags.append(tag)
 		
-	
 	def get_id(cls):
 		return lm_consts.TAG_MOVIECLIP
 		

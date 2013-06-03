@@ -16,8 +16,6 @@ cdef struct CMat:
 	float t0, t1, s0, s1, r0, r1
 cdef struct CColor:
 	float r, g, b, a
-cdef struct CPos:
-	float x, y
 cdef struct CCoords:
 	float x0, y0, x1, y1, x2, y2, x3, y3
 cdef void color_add(CColor *out, CColor *a, CColor *b):
@@ -54,7 +52,6 @@ cdef unsigned pack_color(CColor *color):
 cdef class CRenderer:
 	
 	cdef vector[CMat*] vec_mat
-	cdef vector[CPos*] vec_pos
 	cdef vector[CColor*] vec_color
 	cdef vector[CCoords*] vec_coords
 	
@@ -383,13 +380,6 @@ cdef class CRenderer:
 	####################################
 	# Preloading all rendering data
 	####################################
-	def reg_pos(self, float x, float y):
-		cdef CPos *pos = <CPos *>malloc(sizeof(CPos))
-		pos.x = x
-		pos.y = y
-		self.vec_pos.push_back(pos)
-		return self.vec_pos.size() - 1
-	
 	def reg_color(self, float r, float g, float b, float a):
 		cdef CColor *color = <CColor *>malloc(sizeof(CColor))
 		color.r = r

@@ -41,9 +41,14 @@ class CTag(lm_tag_base.CTag):
 			
 		self.base_tex_coords = self.texture.tex_coords
 			
+		# Python level data
 		self.tex_coords = None
-		self.vertices = None			
+		self.vertices = None
 		self.create_vertex_list()
+		# C level data
+		self.coords_index = []
+		self.tex_coords_index = []
+		self.register_all()
 		
 	def set_texture(self, texture):
 		self.texture = texture
@@ -123,10 +128,18 @@ class CTag(lm_tag_base.CTag):
 			self.tex_coords = _tex_coords					
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
-
+		
 #		self._parsed_data = None
 				
 		return self.vertices, self.tex_coords, self.texture
-		
+
+	def register_all(self):
+		renderer = self.ctx.renderer
+		for i in xrange(0, len(self.vertices) / 8, 8):
+			x0, y0, x1, y1, x2, y2, x3, y3 = self.vertices[i: i + 8]
+			u0, v0, u1, v1, u2, v2, u3, v3 = self.tex_coords[i: i + 8]
+			self.coords_index.append(renderer.reg_coords(x0, y0, x1, y1, x2, y2, x3, y3))
+			self.tex_coords_index.append(renderer.reg_coords(u0, v0, u1, v1, u2, v2, u3, v3))
+
 	def get_id(cls):
 		return lm_consts.TAG_SHAPE

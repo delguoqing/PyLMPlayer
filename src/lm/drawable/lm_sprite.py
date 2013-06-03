@@ -11,7 +11,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self._rect = rect
 		self._vertex_lists = vertex_lists
 		
-	def update(self, render_state, operation=lm_consts.MASK_ALL):
+	def old_update(self, render_state, operation=lm_consts.MASK_ALL):
 		if (operation & lm_consts.MASK_DRAW) == 0:
 			return
 			
@@ -26,3 +26,17 @@ class CDrawable(lm_drawable.CDrawable):
 		render_state.pop_cxform()
 		render_state.pop_blend_mode()	
 		
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		if (operation & lm_consts.MASK_DRAW) == 0:
+			return
+			
+		render_state.push_state(self.color_add_index, self.color_mul_index,
+								 self.matrix_index, self.blend_mode_index)
+
+		for shape_tag in self._vertex_lists:
+			tex = shape_tag.texture
+			for i in xrange(len(shape_tag.coords_index)):
+				render_state.draw_image(tex.target, tex.id,
+										shape_tag.coords_index[i], shape_tag.tex_coords_index[i])
+			
+		render_state.pop_state()

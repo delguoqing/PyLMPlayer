@@ -159,9 +159,8 @@ class CObj(lm_drawable_container.CDrawable):
 			
 		# Update & Render
 		if operation & lm_consts.MASK_DRAW:
-			render_state.push_matrix(self.matrix)
-			render_state.push_cxform(self.color_add, self.color_mul)
-			render_state.push_blend_mode(self.blend_mode)
+			render_state.push_state(self.color_add_index, self.color_mul_index,
+									self.matrix_index, self.blend_mode_index)
 		
 		#self.log("rendering frame %d" % self._play_head)
 		clip_depth = 0
@@ -178,9 +177,7 @@ class CObj(lm_drawable_container.CDrawable):
 				clip_depth = 0
 			
 		if operation & lm_consts.MASK_DRAW:
-			render_state.pop_matrix()
-			render_state.pop_cxform()
-			render_state.pop_blend_mode()
+			render_state.pop_state()
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):

@@ -10,7 +10,11 @@ import random
 from pyglet.gl import *
 from ctypes import *
 
+sys.path.append("..")
+sys.path.append("../..")
+import lm_loader
 import lm_render_state
+
 
 # standard resolution for psp
 window = pyglet.window.Window(480, 272)
@@ -47,16 +51,14 @@ def on_draw(dt):
 	glLoadIdentity()
 	glOrtho(0, 480, 272, 0, -1, 1)
 	
-	glClearColor(1, 1, 1, 1)
+	glClearColor(0, 0, 0, 1)
 	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 	
-	render_state.begin()	
-	render_state.push_state(1, 0, 0, 0)
-	render_state.draw_image(tex.target, tex.id, 0, 1)
-	render_state.pop_state()
+	render_state.begin()
+	mc.update(render_state)
 	render_state.end()
 			
 	# Draw fps
@@ -73,18 +75,14 @@ pyglet.clock.schedule(on_draw)
 # global render state control
 render_state = lm_render_state.CRenderer()
 render_state.init()
-render_state.reg_mat(10.0, 10.0, 1.0, 1.0, 0.0, 0.0)
-render_state.reg_color(1.0, 1.0, 1.0, 1.0)
-render_state.reg_color(0.0, 0.0, 0.0, 0.0)
-render_state.reg_coords(0.0, 16.0, 128.0, 16.0, 128.0, 0.0, 0.0, 0.0)
-render_state.reg_coords(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0)
+#render_state.reg_mat(10.0, 10.0, 1.0, 1.0, 0.0, 0.0)
+#render_state.reg_color(1.0, 1.0, 1.0, 1.0)
+#render_state.reg_color(0.0, 0.0, 0.0, 0.0)
+#render_state.reg_coords(0.0, 16.0, 128.0, 16.0, 128.0, 0.0, 0.0, 0.0)
+#render_state.reg_coords(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0)
 
-# load resource for test
-pyglet.resource.path.append("../../../packages/pack230")
-pyglet.resource.reindex()
-tex = pyglet.resource.texture("event_name_fnt_03.png")
-print tex.target, tex.id
-
+loader = lm_loader.CLoader("pspdx", "../../../packages", render_state)
+mc = loader.load_movie(r"pack124/DANCE_BG_MIKU.LM")
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

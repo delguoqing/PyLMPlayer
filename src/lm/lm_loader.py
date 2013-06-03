@@ -11,10 +11,11 @@ from lm.type import lm_type_mat
 
 class CLoader(object):
 	
-	def __init__(self, platform, lm_root):
+	def __init__(self, platform, lm_root, renderer):
 		self.texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
 		self.platform = platform
 		self.lm_root = lm_root
+		self.renderer = renderer
 		
 	def load_movie_cos(self, name, cos, cos_id, translate=(0, 0)):
 		filename = os.path.join(self.lm_root, name)
@@ -23,8 +24,8 @@ class CLoader(object):
 		cos_filename = os.path.join(self.lm_root, cos)
 		cos_img_root = os.path.split(cos_filename)[0]
 		
-		ctx = load(filename, img_root, self.platform, self.texture_bin)
-		ctx_cos = load(cos_filename, cos_img_root, self.platform, self.texture_bin)
+		ctx = load(filename, img_root, self.platform, self.texture_bin, self.renderer)
+		ctx_cos = load(cos_filename, cos_img_root, self.platform, self.texture_bin, self.renderer)
 		ctx.set_character(cos_id, ctx_cos.get_character(ctx_cos.stage_info.start_character_id))
 		
 		char_id = ctx.stage_info.start_character_id
@@ -41,7 +42,7 @@ class CLoader(object):
 		filename = os.path.join(self.lm_root, name)
 		img_root = os.path.split(filename)[0]
 		
-		ctx = load(filename, img_root, self.platform, self.texture_bin)
+		ctx = load(filename, img_root, self.platform, self.texture_bin, self.renderer)
 		char_id = ctx.stage_info.start_character_id
 		char_tag = ctx.get_character(char_id)
 		movieclip = char_tag.instantiate(0, 0, parent=None)
@@ -57,7 +58,7 @@ class CLoader(object):
 		filename = os.path.join(self.lm_root, name)
 		img_root = os.path.split(filename)[0]
 	
-		ctx = load(filename, img_root, self.platform, self.texture_bin)
+		ctx = load(filename, img_root, self.platform, self.texture_bin, self.renderer)
 		char_id = ctx.stage_info.start_character_id
 		char_tag = ctx.get_character(char_id)
 		
@@ -99,6 +100,7 @@ class CContex(object):
 		self.rect_list = None
 		self.char_dict = {}
 		self.texture_bin = None
+		self.renderer = None
 	
 		self.shape_tags = []
 		
@@ -167,7 +169,7 @@ class CContex(object):
 			if shape_tag.fill_idx == idx and shape_tag.origin_fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
 				shape_tag.set_texture(texture)
 				
-def load(filename, root, platform, texture_bin):
+def load(filename, root, platform, texture_bin, renderer):
 	# uniform resource root
 	res_root = root
 	
@@ -180,6 +182,7 @@ def load(filename, root, platform, texture_bin):
 	ctx.set_img_root(root)
 	ctx.set_platform(platform)
 	ctx.texture_bin = texture_bin
+	ctx.renderer = renderer
 	
 	# start parsing
 	f.seek(0x40)
