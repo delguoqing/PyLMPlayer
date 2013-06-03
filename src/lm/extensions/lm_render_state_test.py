@@ -77,12 +77,12 @@ render_state.reg_mat(10.0, 10.0, 1.0, 1.0, 0.0, 0.0)
 render_state.reg_color(1.0, 1.0, 1.0, 1.0)
 render_state.reg_color(0.0, 0.0, 0.0, 0.0)
 render_state.reg_coords(0.0, 16.0, 128.0, 16.0, 128.0, 0.0, 0.0, 0.0)
-render_state.reg_coords(0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+render_state.reg_coords(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0)
 
 # load resource for test
 pyglet.resource.path.append("../../../packages/pack230")
 pyglet.resource.reindex()
-tex = pyglet.resource.texture("event_name_fnt_04.png")
+tex = pyglet.resource.texture("event_name_fnt_03.png")
 print tex.target, tex.id
 
 
