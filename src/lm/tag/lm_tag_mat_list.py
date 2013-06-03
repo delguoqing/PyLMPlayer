@@ -20,12 +20,13 @@ class CTag(lm_tag_base.CTag):
 		
 	def register_all(self):
 		renderer = self.ctx.renderer
+		index = 0
 		for mat in self._data:
 			t0, t1 = mat.translate
 			s0, s1 = mat.scale
 			r0, r1 = mat.rotateskew
 			index = renderer.reg_mat(t0, t1, s0, s1, r0, r1)
-		return index - len(self._data)
+		return index - len(self._data) + 1
 		
 	def get_val(self, idx):
 		return self._data[idx]

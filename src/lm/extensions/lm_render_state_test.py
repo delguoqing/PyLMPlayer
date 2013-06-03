@@ -17,7 +17,7 @@ import lm_render_state
 
 
 # standard resolution for psp
-window = pyglet.window.Window(480, 272)
+window = pyglet.window.Window(480, 272, vsync=True)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 ###################################
@@ -27,7 +27,7 @@ scr_shot_id = 0
 
 @window.event
 def on_key_press(symbol, modifiers):
-		
+	global mc
 	if symbol == pyglet.window.key.ESCAPE:
 		pyglet.clock.unschedule(on_draw)
 			
@@ -36,6 +36,10 @@ def on_key_press(symbol, modifiers):
 		pyglet.image.get_buffer_manager().get_color_buffer().save('enso%d.jpg' % scr_shot_id)
 		scr_shot_id += 1
 		
+	elif symbol == pyglet.window.key.Q:
+		mc.gotoAndPlay("normal_fever")
+	elif symbol == pyglet.window.key.W:
+		mc.gotoAndPlay("fever_normal")
 ###################################
 # Rendering
 ###################################
@@ -62,9 +66,9 @@ def on_draw(dt):
 	render_state.end()
 			
 	# Draw fps
-	#glScalef(1.0, -1.0, 1.0)
-	#glTranslatef(0.0, -64.0, 1.0)
-	#fps_display.draw()
+	glScalef(1.0, -1.0, 1.0)
+	glTranslatef(0.0, -64.0, 1.0)
+	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -82,7 +86,7 @@ render_state.init()
 #render_state.reg_coords(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0)
 
 loader = lm_loader.CLoader("pspdx", "../../../packages", render_state)
-mc = loader.load_movie(r"pack124/DANCE_BG_MIKU.LM")
+mc = loader.load_movie(r"pack121/DANCE_BG_IDOL.LM")
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

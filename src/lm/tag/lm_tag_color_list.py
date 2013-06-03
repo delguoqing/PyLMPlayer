@@ -21,7 +21,7 @@ class CTag(lm_tag_base.CTag):
 		renderer = self.ctx.renderer
 		for color in self._data:
 			index = renderer.reg_color(color.r, color.g, color.b, color.a)
-		return index - len(self._data)
+		return index + 1 - len(self._data)
 		
 	def get_val(self, idx):
 		return self._data[idx]	

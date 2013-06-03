@@ -53,8 +53,14 @@ class CTag(lm_tag_base.CTag):
 		# C level data
 		self._mat_index = self._get_matrix_index(d["trans_idx"])
 		self._blend_mode_index = d["blend_mode"]
-		self._cadd_index = self.ctx.color_list.beg_index + d["color_add_idx"]
-		self._cmul_index = self.ctx.color_list.beg_index + d["color_mul_idx"]
+		if d["color_add_idx"] >= 0:
+			self._cadd_index = self.ctx.color_list.beg_index + d["color_add_idx"]
+		else:
+			self._cadd_index = -1
+		if d["color_mul_idx"] >= 0:
+			self._cmul_index = self.ctx.color_list.beg_index + d["color_mul_idx"]
+		else:
+			self._cmul_index = -1
 		
 	def add_sub_tag(self, tag):
 		self._clip_action_tags.append(tag)
