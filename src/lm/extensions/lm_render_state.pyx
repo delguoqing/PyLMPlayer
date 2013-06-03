@@ -1,4 +1,4 @@
-cimport c_opengl as gl
+from c_opengl cimport *
 from libcpp.vector cimport vector
 from libcpp.stack cimport stack
 from libc.stdlib cimport malloc, free
@@ -39,13 +39,14 @@ cdef void mat_mul(CMat *out, CMat *a, CMat *b):
 	out.r1 = a.s0 * b.r1 + a.r1 * b.s1
 cdef void transform_coords(CCoords *out, CCoords *a, CMat *m):
 	out.x0 = a.x0 * m.s0 + a.y0 * m.r1 + m.t0
-	out.y0 = a.x0 + m.r0 + a.y0 * m.s1 + m.t1
+	out.y0 = a.x0 * m.r0 + a.y0 * m.s1 + m.t1
 	out.x1 = a.x1 * m.s0 + a.y1 * m.r1 + m.t0
-	out.y1 = a.x1 + m.r0 + a.y1 * m.s1 + m.t1
+	out.y1 = a.x1 * m.r0 + a.y1 * m.s1 + m.t1
 	out.x2 = a.x2 * m.s0 + a.y2 * m.r1 + m.t0
-	out.y2 = a.x2 + m.r0 + a.y2 * m.s1 + m.t1
+	out.y2 = a.x2 * m.r0 + a.y2 * m.s1 + m.t1
 	out.x3 = a.x3 * m.s0 + a.y3 * m.r1 + m.t0
-	out.y3 = a.x3 + m.r0 + a.y3 * m.s1 + m.t1	
+	out.y3 = a.x3 * m.r0 + a.y3 * m.s1 + m.t1
+	
 cdef unsigned pack_color(CColor *color):
 	cdef unsigned ret = (max(0, min(int(color.r * 255), 255)) << 24) |(max(0, min(int(color.g * 255), 255)) << 16) |(max(0, min(int(color.b * 255), 255)) << 8) | max(0, min(int(color.a * 255), 255))
 	return ret
@@ -73,7 +74,7 @@ cdef class CRenderer:
 	cdef stack[CMat*] mat_pool
 	
 	cdef CVertexData vbuf[1000]
-	cdef int vbuf_size
+	cdef int vbuf_head
 	
 	cdef int mask_active
 	cdef CRect mask_rect
@@ -84,16 +85,16 @@ cdef class CRenderer:
 		self._blend_mode = -1
 		
 	cdef void set_blend_mode(self, int idx):
-		gl.Enable(gl.GL_BLEND)
+		glEnable(GL_BLEND)
 		if 0 <= idx <= 2:
-			gl.glBlendEquationEXT(gl.GL_FUNC_ADD)
-			gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+			glBlendEquation(GL_FUNC_ADD)
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		elif idx == 8:
-			gl.glBlendEquationEXT(gl.GL_FUNC_ADD)
-			gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
+			glBlendEquation(GL_FUNC_ADD)
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
 		elif idx == 9:
-			gl.glBlendEquationEXT(gl.GL_FUNC_REVERSE_SUBTRACT)
-			gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
+			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT)
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
 
 	cdef CMat *get_mat(self):
 		cdef CMat *mat = self.mat_pool.top()
@@ -131,11 +132,12 @@ cdef class CRenderer:
 			self.mat_pool.push(<CMat *>malloc(sizeof(CMat)))
 		
 		# Enable secondary color
-		gl.glEnable(gl.GL_COLOR_SUM_EXT)
-		gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
-		gl.glEnableClientState(gl.GL_COLOR_ARRAY)
-		gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY)
-		gl.glEnableClientState(gl.GL_SECONDARY_COLOR_ARRAY)
+		glewInit()
+		glEnable(GL_COLOR_SUM_EXT)
+		glEnableClientState(GL_VERTEX_ARRAY)
+		glEnableClientState(GL_COLOR_ARRAY)
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+		glEnableClientState(GL_SECONDARY_COLOR_ARRAY)
 		
 		# init state stack
 		mat = self.get_mat()
@@ -153,13 +155,13 @@ cdef class CRenderer:
 		
 		self.stk_blend_mode.push(0)
 		
-		self.vbuf_size = 0
+		self.vbuf_head = 0
 		
 	def begin(self):
 		self._tex_tgt = -1	
 		self._tex_id = -1
 		self._blend_mode = -1
-		self.vbuf_size = 0
+		self.vbuf_head = 0
 		self.mask_active = False
 		self._is_texture_dirty = False
 		self._is_blend_mode_dirty = False
@@ -167,8 +169,7 @@ cdef class CRenderer:
 	def push_state(self, int cadd_idx, int cmul_idx, int mat_idx, int blend_mode_idx):
 		cdef CColor *color
 		cdef CMat *mat
-		
-		# Pushing cxform	
+		# Pushing cxform
 		if cadd_idx < 0:
 			self.stk_cadd.push(self.stk_cadd.top())
 		else:
@@ -176,6 +177,7 @@ cdef class CRenderer:
 			color_mul(color, self.vec_color[cadd_idx], self.stk_cmul.top())
 			color_add(color, color, self.stk_cadd.top())
 			self.stk_cadd.push(color)
+		
 		if cmul_idx < 0:
 			self.stk_cmul.push(self.stk_cmul.top())
 		else:
@@ -189,9 +191,10 @@ cdef class CRenderer:
 		else:
 			mat = self.get_mat()
 			mat_mul(mat, self.stk_mat.top(), self.vec_mat[mat_idx])
+			self.stk_mat.push(mat)
 
 		self.stk_blend_mode.push(blend_mode_idx)
-		
+
 	def pop_state(self):
 		cdef CColor *cadd, *cmul
 		cdef CMat *mat
@@ -202,7 +205,6 @@ cdef class CRenderer:
 		mat = self.stk_mat.top()
 		self.stk_mat.pop()
 		self.stk_blend_mode.pop()
-		
 		if self.stk_cadd.empty() or cadd != self.stk_cadd.top():
 			self.del_cadd(cadd)
 		if self.stk_cmul.empty() or cmul != self.stk_cmul.top():
@@ -237,7 +239,7 @@ cdef class CRenderer:
 		cdef CMat *m = self.stk_mat.top()
 		cdef CCoords *coord = self.vec_coords[coords_idx]
 		cdef CCoords *tex_coords = self.vec_coords[tex_coords_idx]
-		cdef int head = self.vbuf_size
+		cdef int head = self.vbuf_head
 		cdef int i
 		cdef unsigned cadd = pack_color(self.stk_cadd.top())
 		cdef unsigned cmul = pack_color(self.stk_cmul.top())
@@ -333,10 +335,10 @@ cdef class CRenderer:
 		self.vbuf_head += 4
 		
 	cdef void _update_contex(self):
-		if self._is_tex_dirty:
-			gl.glEnable(self._tex_tgt)
-			gl.glBindTexture(self._tex_tgt, self._tex_id)
-			self._is_tex_dirty = False
+		if self._is_texture_dirty:
+			glEnable(self._tex_tgt)
+			glBindTexture(self._tex_tgt, self._tex_id)
+			self._is_texture_dirty = False
 		
 		if self._is_blend_mode_dirty:
 			self.set_blend_mode(self._blend_mode)
@@ -347,11 +349,11 @@ cdef class CRenderer:
 		if self.vbuf_head > 0:
 			self._update_contex()
 			stride = sizeof(CVertexData)
-			gl.glVertexPointer(2, gl.GL_FLOAT, stride, &self.vbuf[0].x)
-			gl.glTexCoordPointer(2, gl.GL_FLOAT, stride, &self.vbuf[0].u)
-			gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, stride, &self.vbuf[0].color)
-			gl.glSecondaryColorPointer(3, gl.GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)
-			gl.glDrawArrays(gl.GL_QUADS, 0, self.vbuf_head)
+			glVertexPointer(2, GL_FLOAT, stride, &self.vbuf[0].x)
+			glTexCoordPointer(2, GL_FLOAT, stride, &self.vbuf[0].u)
+			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].color)
+			glSecondaryColorPointer(3, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)
+			glDrawArrays(GL_QUADS, 0, self.vbuf_head)
 			self.vbuf_head = 0
 			
 	def draw_image(self, tex_tgt, tex_id, coord_idx, tex_coord_idx):

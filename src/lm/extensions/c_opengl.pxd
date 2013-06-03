@@ -19,7 +19,7 @@
 
 ctypedef void (*_GLUfuncptr)()
 
-cdef extern from "glew.h":
+cdef extern from "GL/glew.h":
 	ctypedef unsigned int		GLenum
 	ctypedef unsigned char  GLboolean
 	ctypedef unsigned int		GLbitfield
@@ -64,6 +64,7 @@ cdef extern from "glew.h":
 	int GL_VERTEX_ARRAY
 	int GL_NORMAL_ARRAY
 	int GL_COLOR_ARRAY
+	int GL_SECONDARY_COLOR_ARRAY
 	int GL_INDEX_ARRAY
 	int GL_TEXTURE_COORD_ARRAY
 	int GL_EDGE_FLAG_ARRAY
@@ -1516,4 +1517,5 @@ cdef extern from "glew.h":
 	#cdef void init_advanced_opengl()
 	
 	cdef void glBlendEquation(GLenum mode)
-	cdef void glSecondaryColorPointer(GLint size, GLenum type, GLsizei stride, GLvoid *ptr)	
+	cdef void glSecondaryColorPointer(GLint size, GLenum type, GLsizei stride, GLvoid *ptr)
+	cdef void glewInit()
