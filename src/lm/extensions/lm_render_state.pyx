@@ -347,7 +347,6 @@ cdef class CRenderer:
 	cdef void _flush(self):
 		cdef int stride
 		if self.vbuf_head > 0:
-			self._update_contex()
 			stride = sizeof(CVertexData)
 			glVertexPointer(2, GL_FLOAT, stride, &self.vbuf[0].x)
 			glTexCoordPointer(2, GL_FLOAT, stride, &self.vbuf[0].u)
@@ -357,15 +356,23 @@ cdef class CRenderer:
 			self.vbuf_head = 0
 			
 	def draw_image(self, tex_tgt, tex_id, coord_idx, tex_coord_idx):
-		cdef int _is_texture_dirty = self._tex_id != tex_id
-		cdef int _is_blend_mode_dirty = self.stk_blend_mode.top() != self._blend_mode
+		cdef int _is_texture_dirty
+		cdef int _is_blend_mode_dirty
+		
+		_is_blend_mode_dirty = (self.stk_blend_mode.top() != self._blend_mode)
+		_is_texture_dirty = (self._tex_id != tex_id)
 		
 		if _is_texture_dirty or _is_blend_mode_dirty or self.vbuf_head >= 1000:
+			# Flush bufferred vertex using old contex
 			self._flush()
+			# Update new contex
 			self._is_texture_dirty = _is_texture_dirty
 			self._is_blend_mode_dirty = _is_blend_mode_dirty
 			self._tex_tgt = tex_tgt
 			self._tex_id = tex_id
+			self._blend_mode = self.stk_blend_mode.top()			
+			self._update_contex()
+
 		self._append(coord_idx, tex_coord_idx)
 	
 	def end(self):
