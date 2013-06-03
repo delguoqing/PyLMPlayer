@@ -46,7 +46,7 @@ cdef void transform_coords(CCoords *out, CCoords *a, CMat *m):
 	out.y3 = a.x3 * m.r0 + a.y3 * m.s1 + m.t1
 	
 cdef unsigned pack_color(CColor *color):
-	cdef unsigned ret = (max(0, min(int(color.r * 255), 255)) << 24) |(max(0, min(int(color.g * 255), 255)) << 16) |(max(0, min(int(color.b * 255), 255)) << 8) | max(0, min(int(color.a * 255), 255))
+	cdef unsigned ret = (max(0, min(int(color.r * 255), 255))) |(max(0, min(int(color.g * 255), 255)) << 8) |(max(0, min(int(color.b * 255), 255)) << 16) | (max(0, min(int(color.a * 255), 255)) << 24)
 	return ret
 
 cdef class CRenderer:
