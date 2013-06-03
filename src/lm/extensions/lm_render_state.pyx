@@ -83,13 +83,16 @@ cdef class CRenderer:
 		
 	cdef void set_blend_mode(self, int idx):
 		glEnable(GL_BLEND)
-		if 0 <= idx <= 2:
+		if idx <= 1:
+			#print "blend_alpha"
 			glBlendEquation(GL_FUNC_ADD)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		elif idx == 8:
+			#print "blend_add"
 			glBlendEquation(GL_FUNC_ADD)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
 		elif idx == 9:
+			#print "blend_subtract"
 			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
 
@@ -190,7 +193,10 @@ cdef class CRenderer:
 			mat_mul(mat, self.stk_mat.top(), self.vec_mat[mat_idx])
 			self.stk_mat.push(mat)
 
-		self.stk_blend_mode.push(blend_mode_idx)
+		if blend_mode_idx <= 1:
+			self.stk_blend_mode.push(self.stk_blend_mode.top())
+		else:
+			self.stk_blend_mode.push(blend_mode_idx)		
 
 	def pop_state(self):
 		cdef CColor *cadd, *cmul
@@ -365,10 +371,12 @@ cdef class CRenderer:
 			# Update new contex
 			self._is_texture_dirty = _is_texture_dirty
 			self._is_blend_mode_dirty = _is_blend_mode_dirty
+			#print "is_blend_mode_dirty", _is_blend_mode_dirty
 			self._tex_tgt = tex_tgt
 			self._tex_id = tex_id
 			self._blend_mode = self.stk_blend_mode.top()			
 			self._update_contex()
+			
 
 		self._append(coord_idx, tex_coord_idx)
 	
