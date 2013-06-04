@@ -67,7 +67,7 @@ class CLoader(object):
 		for i in xrange(count):
 			movieclip = char_tag.instantiate(0, 0, parent=None)
 			movieclip.init()
-			movieclip.set_matrix(
+			movieclip.set_matrix_index(
 				self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
 			movieclip.ctx = ctx
 			mcs.append(movieclip)

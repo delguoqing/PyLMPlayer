@@ -388,7 +388,6 @@ cdef class CRenderer:
 			self._tex_id = tex_id
 			self._blend_mode = self.stk_blend_mode.top()			
 			self._update_contex()
-			
 
 		self._append(coord_idx, tex_coord_idx)
 	

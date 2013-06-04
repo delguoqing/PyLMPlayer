@@ -135,7 +135,7 @@ class CTag(lm_tag_base.CTag):
 
 	def register_all(self):
 		renderer = self.ctx.renderer
-		for i in xrange(0, len(self.vertices) / 8, 8):
+		for i in xrange(0, len(self.vertices), 8):
 			x0, y0, x1, y1, x2, y2, x3, y3 = self.vertices[i: i + 8]
 			u0, v0, u1, v1, u2, v2, u3, v3 = self.tex_coords[i: i + 8]
 			self.coords_index.append(renderer.reg_coords(x0, y0, x1, y1, x2, y2, x3, y3))

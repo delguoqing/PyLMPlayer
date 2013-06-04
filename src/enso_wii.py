@@ -13,7 +13,7 @@ from pyglet.gl import *
 from ctypes import *
 
 from lm import lm_loader
-from lm.drawable import lm_render_state
+from lm.extensions import lm_render_state
 
 # standard resolution for psp
 window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
@@ -78,16 +78,15 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
-		if movieclip is None: continue
 		#if movieclip not in (movieclips[DON_GEKI], movieclips[ONPS],): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
 			
 	# Draw fps
-	glScalef(1.0, -1.0, 1.0)
-	glTranslatef(80.0, -224.0, 1.0)
-	fps_display.draw()
+	#glScalef(1.0, -1.0, 1.0)
+	#glTranslatef(80.0, -224.0, 1.0)
+	#fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -96,9 +95,12 @@ pyglet.clock.schedule(on_draw)
 ###################################
 
 # global render state control
-render_state = lm_render_state.CObj()
+render_state = lm_render_state.CRenderer()
+render_state.init()
 
-movieclips = enso_scene_wii.build_scene(cfg, sys.argv[1])
+loader = lm_loader.CLoader("wii", cfg.LM_PACK_ROOT, render_state)
+
+movieclips = enso_scene_wii.build_scene(cfg, loader, sys.argv[1])
 movieclips[ONPS].reset(enso_scene_wii)
 
 # Texture env

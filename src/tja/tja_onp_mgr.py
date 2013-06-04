@@ -373,7 +373,7 @@ class CMgr(object):
 			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
 				or (ONP_SYOUSETSU[0] <= onp <= ONP_SYOUSETSU[1] and self._state.barline_on):
 				lumen = self._onp_lumens[onp]
-				lumen.matrix.translate = (x, self._onp_y)
+				lumen.set_pos(x, self._onp_y)
 				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 			elif onp == ONP_END:
 				end_note = (off, onp, hits, spd)

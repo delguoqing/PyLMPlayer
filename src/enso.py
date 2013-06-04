@@ -66,7 +66,7 @@ def on_draw(dt):
 	glOrtho(0, enso_scene.WIDTH, enso_scene.HEIGHT, 0, -1, 1)
 	
 	#glClearColor(1, 1, 1, 1)
-	#window.clear()
+	window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
@@ -75,7 +75,7 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		if movieclip is None: continue
-		#if movieclip not in (movieclips[DON], ): continue
+		#if movieclip not in (movieclips[ONPS], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
@@ -93,11 +93,11 @@ pyglet.clock.schedule(on_draw)
 
 # global render state control
 render_state = lm_render_state.CRenderer()
+render_state.init()
 loader = lm_loader.CLoader("pspdx", enso_cfg.LM_PACK_ROOT, render_state)
 
 movieclips = enso_scene.build_scene(enso_cfg, loader, sys.argv[1])
 movieclips[ONPS].reset(enso_scene)
-
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
