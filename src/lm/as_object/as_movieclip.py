@@ -159,8 +159,15 @@ class CObj(lm_drawable_container.CDrawable):
 			
 		# Update & Render
 		if operation & lm_consts.MASK_DRAW:
-			render_state.push_state(self.color_add_index, self.color_mul_index,
-									self.matrix_index, self.blend_mode_index)
+			if self._as_tween_only:
+				_m = self.matrix
+				render_state.push_matrix(_m._t[0], _m._t[1], _m._s[0], _m._s[1],
+										 _m._r[0], _m._r[1],)
+				render_state.push_state(self.color_add_index, self.color_mul_index,
+									-1, self.blend_mode_index)
+			else:
+				render_state.push_state(self.color_add_index, self.color_mul_index,
+										self.matrix_index, self.blend_mode_index)				
 		
 		#self.log("rendering frame %d" % self._play_head)
 		clip_depth = 0
@@ -178,6 +185,8 @@ class CObj(lm_drawable_container.CDrawable):
 			
 		if operation & lm_consts.MASK_DRAW:
 			render_state.pop_state()
+			if self._as_tween_only:
+				render_state.pop_matrix()
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):
@@ -244,15 +253,19 @@ class CObj(lm_drawable_container.CDrawable):
 	def stop(self):
 		self._is_playing = False
 		
+	def _get_matrix(self):
+		if self.matrix:
+			return self.matrix
+		if self.matrix_index > 0:
+			return self._root.ctx.renderer.get_mat_by_index(self.matrix_index)
+		return lm_type_mat.CType()
+	
 	def _get_x(self):
-		if not self.matrix: return 0
+		self.matrix = self._get_matrix()
 		return self.matrix.translate[0]
 	
 	def _set_x(self, x):
-		if not self.matrix:
-			_m = self.matrix = lm_type_mat.CType()
-		else:
-			_m = self.matrix
+		_m = self.matrix = self._get_matrix()
 		_t = _m.translate
 		_m.translate = (x, _t[1])
 		self._as_tween_only = True
@@ -268,16 +281,15 @@ class CObj(lm_drawable_container.CDrawable):
 	# what official flash player does. 
 	def _get_rotation(self):
 		if self.__rotation: return self.__rotation
-		if self.matrix:
-			return math.asin(self.matrix.rotateskew[0]) * 180.0 / math.pi
-		return 0
+		self.matrix = self._get_matrix()
+		return math.asin(self.matrix.rotateskew[0]) * 180.0 / math.pi
 		
 	def _set_rotation(self, rotation):
 		self.__rotation = rotation
 		radian = rotation * math.pi / 180.0
 		cos = math.cos(radian)
 		sin = math.sin(radian)
-		
+		self.matrix = self._get_matrix()
 		self.matrix.rotateskew = (sin, -sin)
 		self.matrix.scale = (cos, cos)
 		self._as_tween_only = True

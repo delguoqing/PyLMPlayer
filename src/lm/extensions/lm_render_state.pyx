@@ -3,7 +3,8 @@ from libcpp.vector cimport vector
 from libcpp.stack cimport stack
 from libc.stdlib cimport malloc, free
 from memory cimport memset
-	
+from lm.type import lm_type_mat
+
 cdef struct CVertexData:
 	float x, y
 	float u, v
@@ -216,6 +217,25 @@ cdef class CRenderer:
 		if self.stk_mat.empty() or mat != self.stk_mat.top():
 			self.del_mat(mat)
 	
+	def push_matrix(self, float t0, float t1, float s0, float s1, float r0, float r1):
+		cdef CMat *mat1 = self.stk_mat.top()
+		cdef CMat *mat2 = self.get_mat()
+		cdef CMat *mat = self.get_mat()
+		mat2.t0 = t0
+		mat2.t1 = t1
+		mat2.s0 = s0
+		mat2.s1 = s1
+		mat2.r0 = r0
+		mat2.r1 = r1
+		mat_mul(mat, mat1, mat2)
+		self.stk_mat.push(mat)
+		self.del_mat(mat2)
+	
+	def pop_matrix(self):
+		cdef CMat *mat = self.stk_mat.top()
+		self.stk_mat.pop()
+		self.del_mat(mat)
+	
 	def set_mask(self, rect_idx):
 		cdef CRect *rect
 		cdef CMat *m
@@ -422,4 +442,8 @@ cdef class CRenderer:
 		coords.y3 = y3
 		self.vec_coords.push_back(coords)
 		return self.vec_coords.size() - 1
+
+	def get_mat_by_index(self, int mat_idx):
+		cdef CMat *mat = self.vec_mat[mat_idx]
+		return lm_type_mat.CType((mat.t0, mat.t1), (mat.s0, mat.s1), (mat.r0, mat.r1))
 	

@@ -88,10 +88,10 @@ tmp2 = render_state.reg_color(0.0, 0.0, 0.0, 0.0)
 #render_state.reg_coords(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0)
 
 loader = lm_loader.CLoader("pspdx", "../../../packages", render_state)
-#mc = loader.load_movie(r"pack112/DANCE_BG_04.LM")
+mc = loader.load_movie(r"pack123/DANCE_BG_FRENESI.LM")
 #mc.set_cxform_index(tmp, tmp)
 #mc = loader.load_movie(r"pack121/DANCE_BG_IDOL.LM")
-mc = loader.load_movie(r"pack66/GAUGE_DON_H.LM")
+#mc = loader.load_movie(r"pack66/GAUGE_DON_H.LM")
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
