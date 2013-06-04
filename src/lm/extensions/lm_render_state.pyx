@@ -54,6 +54,7 @@ cdef class CRenderer:
 	cdef vector[CMat*] vec_mat
 	cdef vector[CColor*] vec_color
 	cdef vector[CCoords*] vec_coords
+	cdef vector[CRect *] vec_rect
 	
 	cdef int _tex_tgt
 	cdef int _tex_id
@@ -215,28 +216,19 @@ cdef class CRenderer:
 		if self.stk_mat.empty() or mat != self.stk_mat.top():
 			self.del_mat(mat)
 	
-	def set_mask(self, coord_idx):
-		cdef CCoords *coord
+	def set_mask(self, rect_idx):
+		cdef CRect *rect
 		cdef CMat *m
-		cdef float xmin, xmax, ymin, ymax
-		if coord_idx < 0:
+		if rect_idx < 0:
 			self.mask_active = False
 		else:
 			self.mask_active = True
-			coord = self.vec_coords[coord_idx]
+			rect = self.vec_rect[rect_idx]
 			m = self.stk_mat.top()
-			if coord.x0 < coord.x2:
-				xmin = coord.x0; xmax = coord.x2;
-			else:
-				xmin = coord.x2; xmax = coord.x0;
-			if coord.y0 < coord.y2:
-				ymin = coord.y0; ymax = coord.y2;
-			else:
-				ymin = coord.y2; ymax = coord.y0;
-			self.mask_rect.xmin = xmin * m.s0 + ymin * m.r1 + m.t0
-			self.mask_rect.ymin = xmin * m.r0 + ymin * m.s1 + m.t1
-			self.mask_rect.xmax = xmax * m.s0 + ymax * m.r1 + m.t0
-			self.mask_rect.ymax = xmax * m.r0 + ymax * m.s1 + m.t1
+			self.mask_rect.xmin = rect.xmin * m.s0 + rect.ymin * m.r1 + m.t0
+			self.mask_rect.ymin = rect.xmin * m.r0 + rect.ymin * m.s1 + m.t1
+			self.mask_rect.xmax = rect.xmax * m.s0 + rect.ymax * m.r1 + m.t0
+			self.mask_rect.ymax = rect.xmax * m.r0 + rect.ymax * m.s1 + m.t1
 	
 	cdef void _append(self, int coords_idx, int tex_coords_idx):
 		cdef CMat *m = self.stk_mat.top()
@@ -396,6 +388,15 @@ cdef class CRenderer:
 		color.a = a
 		self.vec_color.push_back(color)
 		return self.vec_color.size() - 1
+
+	def reg_rect(self, float xmin, float ymin, float xmax, float ymax):
+		cdef CRect *rect = <CRect *>malloc(sizeof(CRect))
+		rect.xmin = xmin
+		rect.xmax = xmax
+		rect.ymin = ymin
+		rect.ymax = ymax
+		self.vec_rect.push_back(rect)
+		return self.vec_rect.size() - 1
 	
 	def reg_mat(self, float t0, float t1, float s0, float s1, float r0, float r1):
 		cdef CMat *mat = <CMat *>malloc(sizeof(CMat))

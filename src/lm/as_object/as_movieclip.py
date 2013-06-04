@@ -166,14 +166,14 @@ class CObj(lm_drawable_container.CDrawable):
 		clip_depth = 0
 		for drawable in self:
 			if drawable.clip_depth > 0:
-				render_state.set_mask(drawable)
+				render_state.set_mask(drawable._rect_index)
 				clip_depth = drawable.clip_depth
 				continue
 				
 			drawable.update(render_state, operation)
 			
 			if clip_depth > 0 and drawable.depth == clip_depth:
-				render_state.set_mask(None)
+				render_state.set_mask(-1)
 				clip_depth = 0
 			
 		if operation & lm_consts.MASK_DRAW:

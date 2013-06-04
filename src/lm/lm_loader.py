@@ -33,7 +33,8 @@ class CLoader(object):
 		
 		movieclip = char_tag.instantiate(0, 0, parent=None)
 		movieclip.init()
-		movieclip.set_matrix(lm_type_mat.CType(translate))
+		movieclip.set_matrix_index(
+			self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
 		movieclip.ctx = ctx
 		return movieclip
 	
@@ -47,7 +48,8 @@ class CLoader(object):
 		char_tag = ctx.get_character(char_id)
 		movieclip = char_tag.instantiate(0, 0, parent=None)
 		movieclip.init()
-		movieclip.set_matrix(lm_type_mat.CType(translate))
+		movieclip.set_matrix_index(
+			self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
 		movieclip.ctx = ctx
 		return movieclip
 		
@@ -65,7 +67,8 @@ class CLoader(object):
 		for i in xrange(count):
 			movieclip = char_tag.instantiate(0, 0, parent=None)
 			movieclip.init()
-			movieclip.set_matrix(lm_type_mat.CType(translate))
+			movieclip.set_matrix(
+				self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
 			movieclip.ctx = ctx
 			mcs.append(movieclip)
 			

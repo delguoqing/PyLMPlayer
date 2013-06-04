@@ -28,6 +28,9 @@ class CTag(lm_tag_base.CTag):
 		
 		self._vertex_lists = []
 		
+		self._rect_index = ctx.renderer.reg_rect(self._rect.xmin, self._rect.ymin,
+												 self._rect.xmax, self._rect.ymax)
+		
 	# Create vertex list for this sprite.
 	#   collect vertex list of all the shapes contained in this sprite.
 	#   This vertex list is then shared among all the instances of this sprite.
@@ -53,7 +56,7 @@ class CTag(lm_tag_base.CTag):
 		return self.char_id
 		
 	def instantiate(self, inst_id, depth, parent=None):
-		sprite = lm_sprite.CDrawable(self._vertex_lists, self._rect, inst_id, depth, parent=parent)
+		sprite = lm_sprite.CDrawable(self._vertex_lists, self._rect_index, inst_id, depth, parent=parent)
 		return sprite
 		
 	def get_id(cls):

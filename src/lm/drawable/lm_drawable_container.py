@@ -1,11 +1,7 @@
 import itertools
-import collections
 import lm_drawable
 
-from ctypes import *
-from pyglet.gl import *
 from lm import lm_consts
-
 
 class CDrawable(lm_drawable.CDrawable):
 	

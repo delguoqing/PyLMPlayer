@@ -40,6 +40,8 @@ def on_key_press(symbol, modifiers):
 		mc.gotoAndPlay("normal_fever")
 	elif symbol == pyglet.window.key.W:
 		mc.gotoAndPlay("fever_normal")
+	elif symbol == pyglet.window.key.SPACE:
+		mc.play()
 ###################################
 # Rendering
 ###################################
@@ -89,7 +91,7 @@ loader = lm_loader.CLoader("pspdx", "../../../packages", render_state)
 #mc = loader.load_movie(r"pack112/DANCE_BG_04.LM")
 #mc.set_cxform_index(tmp, tmp)
 #mc = loader.load_movie(r"pack121/DANCE_BG_IDOL.LM")
-mc = loader.load_movie(r"pack120/DANCE_BG_14.LM")
+mc = loader.load_movie(r"pack66/GAUGE_DON_H.LM")
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
