@@ -81,7 +81,7 @@ class CLoader(object):
 			for tuple in _def:
 				if len(tuple) == 2: 
 					name, count = tuple
-					translate = None
+					translate = (0, 0)
 				elif len(tuple) == 3: 
 					name, count, translate = tuple
 				mcs += self.load_multi_movie(name, count, translate)

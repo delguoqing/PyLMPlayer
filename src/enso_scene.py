@@ -5,7 +5,6 @@ from enso_layout import *
 from tja import tja_onp_mgr
 from tja import tja_consts
 
-from lm import lm_loader
 from lm import lm_consts
 
 WIDTH = 480
@@ -282,7 +281,7 @@ def set_max_balloon(balloon):
 	mc.gotoAndPlay("geki_hit")
 	
 	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_BALLOON
+	movieclips[DON2].set_pos(enso_cfg.DON_POS_BALLOON[0], enso_cfg.DON_POS_BALLOON[1])
 		
 	max_balloon = balloon
 	set_balloon(balloon)
@@ -341,7 +340,7 @@ def on_balloon_end(mc, data):
 	cur_balloon = 0
 	donchan_free = True
 	reset_don()
-	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
+	movieclips[DON].set_pos(enso_cfg.DON_POS_NORMAL[0], enso_cfg.DON_POS_NORMAL[1])
 
 def set_max_imo(imo):
 	global max_imo, cur_imo, donchan_free
@@ -355,7 +354,7 @@ def set_max_imo(imo):
 	mc.gotoAndPlay("imo_start")
 	
 	swap_depth(DON, DON2)
-	movieclips[DON2].matrix.translate = enso_cfg.DON_POS_IMO
+	movieclips[DON2].set_pos(enso_cfg.DON_POS_IMO[0], enso_cfg.DON_POS_IMO[1], )
 	movieclips[DON2].gotoAndPlay("imo_in")
 	
 	max_imo = imo
@@ -430,7 +429,7 @@ def on_imo_break_end(mc, data):
 	max_imo = -1
 	cur_imo = 0
 	donchan_free = True
-	movieclips[DON].matrix.translate = enso_cfg.DON_POS_NORMAL
+	movieclips[DON].set_pos(enso_cfg.DON_POS_NORMAL[0], enso_cfg.DON_POS_NORMAL[1])
 	
 	reset_don()
 	
@@ -635,7 +634,7 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 			y_range = enso_cfg.RENDA_EFFECT_Y_RANGE
 			x = random.randint(x_range[0], x_range[1])
 			y = random.randint(y_range[0], y_range[1])
-			mc.matrix.translate = (x, y)
+			mc.set_pos(x, y)
 			enso_cfg.RENDA_EFFECT_FUNC(mc, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
 	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_GEKI, tja_consts.ONP_IMO):
 		pass
@@ -672,11 +671,11 @@ def set_renda_red(head, body, tail, hit_cnt):
 
 def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
 	if x > ONP_HIT_X:
-		lumen.matrix.translate = (x, ONP_Y)
+		lumen.set_pos(x, ONP_Y)
 	elif end_x > ONP_HIT_X:
-		lumen.matrix.translate = (ONP_HIT_X, ONP_Y)
+		lumen.set_pos(ONP_HIT_X, ONP_Y)
 	else:
-		lumen.matrix.translate = (end_x, ONP_Y)
+		lumen.set_pos(end_x, ONP_Y)
 	lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 	
 def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, end_x):
@@ -684,14 +683,14 @@ def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, e
 	
 	set_renda_red(lumen_head, lumen_body, lumen_tail, 0)
 	
-	lumen_body.matrix.translate = ((x + end_x) * 0.5, ONP_Y)
-	lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
+	lumen_body.set_pos((x + end_x) * 0.5, ONP_Y)
+	lumen_body.set_scale(body_len / 32.0, 1.0)
 	lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
 	
-	lumen_head.matrix.translate = (x, ONP_Y)
+	lumen_head.set_pos(x, ONP_Y)
 	lumen_head.update(render_state, operation & lm_consts.MASK_DRAW)
 	
-	lumen_tail.matrix.translate = (end_x, ONP_Y)
+	lumen_tail.set_pos(end_x, ONP_Y)
 	lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
 	
 def set_renda_num(num):
@@ -727,7 +726,7 @@ def set_renda_out():
 		mc.gotoAndPlay("renda_out")
 		
 # Build up scene
-def build_scene(cfg, tja_file):
+def build_scene(cfg, loader, tja_file):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
 	global INDEX_RENDA_EFFECT
 	global INDEX_SCORE_ADD
@@ -739,7 +738,6 @@ def build_scene(cfg, tja_file):
 	
 	enso_cfg = cfg
 	
-	loader = lm_loader.CLoader("pspdx", cfg.LM_PACK_ROOT)
 	LMC = loader.load_movie
 	LMCS = loader.load_multi_movie
 	LMP = loader.load_movie_pool

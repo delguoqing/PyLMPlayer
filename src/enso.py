@@ -14,8 +14,7 @@ from pyglet.gl import *
 from ctypes import *
 
 from lm import lm_loader
-
-from lm.drawable import lm_render_state
+from lm.extensions import lm_render_state
 
 # standard resolution for psp
 window = pyglet.window.Window(enso_scene.WIDTH, enso_scene.HEIGHT)
@@ -93,9 +92,10 @@ pyglet.clock.schedule(on_draw)
 ###################################
 
 # global render state control
-render_state = lm_render_state.CObj()
+render_state = lm_render_state.CRenderer()
+loader = lm_loader.CLoader("pspdx", enso_cfg.LM_PACK_ROOT, render_state)
 
-movieclips = enso_scene.build_scene(enso_cfg, sys.argv[1])
+movieclips = enso_scene.build_scene(enso_cfg, loader, sys.argv[1])
 movieclips[ONPS].reset(enso_scene)
 
 # Texture env

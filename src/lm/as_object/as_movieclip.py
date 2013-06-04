@@ -272,6 +272,16 @@ class CObj(lm_drawable_container.CDrawable):
 	
 	_x = property(_get_x, _set_x)
 	
+	def set_pos(self, x, y):
+		_m = self.matrix = self._get_matrix()
+		_m.translate  = (x, y)
+		self._as_tween_only = True
+	
+	def set_scale(self, sx, sy):
+		_m = self.matrix = self._get_matrix()
+		_m.scale  = (sx, sy)
+		self._as_tween_only = True
+	
 	# Don't bother to do extra math
 	# I don't see a movieclip with different x, y scale rate,
 	# and don't see a movieclip with rotation and scale at the
