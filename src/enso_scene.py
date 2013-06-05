@@ -80,6 +80,15 @@ def set_combo(combo):
 	miss = (combo == 0)
 	first_miss = (cur_miss == 0 and miss)
 		
+	# onp animation speed
+	cur_onp_level = min(cur_combo // 50, 3)
+	onp_level = min(combo // 50, 3)
+	if cur_onp_level != onp_level:
+		for onp in xrange(tja_consts.ONP_SHORT[0], tja_consts.ONP_SHORT[1] + 1):
+			movieclips[ONPS]._onp_lumens[onp].gotoAndPlay("level0%d" % (onp_level + 1))
+		for onp in xrange(tja_consts.ONP_LONG[0], tja_consts.ONP_LONG[1] + 1):
+			movieclips[ONPS]._onp_lumens[onp].gotoAndPlay("level0%d" % (onp_level + 1))
+			
 	# Miss chibi
 	if miss:
 		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_MISS)
