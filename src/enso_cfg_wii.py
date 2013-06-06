@@ -13,13 +13,13 @@ DON_IMO = r"don/don_imo_1p/don_imo_1p.lm"
 DON_IMO_POS = (0, 0)
 
 # Dance BG
-DANCE_BG = r"enso_dance/dance_bg_miku/dance_bg_miku.lm"
+DANCE_BG = r"enso_dance/dance_bg_03/dance_bg_03.lm"
 DANCE_BG_POS = (0, 253)
 # Chochin
 CHOCHIN = r"enso/chochin_miku/chochin_miku.lm"
 CHOCHIN_POS = (-1, 435)
 # Enso up bg. Scrolling from left to right.
-ENSO_UP_BG = r"enso/bg/enso_1p_bg_12/enso_1p_bg_12.lm"
+ENSO_UP_BG = r"enso/bg/enso_1p_bg_11/enso_1p_bg_11.lm"
 ENSO_UP_BG_POS = (0, 0)
 # sabi effect. When game enters gogotime. This is drawn on top of up bg.
 BG_SAB_EFFECTI = r"enso/sabi_1p/sabi_1p.lm"

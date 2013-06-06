@@ -6,7 +6,7 @@ from memory cimport memset
 from lm.type import lm_type_mat
 
 cdef struct CVertexData:
-	float x, y
+	short x, y
 	float u, v
 	unsigned color
 	unsigned secondary_color
@@ -316,32 +316,32 @@ cdef class CRenderer:
 			elif tmp.y3 > self.mask_rect.ymax:
 				v3 += (tmp.y3 - self.mask_rect.ymax) * _fix_y; tmp.y3 = self.mask_rect.ymax
 				
-		self.vbuf[head].x = tmp.x0
-		self.vbuf[head].y = tmp.y0
+		self.vbuf[head].x = int(tmp.x0+0.5)
+		self.vbuf[head].y = int(tmp.y0+0.5)
 		self.vbuf[head].u = u0
 		self.vbuf[head].v = v0
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = tmp.x1
-		self.vbuf[head].y = tmp.y1
+		self.vbuf[head].x = int(tmp.x1+0.5)
+		self.vbuf[head].y = int(tmp.y1+0.5)
 		self.vbuf[head].u = u1
 		self.vbuf[head].v = v1		
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = tmp.x2
-		self.vbuf[head].y = tmp.y2
+		self.vbuf[head].x = int(tmp.x2+0.5)
+		self.vbuf[head].y = int(tmp.y2+0.5)
 		self.vbuf[head].u = u2
 		self.vbuf[head].v = v2		
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = tmp.x3
-		self.vbuf[head].y = tmp.y3
+		self.vbuf[head].x = int(tmp.x3+0.5)
+		self.vbuf[head].y = int(tmp.y3+0.5)
 		self.vbuf[head].u = u3
 		self.vbuf[head].v = v3		
 		self.vbuf[head].color = cmul
@@ -363,7 +363,7 @@ cdef class CRenderer:
 		cdef int stride
 		if self.vbuf_head > 0:
 			stride = sizeof(CVertexData)
-			glVertexPointer(2, GL_FLOAT, stride, &self.vbuf[0].x)
+			glVertexPointer(2, GL_SHORT, stride, &self.vbuf[0].x)
 			glTexCoordPointer(2, GL_FLOAT, stride, &self.vbuf[0].u)
 			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].color)
 			glSecondaryColorPointer(3, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)
