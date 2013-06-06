@@ -1,8 +1,8 @@
+import math
 import pyglet
 import lm_tag_base
 
 from lm import lm_consts
-from lm.type import lm_type_pos
 from lm.type import lm_type_rect
 
 class CTag(lm_tag_base.CTag):
@@ -89,50 +89,68 @@ class CTag(lm_tag_base.CTag):
 			
 #			print "recalc!"
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
-			_vertices = []
-			_tex_coords = []
-			_y = _r.ymin
-			while _y < _r.ymax:
-				_x = _r.xmin
-				while _x < _r.xmax:
-					_xmin = _x
-					_xmax = _x + self.texture.width
-					_ymin = _y
-					_ymax = _y + self.texture.height
-									
-					_vertices += (_xmin, _ymax, _xmax, _ymax, _xmax, 
-					_ymin, _xmin, _ymin)
-
-					_tex_coords2 = list(self.base_tex_coords)
-					if _xmax > _r.xmax:
-						scale_tx = (_r.xmax - _xmin) * 1.0 / self.texture.width
-						_vertices[-4] = _vertices[-6] = _r.xmax
-					else:
-						scale_tx = 1
-					_tx_len = _tex_coords2[-9] - _tex_coords2[-3]
-					_tex_coords2[-6] = _tex_coords2[-9] = _tex_coords2[-3] + _tx_len * scale_tx					
-					if _ymax > _r.ymax:
-						scale_ty = (_r.ymax - _ymin) * 1.0 / self.texture.height
-						_vertices[-5] = _vertices[-7] = _r.ymax	
-					else:
-						scale_ty = 1
-					_ty_len = _tex_coords2[-5] - _tex_coords2[-8]
-					_tex_coords2[-5] = _tex_coords2[-2] = _tex_coords2[-8] + _ty_len * scale_ty
-
-					for i, v in enumerate(_tex_coords2):
-						if i % 3 != 2:
-							_tex_coords.append(v)
-					
-					_x += self.texture.width
-
-				_y += self.texture.height
-							
-			self.vertices = _vertices
-			self.tex_coords = _tex_coords					
+			d = self._parsed_data
+			_tx_len = self.base_tex_coords[-9] - self.base_tex_coords[-3]
+			_ty_len = self.base_tex_coords[-5] - self.base_tex_coords[-8]
+			_tx_base = self.base_tex_coords[-3]
+			_ty_base = self.base_tex_coords[-5] 
+			
+			umin = min(d["u0"], d["u2"])
+			umax = max(d["u0"], d["u2"])
+			vmin = min(d["v0"], d["v2"])
+			vmax = max(d["v0"], d["v2"])
+			
+			_x_mapping = []
+			_y_mapping = []
+			# U direction split
+			stride_u = umax - umin
+			u = max(0, umin)
+			while True:
+				_u = math.fmod(-u, 1.0) * _tx_len + _tx_base
+				_x = _r.xmin + 1.0 * (u - umin) / stride_u * _r.width
+				_x_mapping.insert(0, (_x, _u))
+				if u == umin:
+					break
+				u = max(u - 1.0, umin)
+			u = min(0, umax)
+			while True:
+				_u = math.fmod(u, 1.0) * _tx_len + _tx_base
+				_x = _r.xmin + 1.0 * (u - umin) / stride_u * _r.width
+				_x_mapping.append((_x, _u))
+				if u == umax:
+					break
+				u = min(u + 1.0, umax)
+			# V direction split
+			stride_v = vmax - vmin
+			v = max(0, vmin)
+			while True:
+				_v = _ty_base - math.fmod(-v, 1.0) * _ty_len
+				_y = _r.ymin + 1.0 * (v - vmin) / stride_v * _r.height
+				_y_mapping.insert(0, (_y, _v))
+				if v == vmin:
+					break
+				v = max(v - 1.0, vmin)
+			v = min(0, vmax)
+			while True:
+				_v = _ty_base - math.fmod(v, 1.0) * _ty_len
+				_y = _r.ymin + 1.0 * (v - vmin) / stride_v * _r.height
+				_y_mapping.append((_y, _v))
+				if v == vmax:
+					break
+				v = min(v + 1.0, vmax)
+			self.vertices = []
+			self.tex_coords = []
+			for (_x0, _u0), (_x1, _u1) in zip(_x_mapping[:-1], _x_mapping[1:]):
+				for (_y0, _v0), (_y1, _v1) in zip(_y_mapping[:-1], _y_mapping[1:]):
+					# Take care of the border
+					if _u1 == _tx_base: _u1 += _tx_len
+					if _v1 == _ty_base: _v1 -= _ty_len
+					self.vertices.extend((_x0, _y0, _x1, _y0, _x1, _y1, _x0, _y1))
+					self.tex_coords.extend((_u0, _v0, _u1, _v0, _u1, _v1, _u0, _v1))
 		else:
 			assert False, "not supported fill type! 0x%02x" % self.fill_style
 		
-#		self._parsed_data = None
+		self._parsed_data = None
 				
 		return self.vertices, self.tex_coords, self.texture
 
