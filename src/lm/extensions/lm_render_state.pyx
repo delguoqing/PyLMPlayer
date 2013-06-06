@@ -316,32 +316,32 @@ cdef class CRenderer:
 			elif tmp.y3 > self.mask_rect.ymax:
 				v3 += (tmp.y3 - self.mask_rect.ymax) * _fix_y; tmp.y3 = self.mask_rect.ymax
 				
-		self.vbuf[head].x = int(tmp.x0+0.5)
-		self.vbuf[head].y = int(tmp.y0+0.5)
+		self.vbuf[head].x = <short>(tmp.x0+0.5)
+		self.vbuf[head].y = <short>(tmp.y0+0.5)
 		self.vbuf[head].u = u0
 		self.vbuf[head].v = v0
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = int(tmp.x1+0.5)
-		self.vbuf[head].y = int(tmp.y1+0.5)
+		self.vbuf[head].x = <short>(tmp.x1+0.5)
+		self.vbuf[head].y = <short>(tmp.y1+0.5)
 		self.vbuf[head].u = u1
 		self.vbuf[head].v = v1		
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = int(tmp.x2+0.5)
-		self.vbuf[head].y = int(tmp.y2+0.5)
+		self.vbuf[head].x = <short>(tmp.x2+0.5)
+		self.vbuf[head].y = <short>(tmp.y2+0.5)
 		self.vbuf[head].u = u2
 		self.vbuf[head].v = v2		
 		self.vbuf[head].color = cmul
 		self.vbuf[head].secondary_color = cadd
 		
 		head += 1
-		self.vbuf[head].x = int(tmp.x3+0.5)
-		self.vbuf[head].y = int(tmp.y3+0.5)
+		self.vbuf[head].x = <short>(tmp.x3+0.5)
+		self.vbuf[head].y = <short>(tmp.y3+0.5)
 		self.vbuf[head].u = u3
 		self.vbuf[head].v = v3		
 		self.vbuf[head].color = cmul
