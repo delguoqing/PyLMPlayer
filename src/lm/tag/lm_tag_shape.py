@@ -91,10 +91,10 @@ class CTag(lm_tag_base.CTag):
 		elif self.fill_style == lm_consts.FILL_STYLE_TILED_IMAGE:
 			_vertices = []
 			_tex_coords = []
-			count = 0
-			for _y in xrange(_r.ymin, _r.ymax, self.texture.height):
-				for _x in xrange(_r.xmin, _r.xmax, self.texture.width):
-	
+			_y = _r.ymin
+			while _y < _r.ymax:
+				_x = _r.xmin
+				while _x < _r.xmax:
 					_xmin = _x
 					_xmax = _x + self.texture.width
 					_ymin = _y
@@ -122,8 +122,11 @@ class CTag(lm_tag_base.CTag):
 					for i, v in enumerate(_tex_coords2):
 						if i % 3 != 2:
 							_tex_coords.append(v)
+					
+					_x += self.texture.width
+
+				_y += self.texture.height
 							
-					count += 1	
 			self.vertices = _vertices
 			self.tex_coords = _tex_coords					
 		else:
