@@ -137,3 +137,6 @@ SCORE_MAIN_POS = (464, 78)
 
 SPLASH = r"enso/combo_splash/combo_splash.lm"
 SPLASH_POS = (0, 0)
+
+SONG_NAME = r"enso/enso_kyokumei/enso_kyokumei.lm"
+SONG_NAME_POS = (0, 219)

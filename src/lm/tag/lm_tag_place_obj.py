@@ -209,6 +209,8 @@ class CTag(lm_tag_base.CTag):
 			if old_inst and old_inst.forbid_timeline:
 				return
 			inst = target.get_drawable(self._depth)
+			if inst is None:
+				return
 		
 		# Set Matrix and Cxform	
 		inst.set_matrix_index(_mat)

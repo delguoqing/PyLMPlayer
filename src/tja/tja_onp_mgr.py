@@ -397,6 +397,9 @@ class CMgr(object):
 			self._scn.play_fullcombo()
 			self.active = False
 	
+	def get_song_name(self):
+		return self._fumen.header["TITLE"]
+	
 if __name__ == '__main__':
 	import tja_reader
 	import tja_fumen

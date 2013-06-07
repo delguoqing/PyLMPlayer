@@ -78,15 +78,18 @@ def on_draw(dt):
 	render_state.begin()
 	
 	for movieclip in movieclips:
-		#if movieclip not in (movieclips[DON_GEKI], movieclips[ONPS],): continue
+		#if movieclip not in (movieclips[SONG_NAME], ): continue
 		movieclip.update(render_state)
 	
 	render_state.end()
-			
+	
+	glScalef(1.0, -1.0, 1.0)		
+	# Draw song name
+	song_name_label.draw()
+	
 	# Draw fps
-	#glScalef(1.0, -1.0, 1.0)
-	#glTranslatef(80.0, -224.0, 1.0)
-	#fps_display.draw()
+	glTranslatef(80.0, -224.0, 1.0)
+	fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -101,7 +104,13 @@ render_state.init()
 loader = lm_loader.CLoader("wii", cfg.LM_PACK_ROOT, render_state)
 
 movieclips = enso_scene_wii.build_scene(cfg, loader, sys.argv[1])
-movieclips[ONPS].reset(enso_scene_wii)
+fumen_mgr = movieclips[ONPS]
+fumen_mgr.reset(enso_scene_wii)
+song_name = fumen_mgr.get_song_name()
+pyglet.font.add_directory("../font")
+song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
+	x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center", halign="right",
+	font_size=20)
 
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

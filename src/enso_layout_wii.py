@@ -1,4 +1,4 @@
-NUM_MOVIECLIP = 32
+NUM_MOVIECLIP = 33
 (
 #######################
 # BG Part!
@@ -19,7 +19,7 @@ DON,
 GAUGE,
 # Renda effect, 
 RENDA_EFFECT,
-# ==============> SONG_NAME <=================
+SONG_NAME,
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
 DANCER5,

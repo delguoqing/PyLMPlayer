@@ -712,6 +712,7 @@ def build_scene(cfg, loader, tja_file):
 	_def = (((cfg.RENDA_EFFECT, 30),),)
 	movieclips[RENDA_EFFECT] = LMP(_def)
 	INDEX_RENDA_EFFECT, = range(len(_def))
+	movieclips[SONG_NAME] = LMC(cfg.SONG_NAME, cfg.SONG_NAME_POS)
 	movieclips[DANCER1] = LMC(cfg.DANCER1, cfg.DANCER1_POS)
 	movieclips[DANCER2] = LMC(cfg.DANCER2, cfg.DANCER2_POS)
 	movieclips[DANCER3] = LMC(cfg.DANCER3, cfg.DANCER3_POS)
