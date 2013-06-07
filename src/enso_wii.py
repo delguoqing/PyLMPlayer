@@ -29,6 +29,10 @@ else:
 # Game Logic
 ###################################
 scr_shot_id = 0
+glb_time = 0
+music_started = False
+fumen_started = False
+music_off = 0
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -57,7 +61,25 @@ def on_key_press(symbol, modifiers):
 # Rendering
 ###################################
 def on_draw(dt):
-	global movieclips
+	global movieclips, fumen_mgr
+	global music_started, music_off, music, music_mgr
+	global fumen_started
+	
+	fumen_off = fumen_mgr._state.offset
+	if not music_started:
+		if fumen_off < 0 and not fumen_started:
+			fumen_started = True
+		if fumen_off >= 0:
+			music_started = True
+			music_mgr = music.play()
+			music_mgr.volume = 0.5
+			music_off = 0
+	else:
+		music_off += dt * 1000	
+	if not fumen_started and music_started and music_off >= fumen_off:
+		fumen_started = True
+	   	fumen_mgr._state.offset = music_off - dt * 1000
+		
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
 	glDisable(GL_DEPTH_TEST)
@@ -79,8 +101,12 @@ def on_draw(dt):
 	
 	for movieclip in movieclips:
 		#if movieclip not in (movieclips[SONG_NAME], ): continue
-		movieclip.update(render_state)
-	
+		if movieclip != fumen_mgr:
+			movieclip.update(render_state)
+		elif fumen_started:
+			fumen_mgr._state.offset += dt * 1000
+			movieclip.update(render_state)
+			
 	render_state.end()
 	
 	glScalef(1.0, -1.0, 1.0)		
@@ -88,8 +114,8 @@ def on_draw(dt):
 	song_name_label.draw()
 	
 	# Draw fps
-	glTranslatef(80.0, -224.0, 1.0)
-	fps_display.draw()
+	#glTranslatef(80.0, -224.0, 1.0)
+	#fps_display.draw()
 	
 pyglet.clock.schedule(on_draw)
 
@@ -108,10 +134,19 @@ fumen_mgr = movieclips[ONPS]
 fumen_mgr.reset(enso_scene_wii)
 song_name = fumen_mgr.get_song_name()
 pyglet.font.add_directory("../font")
+pyglet.resource.path.append(os.path.split(sys.argv[1])[0])
+pyglet.resource.path.append("../snd")
+pyglet.resource.reindex()
+
 song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
 	x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center", halign="right",
 	font_size=20)
 
+audio_file = movieclips[ONPS].get_audio_file()
+music = pyglet.resource.media(audio_file, streaming=False)
+enso_scene_wii.dong = pyglet.resource.media("dong.wav", streaming=False)
+enso_scene_wii.ka = pyglet.resource.media("ka.wav", streaming=False)
+	
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 

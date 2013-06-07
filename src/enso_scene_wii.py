@@ -1,5 +1,6 @@
 import os
 import random
+import pyglet
 
 from tja import tja_onp_mgr
 from tja import tja_fumen
@@ -652,14 +653,20 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		
 def on_hit(keys):
 	global movieclips, cur_miss
+	global dong, ka
 	
 	if cur_miss > 0:
 		now_gauge_num = int(50.0 * cur_tamashii / max_tamashii + EPS)
 		if now_gauge_num < 40:
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_normal")
 		else:
-			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")			
-		
+			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")
+
+	if keys & tja_consts.HIT_DON:
+		dong.play()
+	if keys & tja_consts.HIT_KATSU:
+		ka.play()
+	
 def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
 	if x > ONP_HIT_X:
 		lumen.set_pos(x, ONP_Y)

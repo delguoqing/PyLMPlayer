@@ -288,8 +288,6 @@ class CMgr(object):
 		if not self.active:
 			return
 		
-		if operation & lm_consts.MASK_UPDATE:
-			self._state.offset += 1000.0 / 60.0
 		self._onps = []
 		
 		# update onp lumens without drawing
@@ -399,6 +397,9 @@ class CMgr(object):
 	
 	def get_song_name(self):
 		return self._fumen.header["TITLE"]
+	
+	def get_audio_file(self):
+		return self._fumen.header["WAVE"]
 	
 if __name__ == '__main__':
 	import tja_reader
