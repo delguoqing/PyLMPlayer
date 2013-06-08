@@ -115,10 +115,13 @@ class CMgr(object):
 		if random.random() > 1:
 			return 0
 		off, onp, hits, spd = self._state.hit_onp
+		valid_keys, big_keys, _, _, _ = ONP_CFG[onp]
+		
 		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:
 			return 0
 		if onp == ONP_RENDA1 or onp == ONP_RENDA_DAI1:
 			self._auto_last_hit = (self._auto_last_hit + 1) % 5
+			valid_keys &= HIT_DON
 			if self._auto_last_hit != 0: return 0
 		elif onp == ONP_GEKI or onp == ONP_IMO:
 			self._auto_last_hit = (self._auto_last_hit + 1) % 2
@@ -126,7 +129,6 @@ class CMgr(object):
 		else:
 			self._auto_last_hit = -1
 			
-		valid_keys, big_keys, _, _, _ = ONP_CFG[onp]
 		if big_keys != HIT_INVALID:
 			keys = big_keys
 			self._auto_hit_left = True
