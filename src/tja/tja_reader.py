@@ -20,7 +20,7 @@ class CReader(object):
 	def peek_line(self):
 		self._fobj.seek(self._fpos)
 		line = self.rem_comment(self._fobj.readline())
-		return line
+		return line or "#END"
 		
 	def skip_line(self):
 		self._fobj.seek(self._fpos)

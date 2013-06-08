@@ -16,7 +16,9 @@ from lm import lm_loader
 from lm.extensions import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
+window = pyglet.window.Window()
+window.maximize()
+window.set_size(window.width, window.width * enso_scene_wii.HEIGHT / enso_scene_wii.WIDTH)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 # setting up config
@@ -29,10 +31,7 @@ else:
 # Game Logic
 ###################################
 scr_shot_id = 0
-glb_time = 0
-music_started = False
 fumen_started = False
-music_off = 0
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -62,23 +61,20 @@ def on_key_press(symbol, modifiers):
 ###################################
 def on_draw(dt):
 	global movieclips, fumen_mgr
-	global music_started, music_off, music, music_mgr
+	global music_player
 	global fumen_started
 	
+	# Music startup
 	fumen_off = fumen_mgr._state.offset
-	if not music_started:
-		if fumen_off < 0 and not fumen_started:
+	if not music_player.playing:
+		if fumen_off < 0:
 			fumen_started = True
 		if fumen_off >= 0:
-			music_started = True
-			music_mgr = music.play()
-			music_mgr.volume = 0.5
-			music_off = 0
-	else:
-		music_off += dt * 1000	
-	if not fumen_started and music_started and music_off >= fumen_off:
+			music_player.seek(fumen_off / 1000.0)
+			music_player.play()
+	elif not fumen_started and music_player.time * 1000.0 >= fumen_off:
 		fumen_started = True
-	   	fumen_mgr._state.offset = music_off - dt * 1000
+		fumen_mgr._state.offset = music_player.time * 1000.0
 		
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -96,19 +92,19 @@ def on_draw(dt):
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
-	
+			
 	render_state.begin()
 	
 	for movieclip in movieclips:
 		#if movieclip not in (movieclips[SONG_NAME], ): continue
-		if movieclip != fumen_mgr:
-			movieclip.update(render_state)
-		elif fumen_started:
-			fumen_mgr._state.offset += dt * 1000
-			movieclip.update(render_state)
+		movieclip.update(render_state)
 			
 	render_state.end()
 	
+	# Fumen advance
+	if fumen_started:
+		fumen_mgr._state.offset += dt * 1000.0
+		
 	glScalef(1.0, -1.0, 1.0)		
 	# Draw song name
 	song_name_label.draw()
@@ -142,8 +138,14 @@ song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 25
 	x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center", halign="right",
 	font_size=20)
 
-audio_file = movieclips[ONPS].get_audio_file()
+# Load WAVE
+audio_file = fumen_mgr.get_audio_file()
 music = pyglet.resource.media(audio_file, streaming=False)
+music_player = music.play()
+music_player.pause()
+music_player.volume = fumen_mgr._fumen.header["SONGVOL"] / 100.0
+
+# Load SE
 enso_scene_wii.dong = pyglet.resource.media("dong.wav", streaming=False)
 enso_scene_wii.ka = pyglet.resource.media("ka.wav", streaming=False)
 	

@@ -70,6 +70,9 @@ class CData(object):
 		str_list = str.split(",")
 		ret = []
 		for str in str_list:
+			str = str.strip()
+			if str == "":
+				continue
 			ret.append(int(str))
 		return ret
 		
