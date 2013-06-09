@@ -6,7 +6,7 @@ def func1(this, _global):
 
 def func2(this, _global):
 	if 2 <= this.fever_gage._play_head <= 23:
-		this.fever_gage.totoAndPlay("toNormal")
+		this.fever_gage.gotoAndPlay("toNormal")
 	this.stop()
 
 def func3(this, _global):

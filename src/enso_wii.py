@@ -16,9 +16,7 @@ from lm import lm_loader
 from lm.extensions import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window()
-window.maximize()
-window.set_size(window.width, window.width * enso_scene_wii.HEIGHT / enso_scene_wii.WIDTH)
+window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 # setting up config
@@ -135,7 +133,7 @@ pyglet.resource.path.append("../snd")
 pyglet.resource.reindex()
 
 song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
-	x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center", halign="right",
+	x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center",
 	font_size=20)
 
 # Load WAVE
