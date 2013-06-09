@@ -16,5 +16,5 @@ How to play:
   Ask me for a pack of resource and combine that unzipped folder with `packages` folder.
 
 Dependencies:
-  1.Pyglet. used in python level to handle window system.
+  1.Pyglet 1.2alpha1. used in python level to handle window system.
   2.OpenGL and Glew. used in Cython extension module.(You're need them to compile pyd file.)
