@@ -133,7 +133,7 @@ class CNoteBatch(object):
 				state.offset += (60000.0/state.bpm) * state.measure * num_notes / tot_notes
 				# record incomplete bar
 				if not notes.endswith(","):
-					state.bar_offset += len(self.notes[-1])
+					state.bar_offset += num_notes
 				else:
 					state.bar_offset = 0
 			elif cmd_name:	# Runtime commands
