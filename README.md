@@ -18,3 +18,6 @@ How to play:
 Dependencies:
   1.Pyglet 1.2alpha1. used in python level to handle window system.
   2.OpenGL and Glew. used in Cython extension module.(You're need them to compile pyd file.)
+
+Video:
+http://v.youku.com/v_show/id_XNTY5MDkwMTky.html
