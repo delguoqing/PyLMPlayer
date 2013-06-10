@@ -69,12 +69,16 @@ def on_draw(dt):
 		if fumen_off < 0:
 			fumen_started = True
 		if fumen_off >= 0:
-			music_player.seek(fumen_off / 1000.0)
+			music_player.seek(0)
 			music_player.play()
 			music_started = True
+			fumen_mgr._state.offset = 0
+			fumen_started = True
+			print "way1"
 	elif not fumen_started and music_player.time * 1000.0 >= fumen_off:
 		fumen_started = True
 		fumen_mgr._state.offset = music_player.time * 1000.0
+		print "way2"
 		
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -146,8 +150,8 @@ music_player.pause()
 music_player.volume = fumen_mgr._fumen.header["SONGVOL"] / 100.0
 
 # Load SE
-enso_scene_wii.dong = pyglet.resource.media("dong.wav", streaming=False)
-enso_scene_wii.ka = pyglet.resource.media("ka.wav", streaming=False)
+enso_scene_wii.dong = pyglet.resource.media("dong2.mp3", streaming=False)
+enso_scene_wii.ka = pyglet.resource.media("ka2.mp3", streaming=False)
 	
 # Texture env
 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)

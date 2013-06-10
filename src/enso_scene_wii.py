@@ -14,7 +14,7 @@ WIDTH = 856
 HEIGHT = 480
 EPS = 0.000001
 
-ONP_HIT_X = 144
+ONP_HIT_X = 145
 ONP_Y = 153
 ONP_IN_X = 640
 ONP_OUT_X = 0
@@ -573,6 +573,11 @@ def set_branch(has_branch, level):
 		mc.bunki_moji.gotoAndPlay("normal_start")
 	elif cur_level != level:
 		mc.bunki_moji.gotoAndPlay("%s>%s" % (cur_level, level))
+		if cur_level == "normal" \
+				or (cur_level == "kurouto" and level =="tatsujin"):
+			movieclips[FUKIDASHI].gotoAndPlay("level_up")
+		else:
+			movieclips[FUKIDASHI].gotoAndPlay("level_down")
 	cur_level = level
 		
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
@@ -677,9 +682,11 @@ def on_hit(keys):
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")
 
 	if keys & tja_consts.HIT_DON:
-		dong.play()
+		player = dong.play()
+		player.volume = 2.0
 	if keys & tja_consts.HIT_KATSU:
-		ka.play()
+		player = ka.play()
+		player.volume = 2.0        
 	
 def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
 	if x > ONP_HIT_X:

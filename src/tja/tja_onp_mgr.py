@@ -285,7 +285,7 @@ class CMgr(object):
 			self._state.offset -= first_batch.in_off
 		
 		self._state.tamashii = 0
-		self._state.tot_tamashii = self._fumen.tot_combo * 0.9
+		self._state.tot_tamashii = self._fumen.tot_combo * 0.8
 		self._scn.set_score(0)
 		self._state.level = "normal"
 		self._state.level_dirty = False
