@@ -20,6 +20,7 @@ class CTag(lm_tag_base.CTag):
 		
 	def register_all(self):
 		renderer = self.ctx.renderer
+		index = 0
 		for pos in self._data:
 			index = renderer.reg_mat(pos._x, pos._y, 1.0, 1.0, 0.0, 0.0)
 		return index - len(self._data) + 1

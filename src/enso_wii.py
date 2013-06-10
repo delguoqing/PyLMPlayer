@@ -30,6 +30,7 @@ else:
 ###################################
 scr_shot_id = 0
 fumen_started = False
+music_started = False
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -60,16 +61,17 @@ def on_key_press(symbol, modifiers):
 def on_draw(dt):
 	global movieclips, fumen_mgr
 	global music_player
-	global fumen_started
+	global fumen_started, music_started
 	
 	# Music startup
 	fumen_off = fumen_mgr._state.offset
-	if not music_player.playing:
+	if not music_started:
 		if fumen_off < 0:
 			fumen_started = True
 		if fumen_off >= 0:
 			music_player.seek(fumen_off / 1000.0)
 			music_player.play()
+			music_started = True
 	elif not fumen_started and music_player.time * 1000.0 >= fumen_off:
 		fumen_started = True
 		fumen_mgr._state.offset = music_player.time * 1000.0
@@ -155,5 +157,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+
+gc.disable()
 
 pyglet.app.run()

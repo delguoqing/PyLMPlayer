@@ -4,7 +4,7 @@ LM_PACK_ROOT = r"../wii_packages"
 DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)
 
-DON_COS = r"don/cos/cos_008/cos_008_4p/cos_008_4p.lm"
+DON_COS = r"don/cos/cos_032/cos_032_3p/cos_032_3p.lm"
 
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
 DON_GEKI_POS = (36, 57)
@@ -13,10 +13,10 @@ DON_IMO = r"don/don_imo_1p/don_imo_1p.lm"
 DON_IMO_POS = (0, 0)
 
 # Dance BG
-DANCE_BG = r"enso_dance/dance_bg_03/dance_bg_03.lm"
+DANCE_BG = r"enso_dance/dance_bg_06/dance_bg_06.lm"
 DANCE_BG_POS = (0, 253)
 # Chochin
-CHOCHIN = r"enso/chochin_miku/chochin_miku.lm"
+CHOCHIN = r"enso/chochin_1p/chochin_1p.lm"
 CHOCHIN_POS = (-1, 435)
 # Enso up bg. Scrolling from left to right.
 ENSO_UP_BG = r"enso/bg/enso_1p_bg_11/enso_1p_bg_11.lm"
@@ -29,24 +29,24 @@ BG_SAB_EFFECTI_POS = (0, 0)
 # This is really weird!!! Renda effects are not made in the same standard!
 def RENDA_EFFECT_FUNC3(mc, style):
 	mc.gotoAndPlay("p1")
-	mc.p1.gotoAndPlay("eff_0%d" % style)
+	mc.p1.gotoAndPlay("dori_0%d" % style)
 
 # Renda Effect hamachidori
 
-RENDA_EFFECT = r"enso/renda_effect_animal/renda_effect_animal.lm"
-RENDA_EFFECT_NUM = 3
-RENDA_EFFECT_X_RANGE = (-10, 10)
+RENDA_EFFECT = r"enso/renda_effect_hamachidori/renda_effect_hamachidori.lm"
+RENDA_EFFECT_NUM = 6
+RENDA_EFFECT_X_RANGE = (-200, 200)
 RENDA_EFFECT_Y_RANGE = (400, 480)
 RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC3
 
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
 
-DANCER5 = r"enso_dance/dance_miku_gdon/dance_miku_gdon.lm"
-DANCER4 = r"enso_dance/dance_miku_vdon/dance_miku_vdon.lm"
-DANCER3 = r"enso_dance/dance_miku_ydon/dance_miku_ydon.lm"
-DANCER2 = r"enso_dance/dance_miku_pdon/dance_miku_pdon.lm"
-DANCER1 = r"enso_dance/dance_miku/dance_miku.lm"
+DANCER5 = r"enso_dance/dance_inu/dance_inu.lm"
+DANCER4 = r"enso_dance/dance_inu/dance_inu.lm"
+DANCER3 = r"enso_dance/dance_john/dance_john.lm"
+DANCER2 = r"enso_dance/dance_john/dance_john.lm"
+DANCER1 = r"enso_dance/dance_inu/dance_inu.lm"
 DANCER5_POS = (580, 436)
 DANCER4_POS = (60, 436)
 DANCER3_POS = (450, 436)
@@ -54,7 +54,7 @@ DANCER2_POS = (190, 436)
 DANCER1_POS = (320, 436)
 
 # Fever(Appear when tamashii gauge is full.)
-FEVER = r"enso/fever/fever_mikul/fever_mikul.lm"
+FEVER = r"enso/fever/fever_01/fever_01.lm"
 FEVER_POS = (0, 301)
 
 # Course icon. not affected by sabi effect.
@@ -65,7 +65,10 @@ GAUGE = r"enso/gage_don_h/gage_don_h.lm"
 GAUGE_POS = (264.5, 17)
 
 CHIBI = (
-	(r"enso_chibi/chibi_1p_miku_01/chibi_1p_miku_01.lm", 0, -32),
+	(r"enso_chibi/chibi_1p_cyo_01/chibi_1p_cyo_01.lm", 0, -32),
+	(r"enso_chibi/chibi_1p_cyo_02/chibi_1p_cyo_02.lm", 0, -32),
+	(r"enso_chibi/chibi_1p_cyo_03/chibi_1p_cyo_03.lm", 0, -32),
+	(r"enso_chibi/chibi_1p_cyo_04/chibi_1p_cyo_04.lm", 0, -32),    
 )
 
 CHIBI_MISS = r"enso/enso_chibi/chibi_1p_tama_01/chibi_1p_tama_01.lm"

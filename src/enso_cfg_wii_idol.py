@@ -42,8 +42,8 @@ RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC3
 # Dancers: (Appear in the  following order)
 # 4    2    1    3    5
 
-DANCER5 = r"enso_dance/dance_idol_miki/dance_idol_miki.lm"
-DANCER4 = r"enso_dance/dance_idol_mami/dance_idol_mami.lm"
+DANCER4 = r"enso_dance/dance_idol_miki/dance_idol_miki.lm"
+DANCER5 = r"enso_dance/dance_idol_mami/dance_idol_mami.lm"
 DANCER3 = r"enso_dance/dance_idol_chihaya/dance_idol_chihaya.lm"
 DANCER2 = r"enso_dance/dance_idol_hibiki/dance_idol_hibiki.lm"
 DANCER1 = r"enso_dance/dance_idol_haruka/dance_idol_haruka.lm"

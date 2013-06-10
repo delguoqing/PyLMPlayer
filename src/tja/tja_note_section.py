@@ -16,11 +16,11 @@ class CNoteSection(object):
 		
 		while not reader.check_commands(self.end_cmd):
 
-			print "\t||||||BATCH BEG|||||| "
+			#print "\t||||||BATCH BEG|||||| "
 			batch = tja_note_batch.CNoteBatch()
 			self.note_batches.append(batch)
 			batch.read(reader, state)
-			print "\t||||||BATCH END||||||\n"
+			#print "\t||||||BATCH END||||||\n"
 		
 		# Update section state	
 		if self.note_batches:
