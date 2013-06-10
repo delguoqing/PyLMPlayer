@@ -121,6 +121,14 @@ class CNoteBatch(object):
 				self.log("#####scroll:%f, off:%f" % (self.scroll, self.offset))
 				self.log("#####")
 				
+				# time = time_per_beat * 0.25
+				# speed = note_dist / time
+				self.speed = self.scroll * state.onp_dist / (60000.0 * 0.25 / self.bpm)
+			
+				# 32: padding
+				self.in_off = (32 + state.onp_in_x - state.onp_hit_x) / self.speed
+				self.out_off = (32 + state.onp_hit_x - state.onp_out_x) / self.speed				
+				
 			# handle notes
 			if notes:
 				self.log("NOTES off=%d:\t%s\tbar_off=%d" % (state.offset, notes, state.bar_offset))
@@ -142,18 +150,6 @@ class CNoteBatch(object):
 			else:
 				self.log("")
 			reader.skip_line()
-			
-			# note_dist = 26
-			# time = time_per_beat * 0.25
-			# speed = note_dist / time
-			self.speed = self.scroll * state.onp_dist / (60000.0 * 0.25 / self.bpm)
-			
-			# 104: hit pos x
-			# 480: screen border x
-			# 32: padding
-			# 80: taiko right border(disappear pos)
-			self.in_off = (32 + state.onp_in_x - state.onp_hit_x) / self.speed
-			self.out_off = (32 + state.onp_hit_x - state.onp_out_x) / self.speed
 			
 	def update(self, state, onps):
 			

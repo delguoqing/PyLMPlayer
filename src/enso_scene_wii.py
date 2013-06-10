@@ -32,6 +32,7 @@ cur_balloon = 0 # current balloon
 max_imo = -1
 cur_imo = 0
 cur_miss = 0
+cur_level = None
 cur_dancer = -1	# current dancer
 cur_renda_effect = 1 # current renda_effect id
 first_unsync_dancer = -1 # current unsync_dancer
@@ -561,6 +562,19 @@ def set_renda_out():
 def set_renda_red(head, body, tail, hit_cnt):
 	return
 
+def set_branch(has_branch, level):
+	global movieclips, cur_level
+	mc = movieclips[LANE]
+	if not has_branch:
+		mc.bunki_moji.gotoAndPlay("no_bunki")
+		return
+	if cur_level is None:
+		cur_level = "normal"
+		mc.bunki_moji.gotoAndPlay("normal_start")
+	elif cur_level != level:
+		mc.bunki_moji.gotoAndPlay("%s>%s" % (cur_level, level))
+	cur_level = level
+		
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	

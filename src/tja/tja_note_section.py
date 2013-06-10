@@ -36,7 +36,10 @@ class CNoteSection(object):
 		self.note_batches.sort()
 		
 	def active(self, state):
-		return self.note_batches[0].active(state)
+		if len(self.note_batches) > 0:
+			return self.note_batches[0].active(state)
+		else:
+			return True
 	
 	def empty(self):
 		return len(self.note_batches) == 0 and len(self._active_batch) == 0

@@ -195,9 +195,11 @@ class CMgr(object):
 			elif onp == ONP_RENDA1 and hit_ok:
 				self._scn.set_renda_num(self._state.hit_onp_hits)
 				score_inc = 300
+				self._state.renda += 1
 			elif onp == ONP_RENDA_DAI1 and hit_ok:
 				self._scn.set_renda_num(self._state.hit_onp_hits)
 				score_inc = 360
+				self._state.renda += 1                
 				
 			# Add combo
 			if hitaway and ONP_SHORT[0] <= onp <= ONP_SHORT[1]:
@@ -285,6 +287,9 @@ class CMgr(object):
 		self._state.tamashii = 0
 		self._state.tot_tamashii = self._fumen.tot_combo * 0.9
 		self._scn.set_score(0)
+		self._state.level = "normal"
+		self._state.level_dirty = False
+		self._scn.set_branch(self._fumen.has_branch, "normal")
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:
@@ -301,7 +306,10 @@ class CMgr(object):
 		if self._state.gogotime_dirty:
 			self._state.gogotime_dirty = False
 			self._scn.set_gogotime(self._state.gogotime)
-		
+		if self._state.level_dirty:
+			self._state.level_dirty = False
+			self._scn.set_branch(self._fumen.has_branch, self._state.level)
+			
 		# Remove hitawayed hit onp
 		if self._state.is_hitaway:
 			self._state.hit_onp_off += 1

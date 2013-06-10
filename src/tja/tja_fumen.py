@@ -15,6 +15,7 @@ class CFumen(object):
 		self._active_sections = []
 		self.tot_combo = 0
 		self.dist_cfg = dist_cfg
+		self.has_branch = False
 		
 	def read_header(self, reader):
 		self.header.read(reader)
@@ -28,6 +29,7 @@ class CFumen(object):
 			cmd_name, args = reader.read_command()
 			
 			if cmd_name == "#BRANCHSTART":
+				self.has_branch = True
 				reader.skip_line()
 				if next_state:
 					curr_state, next_state = next_state, None
@@ -57,6 +59,16 @@ class CFumen(object):
 				section = tja_note_section.CNoteSection()
 				self.sections.append([False, None, section, None, None])
 				section.read(reader, curr_state)
+				
+				if len(self.sections) > 2:
+					last_sec = self.sections[-2]
+					if last_sec[SECTION_NORMAL] is None \
+						and last_sec[SECTION_EXPERT] is None\
+						and last_sec[SECTION_MASTER] is None:
+						self.sections[-1][0] = last_sec[0]
+						self.sections[-1][1] = last_sec[1]
+						self.sections.pop(-2)
+						
 				#print "=====> NO BUNKI END"
 				
 		self.tot_combo = curr_state.tot_combo
@@ -78,7 +90,27 @@ class CFumen(object):
 			if not has_branch:
 				self._active_sections.append(nfumen)
 			else:
-				assert False, "Branch not supported yet!"
+				branch_type, minv, maxv = cond
+				minv = float(minv)
+				maxv = float(maxv)
+				if branch_type == "p":
+					curv = state.get_branch_precision()
+				elif branch_type == "s":
+					curv = state.get_branch_score()
+				else:
+					curv = state.get_branch_renda()
+				state.level_dirty = True
+				if 0 <= curv < minv:
+					fumen = nfumen
+					state.level = "normal"
+				elif minv <= curv < maxv:
+					fumen = efumen
+					state.level = "kurouto"
+				else:
+					fumen = mfumen
+					state.level = "tatsujin"
+				fumen = fumen or nfumen or efumen or mfumen
+				self._active_sections.append(fumen)
 				
 		if activated_idx > 0:
 			self.sections = self.sections[activated_idx:]
