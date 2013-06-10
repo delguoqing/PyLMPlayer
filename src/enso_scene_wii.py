@@ -798,4 +798,13 @@ def build_scene(cfg, loader, tja_file):
 	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
+	# Pre load
+	movieclips[DANCE_BG].gotoAndPlay("normal_fever")
+	movieclips[DANCE_BG].gotoAndPlay("fever")
+	movieclips[DANCE_BG].gotoAndPlay("fever_normal")
+	movieclips[DANCE_BG].gotoAndPlay("normal")
+
+	movieclips[SPLASH].gotoAndPlay("splashStartWide")
+	movieclips[SPLASH].gotoAndPlay("wait")
+
 	return movieclips

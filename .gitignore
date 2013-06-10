@@ -174,3 +174,5 @@ cython
 *.komodoproject
 log.txt
 *.cpp
+*.py~
+*.pyd
