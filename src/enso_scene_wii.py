@@ -698,11 +698,13 @@ def draw_geki_or_imo(render_state, operation, lumen, x, end_x):
 	lumen.update(render_state, operation & lm_consts.MASK_DRAW)
 	
 def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, end_x):
-	body_len = end_x - x
+	
 	
 	set_renda_red(lumen_head, lumen_body, lumen_tail, 0)
-	
-	lumen_body.set_pos(x, ONP_Y)
+
+	x_body = max(x, ONP_OUT_X)
+	body_len = end_x - x_body
+	lumen_body.set_pos(x_body, ONP_Y)
 	lumen_body.matrix.scale = (body_len / 32.0 ,1.0)
 	lumen_body.update(render_state, operation & lm_consts.MASK_DRAW)
 	
