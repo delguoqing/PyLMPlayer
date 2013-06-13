@@ -20,4 +20,5 @@ Dependencies:
   2.OpenGL and Glew. used in Cython extension module.(You're need them to compile pyd file.)
 
 Video:
-http://v.youku.com/v_show/id_XNTY5MDkwMTky.html
+http://v.youku.com/v_show/id_XNTcwNDI4NjAw.html
+http://v.youku.com/v_show/id_XNTcwNDUyMDk2.html
