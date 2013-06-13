@@ -290,6 +290,7 @@ class CMgr(object):
 		self._state.level = "normal"
 		self._state.level_dirty = False
 		self._scn.set_branch(self._fumen.has_branch, "normal")
+		reader.close()
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:

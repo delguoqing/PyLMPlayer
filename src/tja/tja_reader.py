@@ -107,6 +107,9 @@ class CReader(object):
 	def check_commands(self, cmd):
 		return self.peek_line().split(" ")[0].strip() in cmd		
 		
+	def close(self):
+		self._fobj.close()
+	
 if __name__ == "__main__":
 	import tja_header
 	import sys
