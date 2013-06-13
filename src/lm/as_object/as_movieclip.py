@@ -160,7 +160,7 @@ class CObj(lm_drawable_container.CDrawable):
 		# Update & Render
 		if operation & lm_consts.MASK_DRAW:
 			if self._as_tween_only:
-				_m = self.matrix
+				_m = self.matrix = self._get_matrix()
 				render_state.push_matrix(_m._t[0], _m._t[1], _m._s[0], _m._s[1],
 										 _m._r[0], _m._r[1],)
 				render_state.push_state(self.color_add_index, self.color_mul_index,

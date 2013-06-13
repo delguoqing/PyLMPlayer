@@ -9,7 +9,7 @@ import pyglet
 class CDrawable(object):
 
 	def __init__(self, inst_id, depth, parent=None):
-		self.matrix = lm_glb.null_mat
+		self.matrix = None
 		self.clip_depth = 0
 
 		self._parent = parent
@@ -42,13 +42,6 @@ class CDrawable(object):
 	def log(self, str):
 		if self.char_id == 4:
 			print "[sprite %d] " % self.char_id, str
-				
-	def set_matrix(self, matrix):
-		if matrix is not None:
-			self.matrix = matrix
-
-	def get_matrix(self):
-		return self.matrix
 	
 	def destroy(self):
 		self.color_add = None

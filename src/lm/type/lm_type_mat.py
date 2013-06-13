@@ -31,11 +31,6 @@ class CType(object):
 		
 	def __repr__(self):
 		return "%f %f \n%f %f \n%f %f" % (self._t + self._s + self._r)
-		
-	def __nonzero__(self):
-		return self._t != (0.0, 0.0) \
-			or self._s != (1.0, 1.0) \
-			or self._r != (0.0, 0.0)
 
 	# Multiply a by b and store result in self
 	def mul(self, a, b):

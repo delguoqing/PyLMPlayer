@@ -92,7 +92,7 @@ def on_draw(dt):
 	glOrtho(-108, enso_scene_wii.WIDTH-108, enso_scene_wii.HEIGHT, 0, -1, 1)
 	
 	#glClearColor(1, 1, 1, 1)
-	window.clear()
+	#window.clear()
 	
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()

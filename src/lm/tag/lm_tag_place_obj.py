@@ -18,27 +18,7 @@ class CTag(lm_tag_base.CTag):
 		self._has_char = (self._char_id > 0)
 		self._depth = d["depth"]
 		self._name = ctx.str_list.get_val(d["name_idx"])
-		self._mat = self._get_matrix(d["trans_idx"])
-		self._blend_mode = lm_type_blend_mode.CType(d["blend_mode"])
 		self._clip_depth = d["clip_depth"]	# how to impl?
-		
-		# Note:
-		# 
-		# empty color add  `(0.0, 0.0, 0.0, 0.0)`
-		# none  color add  `None`
-		# 
-		# empty color mul  `(1.0, 1.0, 1.0, 1.0)`
-		# none  color mul  `None`
-		#
-		# They are different!
-		
-		self._cadd = None
-		if d["color_add_idx"] >= 0:
-			self._cadd = self.ctx.color_list.get_val(d["color_add_idx"])
-		
-		self._cmul = None
-		if d["color_mul_idx"] >= 0:
-			self._cmul = self.ctx.color_list.get_val(d["color_mul_idx"])
 		
 		self._clip_action_cnt = d["clip_action_cnt"]
 		self._clip_action_tags = []
@@ -80,16 +60,6 @@ class CTag(lm_tag_base.CTag):
 				break
 		mask = (1 << (size * 8 - 1))-1
 		return trans_idx & mask
-
-	def _get_matrix(self, trans_idx):
-		ctx = self.ctx
-		if trans_idx == -1:
-			return None
-		elif trans_idx >= 0:
-			return ctx.mat_list.get_val(trans_idx)
-		else:
-			trans_idx = self._conv_special_trans_idx(trans_idx)
-			return ctx.pos_list.get_val(trans_idx).to_mat()
 		
 	def _get_matrix_index(self, trans_idx):
 		ctx = self.ctx
@@ -108,62 +78,6 @@ class CTag(lm_tag_base.CTag):
 	# Notice:
 	#	a new character replacing an old character which has no matrix(cxform) 
 	# will have to use the old character's matrix(cxform)
-	def _execute(self, target=None):
-		# Must have a target
-		if not target: return
-		
-		# Old Character at `depth`
-		old_inst = target.get_drawable(self._depth)
-			
-		# Matrix and Cxform
-		_mat = self._mat
-		_cadd = self._cadd
-		_cmul = self._cmul
-		_blend_mode = self._blend_mode
-		if old_inst:
-			if _mat is None: _mat = old_inst.get_matrix()
-			if _cadd is None: _cadd = old_inst.get_color_add()
-			if _cmul is None: _cmul = old_inst.get_color_mul()
-			if not _blend_mode: _blend_mode = old_inst.get_blend_mode()
-		
-		# Place or Move?
-		if self._has_char:
-		
-			if not old_inst or old_inst.inst_id != self._inst_id:
-				# remove old if any
-				target.remove_drawable(self._depth)
-				
-				# try allocate from cache
-				inst = target.alloc_drawable(self._depth, self._inst_id)
-				if not inst:		
-					char_tag = self.ctx.get_character(self._char_id)
-					if not char_tag: return
-					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
-					inst.char_id = self._char_id
-				inst.init()
-				target.add_drawable(inst, self._depth, self._name)
-				
-				if self._on_enter_frame:
-					inst.onEnterFrame = self._on_enter_frame
-				
-			else:	# reuse the old inst
-				inst = old_inst
-
-		else:
-			if old_inst and old_inst.forbid_timeline:
-				return
-			inst = target.get_drawable(self._depth)
-		
-		# Set Matrix and Cxform	
-		inst.set_matrix(_mat)
-		inst.set_cxform(_cadd, _cmul)
-		inst.set_blend_mode(_blend_mode)
-		inst.clip_depth = self._clip_depth
-	
-		# Set instance ID			
-		if self._char_id >= 0:
-			inst.char_id = self._char_id
-
 	def execute(self, target=None):
 		# Must have a target
 		if not target: return
