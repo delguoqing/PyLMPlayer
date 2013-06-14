@@ -96,11 +96,8 @@ class CObj(lm_drawable_container.CDrawable):
 				break
 			else:
 				break
-		if key_frame is None:
-			key_frame = self._frame_tags[frame_id]
-			if key_frame.empty() and nearest is not None:
-				key_frame = nearest
-		assert key_frame is not None, "[Movieclip %d][inst%d]Target frame is not a key frame!" % (self.char_id, self.inst_id)
+		
+		key_frame = key_frame or nearest or self._frame_tags[0]
 		key_frame.execute(target=self)
 		
 #		self.log("Goto frame %d" % frame_id)
@@ -115,6 +112,10 @@ class CObj(lm_drawable_container.CDrawable):
 		
 		# Key Frame is always missing action?
 		self._frame_tags[frame_id].do_actions(target=self)
+		
+		if key_frame.get_frame_id() < frame_id:
+			for i in xrange(key_frame.get_frame_id(), frame_id + 1):
+				self._frame_tags[i].execute(target=self)
 		
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if not self.active:
