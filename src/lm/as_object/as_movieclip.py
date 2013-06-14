@@ -158,36 +158,44 @@ class CObj(lm_drawable_container.CDrawable):
 				else:
 					self._frame_tags[self._play_head].execute(target=self)
 			
-		# Update & Render
+		# Update sub movieclips
 		if operation & lm_consts.MASK_DRAW:
+			# Set render state
 			if self._as_tween_only:
 				_m = self.matrix = self._get_matrix()
+				self.matrix_index = -1
 				render_state.push_matrix(_m._t[0], _m._t[1], _m._s[0], _m._s[1],
 										 _m._r[0], _m._r[1],)
-				render_state.push_state(self.color_add_index, self.color_mul_index,
-									-1, self.blend_mode_index)
-			else:
-				render_state.push_state(self.color_add_index, self.color_mul_index,
-										self.matrix_index, self.blend_mode_index)				
-		
-		#self.log("rendering frame %d" % self._play_head)
-		clip_depth = 0
-		for drawable in self:
-			if drawable.clip_depth > 0:
-				render_state.set_mask(drawable._rect_index)
-				clip_depth = drawable.clip_depth
-				continue
+			render_state.push_state(self.color_add_index, self.color_mul_index,
+									self.matrix_index, self.blend_mode_index)				
+			
+			# ####################
+			# Updating Code Begin
+			clip_depth = 0
+			for drawable in self:
+				if drawable.clip_depth > 0:
+					render_state.set_mask(drawable._rect_index)
+					clip_depth = drawable.clip_depth
+					continue
+					
+				drawable.update(render_state, operation)
 				
-			drawable.update(render_state, operation)
+				if clip_depth > 0 and drawable.depth == clip_depth:
+					render_state.set_mask(-1)
+					clip_depth = 0	
+			# Updating Code End
+			# ####################
 			
-			if clip_depth > 0 and drawable.depth == clip_depth:
-				render_state.set_mask(-1)
-				clip_depth = 0
-			
-		if operation & lm_consts.MASK_DRAW:
+			# Restore render state
 			render_state.pop_state()
 			if self._as_tween_only:
 				render_state.pop_matrix()
+				
+		else:
+			
+			for drawable in self:
+				drawable.update(render_state, operation)
+			
 		
 	# initialization when first placed on stage
 	def init(self, fully=False):

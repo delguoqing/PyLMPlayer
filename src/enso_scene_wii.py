@@ -797,7 +797,7 @@ def build_scene(cfg, loader, tja_file):
 	movieclips[SPLASH] = LMC(cfg.SPLASH, cfg.SPLASH_POS)
 	
 	# Init fumen
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, tja_consts.OPTION_AUTO)
+	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, 0)#tja_consts.OPTION_AUTO)
 	movieclips[ONPS].set_onp_lumens(onp_lumens)
 	
 	# Pre load
