@@ -59,9 +59,10 @@ class CNoteBatch(object):
 			if note == "0" or note == ",":
 				continue
 			elif note == "5" or note == "6":	# Renda
-				self.long_note = True
-				self.notes.append((off, self.trans_note(note), 999999, self.speed))
-				self.log("ONP %s @off=%f" % (note, off))
+				if not state.long_note:
+					state.long_note = True
+					self.notes.append((off, self.trans_note(note), 999999, self.speed))
+					self.log("ONP %s @off=%f" % (note, off))
 			elif note == "7" or note == "9":	# Balloon Renda or Imo Renda
 				if state.long_note:
 					if note == "9":
