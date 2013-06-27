@@ -16,7 +16,8 @@ from lm import lm_loader
 from lm.extensions import lm_render_state
 
 # standard resolution for psp
-window = pyglet.window.Window(enso_scene_wii.WIDTH, enso_scene_wii.HEIGHT)
+window = pyglet.window.Window(int(enso_scene_wii.WIDTH*1.5),
+        int(enso_scene_wii.HEIGHT*1.5))
 fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 
 # setting up config
@@ -79,17 +80,6 @@ def on_draw(dt):
 		fumen_started = True
 		fumen_mgr._state.offset = music_player.time * 1000.0
 		print "way2"
-		
-	# switch off some expensive operation
-	glShadeModel(GL_FLAT)
-	glDisable(GL_DEPTH_TEST)
-	glDisable(GL_DITHER)
-	
-	# change default pyglet setting, for a origin at left top corner
-	# do this wheneVer redraw event is triggered!
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()
-	glOrtho(-108, enso_scene_wii.WIDTH-108, enso_scene_wii.HEIGHT, 0, -1, 1)
 	
 	#glClearColor(1, 1, 1, 1)
 	#window.clear()
