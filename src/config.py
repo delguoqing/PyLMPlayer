@@ -6,7 +6,7 @@ import enso_skin_def
 import enso_skin_idol
 
 DATA = {
-	"is_widescreen": False,
+	"widescreen": False,
 	"wnd_width": 640,
 	"wnd_height": 480,
 	"widescreen_padding": 108,
@@ -18,7 +18,11 @@ DATA = {
 	"onp_dist": 30,
 	
 	"enso_skin": enso_skin_def,
+	"fumen_file": "E:/fumen/tomato.tja",
 }
+
+if len(sys.argv) > 1:
+	DATA["fumen_file"] = sys.argv[1]
 
 def save():
 	pass

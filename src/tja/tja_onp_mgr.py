@@ -39,7 +39,7 @@ def onp_rand_srandom(onp):
 
 class CMgr(object):
 	
-	def __init__(self, fumen, options=0):
+	def __init__(self, options=0):
 		self._glb_scroll = 1.0
 		
 		self._auto = False
@@ -48,7 +48,7 @@ class CMgr(object):
 		
 		self._onp_rand = 0
 		self._onp_rand_func = onp_rand_none
-		self._fumen = fumen
+		self._fumen = None
 		self._onps = []
 		
 		self._judge_ryo = 50 * 0.5
@@ -60,9 +60,6 @@ class CMgr(object):
 		self.active = True
 		
 		self.set_option(options)
-		
-	def set_onp_lumens(self, lumens):
-		self._onp_lumens = lumens
 		
 	def log_onps(self, onps):
 		print "active onps:"
@@ -264,13 +261,11 @@ class CMgr(object):
 			self._state.is_hitaway
 			self._state.hitaway_off = off
 			
-	def reset(self, scn):
+	def reset(self, scn, _fumen_file, option):
 		self._scn = scn
 		
-		self._scn.add_dancer()
-		
 		reader = tja_reader.CReader()
-		reader.set_file(self._fumen)
+		reader.set_file(_fumen_file)
 		fumen = tja_fumen.CFumen(self._scn.DIST_CFG)
 		fumen.read_header(reader)
 		fumen.read_fumen(reader)	
@@ -292,15 +287,13 @@ class CMgr(object):
 		self._scn.set_branch(self._fumen.has_branch, "normal")
 		reader.close()
 		
-	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		self.set_option(option)
+		
+	def update(self):
 		if not self.active:
 			return
 		
 		self._onps = []
-		
-		# update onp lumens without drawing
-		for lumen in self._onp_lumens:
-			lumen.update(render_state, operation & lm_consts.MASK_NO_DRAW)
 		
 		self._fumen.update(self._state, self._onps)
 		#self.log_onps(self._onps)
@@ -374,32 +367,8 @@ class CMgr(object):
 		# clear keys	
 		self._keys = 0
 		
-		# draw from back to front
-		end_note = None
-		for off, onp, hits, spd in reversed(self._onps):
-			x = self._onp_hit_x + (off - self._state.offset) * spd
-			end_x = self._state.onp_in_x
-			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
-				or (ONP_SYOUSETSU[0] <= onp <= ONP_SYOUSETSU[1] and self._state.barline_on):
-				lumen = self._onp_lumens[onp]
-				lumen.set_pos(x, self._onp_y)
-				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
-			elif onp == ONP_END:
-				end_note = (off, onp, hits, spd)
-			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
-				if end_note is not None:
-					end_x = self._onp_hit_x + (end_note[0] - self._state.offset) * end_note[3]
-					end_note = None
-				if onp == ONP_RENDA1:
-					self._scn.draw_renda(render_state, operation,
-						self._onp_lumens[ONP_RENDA1], self._onp_lumens[ONP_RENDA2], self._onp_lumens[ONP_RENDA3], x, end_x)
-				elif onp == ONP_RENDA_DAI1:
-					self._scn.draw_renda(render_state, operation,
-						self._onp_lumens[ONP_RENDA_DAI1], self._onp_lumens[ONP_RENDA_DAI2], self._onp_lumens[ONP_RENDA_DAI3], x, end_x)
-				elif onp == ONP_GEKI and (off != self._state.hit_onp_off or self._state.hit_onp_hits == 0):
-					self._scn.draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_GEKI], x, end_x)
-				elif onp == ONP_IMO and (off > self._state.hit_onp_off):
-					self._scn.draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_IMO], x, end_x)
+		# set onps for later rendering			
+		self._scn.set_onps(self._onps, self._state)
 	
 		# judge full combo
 		if self._fumen.empty() and self._state.fuka == 0:

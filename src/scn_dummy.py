@@ -1,7 +1,7 @@
 def on_update(dt):
 	pass
 
-def on_enter():
+def on_enter(this):
 	pass
 
 def on_exit():

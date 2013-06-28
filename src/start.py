@@ -1,6 +1,7 @@
 import sys
 import pyglet
-import gcrandom
+import gc
+import random
 from pyglet.gl import *
 
 import config
@@ -27,6 +28,29 @@ window = None
 fps_display = None
 cur_state = None
 active_m = None
+
+def graphic_setup():
+	global window
+	global fps_display
+
+	cfg = config.DATA
+	width = cfg["wnd_width"]
+	height = cfg["wnd_height"]
+	if cfg["widescreen"]:
+		width += cfg["widescreen_padding"] * 2
+		
+	window = pyglet.window.Window(width, height)
+	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
+	
+	# Texture env
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+
+	# Turn off texture filter
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+graphic_setup()
 
 scr_shot_id = 0
 
@@ -62,17 +86,23 @@ def on_update(dt):
 	glLoadIdentity()
 	
 	left = top = 0
-	right = config["wnd_width"]
-	bottom = config["wnd_height"]
-	if config["widescreen"]:
-		left -= config["widescreen_padding"]
-		right += config["widescreen_padding"]
+	right = config.DATA["wnd_width"]
+	bottom = config.DATA["wnd_height"]
+	if config.DATA["widescreen"]:
+		left -= config.DATA["widescreen_padding"]
+		right += config.DATA["widescreen_padding"]
 		
 	glOrtho(left, right, bottom, top, -1, 1)
 
 	# update working module
 	active_m.on_update(dt)
 
+	# Draw fps
+	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
+	glTranslatef(80.0, -224.0, 1.0)
+	fps_display.draw()
+	
 ###################################
 # Setup code
 ###################################
@@ -81,19 +111,21 @@ def set_game_state(state):
 	global active_m
 	
 	if state == cur_state: return
-	
-	m_old = STATE_MODULES[cur_state]
+
+	m_old = None
+	if cur_state != None:	
+		m_old = STATE_MODULES[cur_state]
 	m_new = STATE_MODULES[state]
 	
 	if m_old is not None:
 		m_old.on_exit()	
-	m_new.on_enter()
+	m_new.on_enter(m_new)
 
 	cur_state = state
 	active_m = m_new
 	
 def logic_setup():
-	set_game_state(GAME_STATE_SONG_SELECT)
+	set_game_state(GAME_STATE_ENSO)
 	
 	# Disable some global python setting
 	gc.disable()
@@ -101,24 +133,9 @@ def logic_setup():
 	
 	# set up timer
 	pyglet.clock.schedule(on_update)
-	
-def graphic_setup():
-	global window
-	global fps_display
-	
-	window = pyglet.window.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
-	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
-	
-	# Texture env
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-
-	# Turn off texture filter
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 
 def startup():
-	graphic_setup()
 	logic_setup()
 	pyglet.app.run()
+	
+startup()

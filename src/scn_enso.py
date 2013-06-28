@@ -1,3 +1,15 @@
+import os
+import random
+import pyglet
+from pyglet.gl import *
+
+from lm import lm_consts
+from lm import lm_loader
+from lm.extensions import lm_render_state
+from tja import tja_onp_mgr
+from layout import *
+from tja.tja_consts import *
+
 import config
 
 EPS = 0.000001
@@ -32,6 +44,7 @@ max_tamashii = 1
 cur_tamashii_grid = 0
 max_tamashii_grid = 50
 cur_ggt = False
+donchan_free = True
 def init_enso_data():
 	cur_combo = 0
 	cur_renda = 0
@@ -56,7 +69,7 @@ def on_config_update():
 	#######################
 	# Widescreen config
 	#######################
-	widescreen = config["widescreen"]
+	widescreen = config.DATA["widescreen"]
 	# SplashStart(Wide)
 	global splash_start_label
 	splash_start_label = "splashStart"
@@ -72,11 +85,11 @@ def on_config_update():
 	# Onp config
 	#######################
 	global ONP_HIT_X, ONP_Y, ONP_IN_X, ONP_OUT_X, ONP_DIST, DIST_CFG
-	ONP_HIT_X = config["onp_hit_x"]
-	ONP_Y = config["onp_y"]
-	ONP_IN_X = config["onp_in_x"]
-	ONP_OUT_X = config["onp_out_x"]
-	ONP_DIST = config["onp_dist"]
+	ONP_HIT_X = config.DATA["onp_hit_x"]
+	ONP_Y = config.DATA["onp_y"]
+	ONP_IN_X = config.DATA["onp_in_x"]
+	ONP_OUT_X = config.DATA["onp_out_x"]
+	ONP_DIST = config.DATA["onp_dist"]
 	DIST_CFG = (ONP_DIST, ONP_IN_X, ONP_HIT_X, ONP_OUT_X, ONP_Y)
 	
 def set_combo(combo):
@@ -126,9 +139,9 @@ def set_combo(combo):
 	cur_onp_level = min(cur_combo // 50, 3)
 	onp_level = min(combo // 50, 3)
 	if cur_onp_level != onp_level:
-		for onp in xrange(tja_consts.ONP_SHORT[0], tja_consts.ONP_SHORT[1] + 1):
+		for onp in xrange(ONP_SHORT[0], ONP_SHORT[1] + 1):
 			movieclips[ONPS]._onp_lumens[onp].gotoAndPlay("level0%d" % (onp_level + 1))
-		for onp in xrange(tja_consts.ONP_LONG[0], tja_consts.ONP_LONG[1] + 1):
+		for onp in xrange(ONP_LONG[0], ONP_LONG[1] + 1):
 			movieclips[ONPS]._onp_lumens[onp].gotoAndPlay("level0%d" % (onp_level + 1))
 			
 	# Miss chibi
@@ -468,21 +481,21 @@ def on_trans_animation_end(mc, data):
 def play_onp_fly(onp_fly):
 	mc = movieclips[ONP_FLY].alloc(INDEX_ONP_FLY)
 	if not mc: return
-	if onp_fly == tja_consts.ONP_FLY_DON:
+	if onp_fly == ONP_FLY_DON:
 		mc.gotoAndPlay("don_hit")
-	elif onp_fly == tja_consts.ONP_FLY_KATSU:
+	elif onp_fly == ONP_FLY_KATSU:
 		mc.gotoAndPlay("katsu_hit")
-	elif onp_fly == tja_consts.ONP_FLY_DON_DAI_BIG:
+	elif onp_fly == ONP_FLY_DON_DAI_BIG:
 		mc.gotoAndPlay("don_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI_BIG:
+	elif onp_fly == ONP_FLY_KATSU_DAI_BIG:
 		mc.gotoAndPlay("katsu_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_DON_DAI_SMALL:
+	elif onp_fly == ONP_FLY_DON_DAI_SMALL:
 		mc.gotoAndPlay("don_renda_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_KATSU_DAI_SMALL:
+	elif onp_fly == ONP_FLY_KATSU_DAI_SMALL:
 		mc.gotoAndPlay("katsu_renda_d_hit")
-	elif onp_fly == tja_consts.ONP_FLY_GEKI:
+	elif onp_fly == ONP_FLY_GEKI:
 		mc.gotoAndPlay("geki_hit")
-	if onp_fly != tja_consts.ONP_FLY_GEKI:
+	if onp_fly != ONP_FLY_GEKI:
 		movieclips[COURSE].gotoAndPlay("hit")
 	
 def set_tamashii(tamashii, _max_tamashii):
@@ -620,7 +633,7 @@ def set_branch(has_branch, level):
 def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	global movieclips
 	
-	hit_big = (hit_judge & tja_consts.HITJUDGE_DAI) > 0
+	hit_big = (hit_judge & HITJUDGE_DAI) > 0
 	
 	enso_hiteffects = None
 	enso_mato = None
@@ -630,48 +643,48 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 	enso_hiteffects_type = None
 	
 	enso_hiteffects_type_str = ("don", "katsu")
-	if hit_keys & tja_consts.HIT_DON:
+	if hit_keys & HIT_DON:
 		enso_hiteffects_type = 0
-	elif hit_keys & tja_consts.HIT_KATSU:
+	elif hit_keys & HIT_KATSU:
 		enso_hiteffects_type = 1
 	else:
 		enso_hiteffects_type = 2
 		
-	if hit_judge == tja_consts.HITJUDGE_NO:
+	if hit_judge == HITJUDGE_NO:
 		if enso_hiteffects_type < 2:
 			enso_hiteffects = "%s_s" % enso_hiteffects_type_str[enso_hiteffects_type]
 		else:
 			enso_hiteffects = "none"
 		enso_mato = enso_hitjudge = "hit_no"
-		onp_fly = tja_consts.ONP_FLY_NONE
+		onp_fly = ONP_FLY_NONE
 	else:
-		_, _, onp_flys, _, onp_fly_on_break = tja_consts.ONP_CFG[onp]
+		_, _, onp_flys, _, onp_fly_on_break = ONP_CFG[onp]
 		
-		if hit_judge == tja_consts.HITJUDGE_FUKA:
+		if hit_judge == HITJUDGE_FUKA:
 			enso_hiteffects = "none"
 		else:
 			enso_hiteffects = "%s_hit" % enso_hiteffects_type_str[enso_hiteffects_type]
 		
-		if hit_judge == tja_consts.HITJUDGE_HIT:
+		if hit_judge == HITJUDGE_HIT:
 			enso_mato = enso_hitjudge = "hit_no"
-		elif hit_judge == tja_consts.HITJUDGE_FUKA:
+		elif hit_judge == HITJUDGE_FUKA:
 			enso_mato = enso_hitjudge = "hit_huka"
-		elif hit_judge == tja_consts.HITJUDGE_KA:
+		elif hit_judge == HITJUDGE_KA:
 			enso_mato = enso_hitjudge = "hit_ka"
-		elif hit_judge == tja_consts.HITJUDGE_RYO:
+		elif hit_judge == HITJUDGE_RYO:
 			enso_mato = enso_hitjudge = "hit_ryo"
-		elif hit_judge == tja_consts.HITJUDGE_RYO_DAI:
+		elif hit_judge == HITJUDGE_RYO_DAI:
 			enso_mato = "hit_dai_ryo"
 			enso_hitjudge = "hit_ryo_big"
-		elif hit_judge == tja_consts.HITJUDGE_KA_DAI:
+		elif hit_judge == HITJUDGE_KA_DAI:
 			enso_mato = "hit_dai_ka"
 			enso_hitjudge = "hit_ka_big"
 		else:
 			enso_mato = enso_hitjudge = "hit_no"
 			print "[WARNING] unknown hit_judge %d" % hit_judge
 		
-		if onp_fly_on_break != hitaway or hit_judge == tja_consts.HITJUDGE_FUKA:
-			onp_fly = tja_consts.ONP_FLY_NONE
+		if onp_fly_on_break != hitaway or hit_judge == HITJUDGE_FUKA:
+			onp_fly = ONP_FLY_NONE
 		else:
 			onp_fly = onp_flys[enso_hiteffects_type + int(hit_big) * 2]
 			
@@ -683,13 +696,13 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 		movieclips[LANE].effect.gotoAndPlay(enso_hiteffects)
 	if enso_mato != "hit_no":
 		movieclips[MATO].hit.gotoAndPlay(enso_mato)
-	if onp_fly != tja_consts.ONP_FLY_NONE:
+	if onp_fly != ONP_FLY_NONE:
 		play_onp_fly(onp_fly)
 
 	# chibi and rendaeffects
-	if hit_judge == tja_consts.HITJUDGE_NO:
+	if hit_judge == HITJUDGE_NO:
 		pass
-	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_RENDA1, tja_consts.ONP_RENDA_DAI1):
+	elif hit_judge == HITJUDGE_HIT and onp in (ONP_RENDA1, ONP_RENDA_DAI1):
 		mc = movieclips[RENDA_EFFECT].alloc(INDEX_RENDA_EFFECT)
 		if mc: 
 			x_range = enso_cfg.RENDA_EFFECT_X_RANGE
@@ -698,12 +711,12 @@ def on_hit_judge(onp, hit_keys, hit_judge, hitaway):
 			y = random.randint(y_range[0], y_range[1])
 			mc.set_pos(x, y)
 			enso_cfg.RENDA_EFFECT_FUNC(mc, random.randint(1, enso_cfg.RENDA_EFFECT_NUM))
-	elif hit_judge == tja_consts.HITJUDGE_HIT and onp in (tja_consts.ONP_GEKI, tja_consts.ONP_IMO):
+	elif hit_judge == HITJUDGE_HIT and onp in (ONP_GEKI, ONP_IMO):
 		pass
-	elif hit_judge == tja_consts.HITJUDGE_FUKA:
+	elif hit_judge == HITJUDGE_FUKA:
 		pass
 	else: #HITJUDGE_KA, HITJUDGE_KA_DAI, HITJUDGE_RYO, HITJUDGE_RYO_DAI
-		assert onp in (tja_consts.HITJUDGE_KA, tja_consts.HITJUDGE_KA_DAI, tja_consts.HITJUDGE_RYO, tja_consts.HITJUDGE_RYO_DAI)
+		assert onp in (HITJUDGE_KA, HITJUDGE_KA_DAI, HITJUDGE_RYO, HITJUDGE_RYO_DAI)
 		mc = movieclips[CHIBI].alloc(INDEX_CHIBI_HIT)
 		if mc: mc.gotoAndPlay(0)
 		
@@ -718,10 +731,10 @@ def on_hit(keys):
 		else:
 			movieclips[ENSO_UP_BG].gotoAndPlay("miss_fever")
 
-	if keys & tja_consts.HIT_DON:
+	if keys & HIT_DON:
 		player = dong.play()
 		player.volume = 2.0
-	if keys & tja_consts.HIT_KATSU:
+	if keys & HIT_KATSU:
 		player = ka.play()
 		player.volume = 2.0        
 	
@@ -748,9 +761,62 @@ def draw_renda(render_state, operation, lumen_head, lumen_body, lumen_tail, x, e
 	
 	lumen_tail.set_pos(end_x, ONP_Y)
 	lumen_tail.update(render_state, operation & lm_consts.MASK_DRAW)
+
+def set_onps(onps, state):
+	global movieclips
+	movieclips[ONPS].set_onps(onps, state)
+	
+class COnpRenderer(object):
+	
+	def __init__(self, onp_lumens):
+		self._onp_lumens = onp_lumens
+		self._onps = []
+		self._offset = 0
+		self._barline_on = False
+		self.hit_onp_off = 0
+		self.hit_onp_hits = 0
+	
+	def set_onps(self, onps, state):
+		self._onps = onps
+		self.offset = state.offset
+		self.barline_on = state.barline_on
+		self.hit_onp_off = state.hit_onp_off
+		self.hit_onp_hits = state.hit_onp_hits
+	
+	def update(self, render_state, operation=lm_consts.MASK_ALL):
+		# update onp lumens without drawing
+		for lumen in self._onp_lumens:
+			lumen.update(render_state, operation & lm_consts.MASK_NO_DRAW)
+			
+		# draw from back to front
+		end_note = None
+		for off, onp, hits, spd in reversed(self._onps):
+			x = ONP_HIT_X + (off - self.offset) * spd
+			end_x = ONP_IN_X
+			if (ONP_SHORT[0] <= onp <= ONP_SHORT[1]) \
+				or (ONP_SYOUSETSU[0] <= onp <= ONP_SYOUSETSU[1] and self.barline_on):
+				lumen = self._onp_lumens[onp]
+				lumen.set_pos(x, ONP_Y)
+				lumen.update(render_state, operation & lm_consts.MASK_DRAW)
+			elif onp == ONP_END:
+				end_note = (off, onp, hits, spd)
+			elif ONP_LONG[0] <= onp <= ONP_LONG[1]:
+				if end_note is not None:
+					end_x = ONP_HIT_X + (end_note[0] - self.offset) * end_note[3]
+					end_note = None
+				if onp == ONP_RENDA1:
+					draw_renda(render_state, operation,
+						self._onp_lumens[ONP_RENDA1], self._onp_lumens[ONP_RENDA2], self._onp_lumens[ONP_RENDA3], x, end_x)
+				elif onp == ONP_RENDA_DAI1:
+					draw_renda(render_state, operation,
+						self._onp_lumens[ONP_RENDA_DAI1], self._onp_lumens[ONP_RENDA_DAI2], self._onp_lumens[ONP_RENDA_DAI3], x, end_x)
+				elif onp == ONP_GEKI and (off != self.hit_onp_off or self.hit_onp_hits == 0):
+					draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_GEKI], x, end_x)
+				elif onp == ONP_IMO and (off > self._state.hit_onp_off):
+					draw_geki_or_imo(render_state, operation, self._onp_lumens[ONP_IMO], x, end_x)
 	
 # Build up scene
-def build_scene(cfg, loader, tja_file):
+def build_scene(cfg, loader):
 	global INDEX_CHIBI_HIT, INDEX_CHIBI_MISS
 	global INDEX_RENDA_EFFECT
 	global INDEX_SCORE_ADD
@@ -792,8 +858,8 @@ def build_scene(cfg, loader, tja_file):
 	onp_lumens = []
 	for filename in cfg.ONPS:
 		onp_lumens.append(LMC(filename))
-	onp_lumens[tja_consts.ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
-	onp_lumens[tja_consts.ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")	
+	onp_lumens[ONP_SYOUSETSU_NORMAL].gotoAndStop("normal")
+	onp_lumens[ONP_SYOUSETSU_BUNKI].gotoAndStop("bunki")	
 	movieclips[FULLCOMBO] = LMC(cfg.FULLCOMBO, cfg.FULLCOMBO_POS)
 	movieclips[TAIKO] = LMC(cfg.TAIKO, cfg.TAIKO_POS)
 	movieclips[COMBO] = LMC(cfg.COMBO, cfg.COMBO_POS)
@@ -805,7 +871,7 @@ def build_scene(cfg, loader, tja_file):
 		_def[0].append((chibi_lm, 40 / len(cfg.CHIBI), (chibi_x, chibi_y)))
 	movieclips[CHIBI] = LMP(_def)
 	INDEX_CHIBI_HIT, INDEX_CHIBI_MISS = range(len(_def))
-	movieclips[CHIBI].speed = 1.46
+	movieclips[CHIBI].speed = 2
 	# Load onp fly
 	_def = (((cfg.ONP_FLY, 30, cfg.ONP_FLY_POS),),)
 	movieclips[ONP_FLY] = LMP(_def)
@@ -823,7 +889,7 @@ def build_scene(cfg, loader, tja_file):
 	movieclips[DON_GEKI].register_callback("on_geki_end", on_balloon_end, None)
 	
 	# display mekakushi only when widescreen is set
-	if config["widescreen"]:
+	if config.DATA["widescreen"]:
 		movieclips[MEKAKUSHI] = LMC(cfg.MEKAKUSHI)
 		
 	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
@@ -836,8 +902,7 @@ def build_scene(cfg, loader, tja_file):
 	movieclips[SPLASH] = LMC(cfg.SPLASH, cfg.SPLASH_POS)
 	
 	# Init fumen
-	movieclips[ONPS] = tja_onp_mgr.CMgr(tja_file, 0)#tja_consts.OPTION_AUTO)
-	movieclips[ONPS].set_onp_lumens(onp_lumens)
+	movieclips[ONPS] = COnpRenderer(onp_lumens)
 	
 	# Pre load
 	movieclips[DANCE_BG].gotoAndPlay("normal_fever")
@@ -851,19 +916,121 @@ def build_scene(cfg, loader, tja_file):
 	return movieclips
 	
 def on_update(dt):
-	pass
+	global enso_started
+	global movieclips, fumen_mgr
+	global music_player
+	global fumen_started, music_started
+	
+	# Enso logic
+	if enso_started:
+		fumen_off = fumen_mgr._state.offset
+		if not music_started:
+			if fumen_off < 0:
+				fumen_started = True
+			if fumen_off >= 0:
+				music_player.seek(0)
+				music_player.play()
+				music_started = True
+				fumen_mgr._state.offset = 0
+				fumen_started = True
+				print "way1"
+		elif not fumen_started and music_player.time * 1000.0 >= fumen_off:
+			fumen_started = True
+			fumen_mgr._state.offset = music_player.time * 1000.0
+			print "way2"
+	
+		# Fumen advance
+		if fumen_started:
+			fumen_mgr.update()
+			fumen_mgr._state.offset += dt * 1000.0			
+			
+	# Rendering
+	
+	#glClearColor(1, 1, 1, 1)
+	#window.clear()
+	
+	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
+			
+	renderer.begin()
+	
+	for movieclip in movieclips:
+		#if movieclip not in (movieclips[SONG_NAME], ): continue
+		if movieclip is None: continue
+		movieclip.update(renderer)
+			
+	renderer.end()
+	
+	glScalef(1.0, -1.0, 1.0)		
+	# Draw song name
+	song_name_label.draw()
 
-def on_enter():
+def on_enter(this):
+	# Update config
+	on_config_update()
+	
 	# Init enso data
 	init_enso_data()
 
 	# init movieclips
 	global movieclips
+	global loader
+	global renderer
+	global fumen_mgr
+	global song_name_label
+	global dong, ka
+	global music_player
+	global music_started, fumen_started, enso_started
 	if movieclips is None:
-		build_scene(config["enso_skin"], )
+		renderer = lm_render_state.CRenderer()
+		renderer.init()
+		
+		loader = lm_loader.CLoader("wii", config.DATA["enso_skin"].LM_PACK_ROOT, renderer)
+		movieclips = build_scene(config.DATA["enso_skin"], loader)
+		
+		fumen_mgr = tja_onp_mgr.CMgr()
+
+		pyglet.font.add_directory("../font")
+		pyglet.resource.path.append("../snd")
+		pyglet.resource.reindex()
+
+		# Load SE
+		dong = pyglet.resource.media("dong2.mp3", streaming=False)
+		ka = pyglet.resource.media("ka2.mp3", streaming=False)
+		
+	pyglet.resource.path.append(os.path.split(config.DATA["fumen_file"])[0])	
+	pyglet.resource.reindex()
+
+	fumen_mgr.reset(this, config.DATA["fumen_file"], OPTION_AUTO)
+	song_name = fumen_mgr.get_song_name()
+	song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
+		x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center",
+		font_size=20)
+
+	# Load WAVE
+	audio_file = fumen_mgr.get_audio_file()
+	music = pyglet.resource.media(audio_file, streaming=False)
+	music_player = music.play()
+	music_player.pause()
+	music_player.volume = fumen_mgr._fumen.header["SONGVOL"] / 100.0
+	
+	music_started = False
+	fumen_started = False
+	enso_started = False
 
 def on_exit():
 	pass
 
 def on_key_press(symbol, modifiers):
-	pass
+	global fumen_mgr, enso_started
+	if symbol == pyglet.window.key.F:
+		fumen_mgr.add_key(HIT_LEFT_DON)
+	elif symbol == pyglet.window.key.J:
+		fumen_mgr.add_key(HIT_RIGHT_DON)
+	elif symbol == pyglet.window.key.R:
+		fumen_mgr.add_key(HIT_LEFT_KATSU)
+	elif symbol == pyglet.window.key.U:
+		fumen_mgr.add_key(HIT_RIGHT_KATSU)
+	elif not enso_started and symbol == pyglet.window.key.SPACE:
+		enso_started = True
+		add_dancer()
