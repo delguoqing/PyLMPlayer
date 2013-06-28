@@ -1,5 +1,4 @@
 def on_update(dt):
-	
 	pass
 
 def on_enter():

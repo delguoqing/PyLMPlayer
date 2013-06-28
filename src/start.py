@@ -3,6 +3,7 @@ import pyglet
 import gcrandom
 from pyglet.gl import *
 
+import config
 import scn_song_select
 import scn_enso
 import scn_dummy
@@ -45,6 +46,10 @@ def on_key_press(symbol, modifiers):
 	# pass to active module
 	active_m.on_key_press(symbol, modifiers)
 	
+# May be customize here!
+def on_resize(width, height):
+	pass
+
 def on_update(dt):
 	# switch off some expensive operation
 	glShadeModel(GL_FLAT)
@@ -55,7 +60,15 @@ def on_update(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(-108, enso_scene_wii.WIDTH-108, enso_scene_wii.HEIGHT, 0, -1, 1)
+	
+	left = top = 0
+	right = config["wnd_width"]
+	bottom = config["wnd_height"]
+	if config["widescreen"]:
+		left -= config["widescreen_padding"]
+		right += config["widescreen_padding"]
+		
+	glOrtho(left, right, bottom, top, -1, 1)
 
 	# update working module
 	active_m.on_update(dt)

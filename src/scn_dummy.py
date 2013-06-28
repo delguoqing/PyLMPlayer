@@ -10,5 +10,5 @@ def on_exit():
 def on_key_press(symbol, modifiers):
 	pass
 
-
-
+def on_config_update():
+	pass
