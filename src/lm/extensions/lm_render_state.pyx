@@ -363,7 +363,7 @@ cdef class CRenderer:
 		cdef int stride
 		if self.vbuf_head > 0:
 			stride = sizeof(CVertexData)
-			glVertexPointer(2, GL_SHORT, stride, &self.vbuf[0].x)
+			glVertexPointer(2, GL_INT, stride, &self.vbuf[0].x)
 			glTexCoordPointer(2, GL_FLOAT, stride, &self.vbuf[0].u)
 			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].color)
 			glSecondaryColorPointer(3, GL_UNSIGNED_BYTE, stride, &self.vbuf[0].secondary_color)

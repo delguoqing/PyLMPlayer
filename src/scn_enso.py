@@ -525,7 +525,7 @@ def set_tamashii(tamashii, _max_tamashii):
 		movieclips[GAUGE].fever.gotoAndPlay("fever_start")
 		movieclips[GAUGE].fever_gage.gotoAndPlay("toFever")
 	elif old_gauge_num >= 50 and now_gauge_num < 50:
-		movieclips[FEVER].fever.gotoAndPlay("fever_end_label")
+		movieclips[FEVER].fever.gotoAndPlay(fever_end_label)
 		movieclips[GAUGE].fever.gotoAndPlay("fever_end")
 		movieclips[GAUGE].fever_gage.gotoAndPlay("toNormal")
 		reset_don()
