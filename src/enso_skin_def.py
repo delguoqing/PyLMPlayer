@@ -1,5 +1,3 @@
-LM_PACK_ROOT = r"../wii_packages"
-
 # Character don.
 DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)

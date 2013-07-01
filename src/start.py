@@ -9,9 +9,6 @@ import scn_song_select
 import scn_enso
 import scn_dummy
 
-WINDOW_WIDTH = 856
-WINDOW_HEIGHT = 480
-
 GAME_STATE_NULL = 0
 GAME_STATE_SONG_SELECT = 1
 GAME_STATE_ENSO = 2
@@ -32,14 +29,20 @@ active_m = None
 def graphic_setup():
 	global window
 	global fps_display
+	global left, right, top, bottom
 
 	cfg = config.DATA
 	width = cfg["wnd_width"]
 	height = cfg["wnd_height"]
+	left = top = 0
+	right = width
+	bottom = height
 	if cfg["widescreen"]:
 		width += cfg["widescreen_padding"] * 2
+		left -= cfg.DATA["widescreen_padding"]
+		right += cfg.DATA["widescreen_padding"]
 		
-	window = pyglet.window.Window(width, height)
+	window = pyglet.window.Window(int(1.5*width), int(1.5*height))
 	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 	
 	# Texture env
@@ -84,13 +87,6 @@ def on_update(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	
-	left = top = 0
-	right = config.DATA["wnd_width"]
-	bottom = config.DATA["wnd_height"]
-	if config.DATA["widescreen"]:
-		left -= config.DATA["widescreen_padding"]
-		right += config.DATA["widescreen_padding"]
 		
 	glOrtho(left, right, bottom, top, -1, 1)
 
@@ -125,15 +121,21 @@ def set_game_state(state):
 	active_m = m_new
 	
 def logic_setup():
-	set_game_state(GAME_STATE_ENSO)
-	
 	# Disable some global python setting
 	gc.disable()
 	sys.setcheckinterval(1000000)
 	
 	# set up timer
 	pyglet.clock.schedule(on_update)
+	
+	# add resource path
+	pyglet.font.add_directory("../font")
+	pyglet.resource.path.append("../snd")
+	pyglet.resource.reindex()	
 
+	# set begin state
+	set_game_state(GAME_STATE_ENSO)
+	
 def startup():
 	logic_setup()
 	pyglet.app.run()

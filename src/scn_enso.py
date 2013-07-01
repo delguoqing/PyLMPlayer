@@ -985,14 +985,10 @@ def on_enter(this):
 		renderer = lm_render_state.CRenderer()
 		renderer.init()
 		
-		loader = lm_loader.CLoader("wii", config.DATA["enso_skin"].LM_PACK_ROOT, renderer)
+		loader = lm_loader.CLoader("wii", config.DATA["lm_root"], renderer)
 		movieclips = build_scene(config.DATA["enso_skin"], loader)
 		
 		fumen_mgr = tja_onp_mgr.CMgr()
-
-		pyglet.font.add_directory("../font")
-		pyglet.resource.path.append("../snd")
-		pyglet.resource.reindex()
 
 		# Load SE
 		dong = pyglet.resource.media("dong2.mp3", streaming=False)
@@ -1001,7 +997,7 @@ def on_enter(this):
 	pyglet.resource.path.append(os.path.split(config.DATA["fumen_file"])[0])	
 	pyglet.resource.reindex()
 
-	fumen_mgr.reset(this, config.DATA["fumen_file"], OPTION_AUTO)
+	fumen_mgr.reset(this, config.DATA["fumen_file"], config.DATA["enso_option"])
 	song_name = fumen_mgr.get_song_name()
 	song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
 		x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center",
