@@ -961,9 +961,13 @@ def on_update(dt):
 			
 	renderer.end()
 	
-	glScalef(1.0, -1.0, 1.0)		
+	glScalef(1.0, -1.0, 1.0)
+	
 	# Draw song name
-	song_name_label.draw()
+	if config.DATA["use_texture_as_song_name"]:
+		song_name_label.blit(640, -235)
+	else:
+		song_name_label.draw()
 
 def on_enter(this):
 	# Update config
@@ -999,9 +1003,15 @@ def on_enter(this):
 
 	fumen_mgr.reset(this, config.DATA["fumen_file"], config.DATA["enso_option"])
 	song_name = fumen_mgr.get_song_name()
-	song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
-		x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center",
-		font_size=20)
+	
+	if config.DATA["use_texture_as_song_name"]:
+		song_name_label = pyglet.image.load(config.DATA["def_song_name_label"])
+		song_name_label.anchor_x = song_name_label.width
+		song_name_label.anchor_y = song_name_label.height / 2
+	else:
+		song_name_label = pyglet.text.Label(song_name, "DFKanTeiRyu-W11", color=(255, 255, 255, 255),
+			x=630, y=-240, width=640, height=35, anchor_x="right", anchor_y="center",
+			font_size=20)
 
 	# Load WAVE
 	audio_file = fumen_mgr.get_audio_file()

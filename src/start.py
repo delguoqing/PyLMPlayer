@@ -39,18 +39,19 @@ def graphic_setup():
 	bottom = height
 	if cfg["widescreen"]:
 		width += cfg["widescreen_padding"] * 2
-		left -= cfg.DATA["widescreen_padding"]
-		right += cfg.DATA["widescreen_padding"]
+		left -= cfg["widescreen_padding"]
+		right += cfg["widescreen_padding"]
 		
-	window = pyglet.window.Window(int(1.5*width), int(1.5*height))
+	window = pyglet.window.Window(int(cfg["wnd_scale"]*width), int(cfg["wnd_scale"]*height))
+	window.set_location(0, 20)
 	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 	
 	# Texture env
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
 	# Turn off texture filter
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 graphic_setup()
@@ -134,7 +135,7 @@ def logic_setup():
 	pyglet.resource.reindex()	
 
 	# set begin state
-	set_game_state(GAME_STATE_SONG_SELECT)
+	set_game_state(GAME_STATE_ENSO)
 	
 def startup():
 	logic_setup()

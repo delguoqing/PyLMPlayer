@@ -33,7 +33,7 @@ def RENDA_EFFECT_FUNC3(mc, style):
 
 RENDA_EFFECT = r"enso/renda_effect_hamachidori/renda_effect_hamachidori.lm"
 RENDA_EFFECT_NUM = 6
-RENDA_EFFECT_X_RANGE = (-200, 200)
+RENDA_EFFECT_X_RANGE = (-220, 220)
 RENDA_EFFECT_Y_RANGE = (400, 480)
 RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC3
 

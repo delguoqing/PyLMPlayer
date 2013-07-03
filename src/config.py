@@ -10,6 +10,7 @@ DATA = {
 	"widescreen": False,
 	"wnd_width": 640,
 	"wnd_height": 480,
+	"wnd_scale": 1,
 	"widescreen_padding": 108,
 	
 	"onp_hit_x": 145,
@@ -22,6 +23,9 @@ DATA = {
 	"lm_root": "../wii_packages",
 	"fumen_file": "D:/fumen/tomato/tomato.tja",
 	"enso_option": OPTION_AUTO,
+	
+	"def_song_name_label": "../font/sn01.png",
+	"use_texture_as_song_name": True,
 }
 
 if len(sys.argv) > 1:
