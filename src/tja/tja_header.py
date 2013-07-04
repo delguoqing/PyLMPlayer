@@ -7,6 +7,9 @@ class CData(object):
 		if init_data: 
 			self._dict.update(init_data)
 		
+	def reset(self):
+		self._dict = {}
+	
 	def read(self, reader):
 		while True:
 			# Start of fumen is end of header
@@ -18,7 +21,7 @@ class CData(object):
 			if key:
 				self._dict[key] = val
 			
-	def _key_defs(self):
+	def _get_default_dict(self):
 		return {
 			"TITLE": (unicode, self._conv_unicode, u"UNTITLED"),
 			"SUBTITLE": (unicode, self._conv_unicode, u""),
@@ -28,43 +31,21 @@ class CData(object):
 			"SONGVOL": (float, float, 100.0),
 			"SEVOL": (float, float, 100.0),
 			"DEMOSTART": (float, float, 0.0),
+			"FONT": (str, str, "DFKTLB.ttc"),
+			"ENCODING": (str, str, 'sjis'),
 			
 			"BALLOON": (list, self._parse_int_list, [5, 5, 5]),
 			"SCOREINIT": (int, int, 1),
 			"SCOREDIFF": (int, int, 1),
 			"LEVEL": (int, int, 9),
 			"COURSE": (int, self._conv_course, 3),
-		}.iteritems()
+		}
+	
+	def _key_defs(self):
+		return self._get_default_dict().iteritems()		
 
-	# Guessing encoding		
 	def _conv_unicode(self, str):
-		try:
-			ret1 = str.decode("gbk").encode("utf-8")
-		except:
-			ret1 = None
-	
-		try:
-			ret2 = str.decode("shift-jis").encode("utf-8")
-		except:
-			ret2 = None
-	
-		try:
-			ret3 = str.decode("big5").encode("utf-8")
-		except:
-			ret3 = None
-		
-		ret = []
-		if ret1: ret.append(ret1)
-		if ret2: ret.append(ret2)
-		if ret3: ret.append(ret3)
-		if not ret:
-			return str
-		else:
-			ans = None
-			for ret0 in ret:
-				if ans is None or len(ret0) < len(ans):
-					ans = ret0
-			return ans.decode("utf-8")
+		return str.decode(self["ENCODING"])
 		
 	def _parse_int_list(self, str):
 		str_list = str.split(",")
@@ -105,8 +86,8 @@ class CData(object):
 #		print "%s,%s,%s" % (self._dict["TITLE"], self._dict["SUBTITLE"], self._dict["WAVE"])
 	
 	def __getitem__(self, key):
-		return self._dict[key]
-	
+		return self._dict.get(key, self._get_default_dict()[key][2])
+		
 if __name__ == "__main__":
 	f = open(sys.argv[1], "r")
 	d = CData()
