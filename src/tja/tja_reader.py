@@ -4,6 +4,10 @@ class CReader(object):
 		self._fobj = None
 		self._fpos = 0
 		
+	def is_eof(self):
+		self._fobj.seek(self._fpos)
+		return self._fobj.readline() == ""
+	
 	def set_file(self, filename):
 		if self._fobj:
 			self._fobj.close()

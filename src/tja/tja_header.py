@@ -20,7 +20,27 @@ class CData(object):
 			reader.skip_line()
 			if key:
 				self._dict[key] = val
+	
+	# Extend reading to #END command and checks if has branch
+	def ex_read(self, reader):
+		self._dict["HAS_BUNKI"] = False
+		self._dict["HAS_FUMEN"] = False
+		while True:
 			
+			# Start of fumen is end of header
+			if reader.check_command("#END"):
+				reader.skip_line()
+				break
+			
+			key, val = reader.read_header()
+			reader.skip_line()
+			if key:
+				self._dict[key] = val
+			elif reader.check_command("#BRANCHSTART"):
+				self._dict["HAS_BUNKI"] = True
+			elif not self._dict["HAS_FUMEN"] and reader.check_command("#START"):
+				self._dict["HAS_FUMEN"] = True
+	
 	def _get_default_dict(self):
 		return {
 			"TITLE": (unicode, self._conv_unicode, u"UNTITLED"),
@@ -39,6 +59,8 @@ class CData(object):
 			"SCOREDIFF": (int, int, 1),
 			"LEVEL": (int, int, 9),
 			"COURSE": (int, self._conv_course, 3),
+			"HAS_BUNKI": (bool, bool, False),
+			"HAS_FUMEN": (bool, bool, False),
 		}
 	
 	def _key_defs(self):
@@ -60,7 +82,7 @@ class CData(object):
 	def _conv_course(self, str):
 		# Try using course name
 		try:
-			course = ["Easy", "Normal", "Hard", "Oni"].index(str)
+			course = ["EASY", "NORMAL", "HARD", "ONI"].index(str.upper())
 			return course
 		except ValueError:
 			pass
