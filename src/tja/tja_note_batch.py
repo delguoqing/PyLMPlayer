@@ -195,7 +195,7 @@ class CNoteBatch(object):
 		delay_removing = False
 		for idx, (off, note, hits, spd) in enumerate(self._missed_notes):
 			if state.offset - off > self.out_off:
-				if ONP_LONG[0] <= note <= ONP_LONG[1]:
+				if ONP_LONG[0] <= note <= ONP_LONG[1] and state.hit_onp_off == off:
 					delay_removing = True
 				elif note == ONP_END:
 					delay_removing = False
