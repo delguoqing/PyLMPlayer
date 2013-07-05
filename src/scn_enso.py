@@ -804,6 +804,7 @@ class COnpRenderer(object):
 				if end_note is not None:
 					end_x = ONP_HIT_X + (end_note[0] - self.offset) * end_note[3]
 					end_note = None
+				elif self.hit_onp_off > off: continue
 				if onp == ONP_RENDA1:
 					draw_renda(render_state, operation,
 						self._onp_lumens[ONP_RENDA1], self._onp_lumens[ONP_RENDA2], self._onp_lumens[ONP_RENDA3], x, end_x)
