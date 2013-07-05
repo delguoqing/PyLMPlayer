@@ -46,4 +46,4 @@ def gen0(font_file, pointsize, ch, out_path):
 		image = Image.fromstring('RGBA', (bitmap.width, bitmap.rows), bitmap_string)
 		image.save(out_path)
 		
-	return bitmap.width, bitmap.rows
+	return face.glyph.bitmap_left, face.glyph.bitmap_top, bitmap.width, bitmap.rows
