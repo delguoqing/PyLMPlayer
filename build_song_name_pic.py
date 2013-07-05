@@ -1,4 +1,5 @@
 import os
+import sys
 import glob
 import font
 from src.tja import tja_reader, tja_header
@@ -6,10 +7,11 @@ from src.tja import tja_reader, tja_header
 reader = tja_reader.CReader()
 header = tja_header.CData()
 
+force = "force" in sys.argv
 for file_path in glob.glob(r"./song/*/*/*.tja"):
 	
 	out_folder = os.path.split(file_path)[0]
-	if os.path.exists(os.path.join(out_folder, "sn_game.png")): continue
+	if not force and os.path.exists(os.path.join(out_folder, "sn_game.png")): continue
 	
 	reader.set_file(file_path)
 	
