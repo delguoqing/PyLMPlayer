@@ -27,6 +27,8 @@ class CData(object):
 		self._dict["HAS_FUMEN"] = False
 		while True:
 			
+			if reader.is_eof():
+				break
 			# Start of fumen is end of header
 			if reader.check_command("#END"):
 				reader.skip_line()
@@ -45,7 +47,7 @@ class CData(object):
 		return {
 			"TITLE": (unicode, self._conv_unicode, u"UNTITLED"),
 			"SUBTITLE": (unicode, self._conv_unicode, u""),
-			"WAVE": (unicode, self._conv_unicode, u"NULL.ogg"),
+			"WAVE": (str, str, "NULL.ogg"),
 			"BPM": (float, float, 100.0),
 			"OFFSET": (float, float, 0.0),
 			"SONGVOL": (float, float, 100.0),
@@ -55,8 +57,8 @@ class CData(object):
 			"ENCODING": (str, str, 'sjis'),
 			
 			"BALLOON": (list, self._parse_int_list, [5, 5, 5]),
-			"SCOREINIT": (int, int, 1),
-			"SCOREDIFF": (int, int, 1),
+			"SCOREINIT": (int, self._conv_score_cfg, 1),
+			"SCOREDIFF": (int, self._conv_score_cfg, 1),
 			"LEVEL": (int, int, 9),
 			"COURSE": (int, self._conv_course, 3),
 			"HAS_BUNKI": (bool, bool, False),
@@ -69,6 +71,10 @@ class CData(object):
 	def _conv_unicode(self, str):
 		return str.decode(self["ENCODING"])
 		
+	def _conv_score_cfg(self, str):
+		if str == "": return 0
+		return int(str.split(',')[0])
+	
 	def _parse_int_list(self, str):
 		str_list = str.split(",")
 		ret = []
@@ -87,7 +93,7 @@ class CData(object):
 		except ValueError:
 			pass
 		# Try using course index
-		print "use digit string %r" % str
+		#print "use digit string %r" % str
 		return max(0, min(int(str), 3))
 		
 	def refresh(self):

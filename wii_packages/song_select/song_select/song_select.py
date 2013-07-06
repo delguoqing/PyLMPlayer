@@ -93,8 +93,9 @@ def bg_onEnterFrame(this, _global):
 		this.gotoAndPlay("genre%d" % this._root.currentGenre)
 
 def func17(this, _global):
-	this._root._Bg_init(this);
-	this.onEnterFrame = bg_onEnterFrame
+	#this._root._Bg_init(this);
+	#this.onEnterFrame = bg_onEnterFrame
+	pass
 
 def func18(this, _global):
 	this.gotoAndPlay("loop")
@@ -228,7 +229,7 @@ def func39(this, _global):
 
 # sprite[257], names=selected_board_1p~selected_board_4p,
 def func40(this, _global):
-	this.gotoAndPlay("unselected")
+	this.gotoAndPlay("unselect")
 
 def func41(this, _global):
 	this.gotoAndPlay("select")
@@ -446,12 +447,15 @@ def func131(this, _global):
 	this._root._Hiscore_fadeoutEnd(this)
 
 # sprite[422], names=board_move
+# stop here and wait for song list init
 def func132(this, _global):
-	this._root._SongMenu_init(this)
+	#this._root._SongMenu_init(this)
 	this.stop()
 
+# do nothing.
 def func133(this, _global):
-	this._root._SongMenu_start(this)
+	#this._root._SongMenu_start(this)
+	pass
 
 def func134(this, _global):
 	this._root._SongMenu_initialAnimationEnd(this)
@@ -750,3 +754,7 @@ def placeholder(this, _global):
 #147?
 #166?
 DATA = [placeholder] * 177
+DATA[17] = func17
+DATA[18] = func18
+DATA[132] = func132
+DATA[133] = func133

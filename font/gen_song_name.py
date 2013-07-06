@@ -7,11 +7,11 @@ SN_ENSO_HEIGHT = 35
 SN_ENSO_WIDTH = 560
 
 SN_TITLE_SIZE = 29
-SN_TITLE_HEIGHT = 296
+SN_TITLE_HEIGHT = 280
 SN_TITLE_WIDTH = 48
 
 SN_SUBTITLE_SIZE = 22
-SN_SUBTITLE_HEIGHT = 296
+SN_SUBTITLE_HEIGHT = 280
 SN_SUBTITLE_WIDTH = 48
 
 BG_COLOR = 0x00000000
@@ -50,7 +50,7 @@ def gen_song_name_select_full(title, subtitle, out_folder):
 			size=(48, SN_SUBTITLE_HEIGHT), font=FONT,
 			bgcolor=BG_COLOR, txt_color=TXT_COLOR, vspacing=-4, align="South",
 			font_size=SN_SUBTITLE_SIZE)
-		os.system("%s -size 80x296 xc:#%08x \"%s\"" % (EXE_CONVERT, BG_COLOR, os.path.join(out_folder, "sn_select_full.png")))
+		os.system("%s -size 80x280 xc:#%08x \"%s\"" % (EXE_CONVERT, BG_COLOR, os.path.join(out_folder, "sn_select_full.png")))
 		os.system("%s -gravity Southwest \"%s\" \"%s\" \"%s\"" % (
 			EXE_COMPOSITE,
 			os.path.join(out_folder, "sn_subtitle.png"),

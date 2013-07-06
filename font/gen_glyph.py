@@ -40,7 +40,7 @@ def gen0(font_file, pointsize, ch, out_path):
 		assert bitmap.pitch == bitmap.width, "Only support normal pixel mode"
 		expanded_buffer = []
 		for byte in bitmap.buffer:
-			expanded_buffer.extend([0, 0, 0, byte])
+			expanded_buffer.extend([255, 255, 255, byte])
 		bitmap_array.fromlist(expanded_buffer)
 		bitmap_string = bitmap_array.tostring()
 		image = Image.fromstring('RGBA', (bitmap.width, bitmap.rows), bitmap_string)

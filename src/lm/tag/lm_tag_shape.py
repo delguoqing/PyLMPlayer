@@ -154,6 +154,19 @@ class CTag(lm_tag_base.CTag):
 				
 		return self.vertices, self.tex_coords, self.texture
 
+	def __repr__(self):
+		msg = ""
+		msg += ",".join(map(str, self.coords_index))
+		msg += "\n"
+		msg += ",".join(map(str, self.tex_coords_index))
+		msg += "\n"
+		for i in xrange(0, len(self.vertices), 8):
+			msg += ("%f " * 8) %  tuple(self.vertices[i: i + 8])
+			msg += "\n"
+			msg += ("%f " * 8) %  tuple(self.tex_coords[i: i + 8])
+			msg += "\n"
+		return msg
+			
 	def register_all(self):
 		renderer = self.ctx.renderer
 		for i in xrange(0, len(self.vertices), 8):

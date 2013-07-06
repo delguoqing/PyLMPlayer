@@ -29,19 +29,13 @@ active_m = None
 def graphic_setup():
 	global window
 	global fps_display
-	global left, right, top, bottom
 
 	cfg = config.DATA
+
 	width = cfg["wnd_width"]
 	height = cfg["wnd_height"]
-	left = top = 0
-	right = width
-	bottom = height
 	if cfg["widescreen"]:
 		width += cfg["widescreen_padding"] * 2
-		left -= cfg["widescreen_padding"]
-		right += cfg["widescreen_padding"]
-		
 	window = pyglet.window.Window(int(cfg["wnd_scale"]*width), int(cfg["wnd_scale"]*height))
 	window.set_location(0, 20)
 	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
@@ -88,17 +82,15 @@ def on_update(dt):
 	# do this wheneVer redraw event is triggered!
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-		
-	glOrtho(left, right, bottom, top, -1, 1)
 
+	#window.clear()
 	# update working module
 	active_m.on_update(dt)
 
 	# Draw fps
-	glMatrixMode(GL_MODELVIEW)
-	glLoadIdentity()
-	glTranslatef(80.0, -224.0, 1.0)
-	fps_display.draw()
+	#glScalef(1.0, -1.0, 1.0)
+	#glTranslatef(80.0, -224.0, 1.0)
+	#fps_display.draw()
 	
 ###################################
 # Setup code
@@ -132,6 +124,7 @@ def logic_setup():
 	# add resource path
 	pyglet.font.add_directory("../font")
 	pyglet.resource.path.append("../snd")
+	pyglet.resource.path.append("../song")
 	pyglet.resource.reindex()	
 
 	# set begin state

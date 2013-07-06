@@ -7,7 +7,7 @@ import enso_skin_idol
 from tja.tja_consts import OPTION_AUTO
 
 DATA = {
-	"widescreen": False,
+	"widescreen": True,
 	"wnd_width": 640,
 	"wnd_height": 480,
 	"wnd_scale": 1,

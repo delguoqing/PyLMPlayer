@@ -953,6 +953,8 @@ def on_update(dt):
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
 			
+	glOrtho(left, right, bottom, top, -1, 1)
+
 	renderer.begin()
 	
 	for movieclip in movieclips:
@@ -970,6 +972,19 @@ def on_update(dt):
 	else:
 		song_name_label.draw()
 
+def setup_viewport():
+	global left, right, top, bottom	
+	cfg = config.DATA
+	
+	width = cfg["wnd_width"]
+	height = cfg["wnd_height"]
+	left = top = 0
+	right = width
+	bottom = height
+	if cfg["widescreen"]:
+		left -= cfg["widescreen_padding"]
+		right += cfg["widescreen_padding"]
+
 def on_enter(this):
 	# Update config
 	on_config_update()
@@ -986,18 +1001,23 @@ def on_enter(this):
 	global dong, ka
 	global music_player
 	global music_started, fumen_started, enso_started
+	
 	if movieclips is None:
 		renderer = lm_render_state.CRenderer()
 		renderer.init()
-		
-		loader = lm_loader.CLoader("wii", config.DATA["lm_root"], renderer)
-		movieclips = build_scene(config.DATA["enso_skin"], loader)
+	
+		cfg = config.DATA
+		loader = lm_loader.CLoader("wii", cfg["lm_root"], renderer)
+		movieclips = build_scene(cfg["enso_skin"], loader)
 		
 		fumen_mgr = tja_onp_mgr.CMgr()
 
 		# Load SE
 		dong = pyglet.resource.media("dong2.mp3", streaming=False)
 		ka = pyglet.resource.media("ka2.mp3", streaming=False)
+		
+		setup_viewport()
+
 		
 	pyglet.resource.path.append(os.path.split(config.DATA["fumen_file"])[0])	
 	pyglet.resource.reindex()

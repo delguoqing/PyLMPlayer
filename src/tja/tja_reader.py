@@ -112,7 +112,9 @@ class CReader(object):
 		return self.peek_line().split(" ")[0].strip() in cmd		
 		
 	def close(self):
-		self._fobj.close()
+		if self._fobj:
+			self._fobj.close()
+			self._fobj = None
 	
 if __name__ == "__main__":
 	import tja_header
