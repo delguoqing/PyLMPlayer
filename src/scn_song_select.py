@@ -358,7 +358,6 @@ def on_song_menu_select_start(root, data):
 def on_enter(this):
 	global renderer, loader
 	global mc_song_select, mc_song_select_submenu
-	global song_texture_set, select_song_texture_set
 	global SONG_TEX_COORDS_INDEX, SONG_COORDS_INDEX
 	global preview_player, inited
 	
@@ -368,37 +367,8 @@ def on_enter(this):
 			renderer.init()
 			
 			loader = lm_loader.CLoader("wii", config.DATA["lm_root"], renderer)
-	
-			mc_song_select = loader.load_movie("song_select/song_select/song_select.lm")
-			mc_song_select.register_callback("initial_animation_end", on_initial_animation_end, mc_song_select.main_movie.board_move)
-			mc_song_select.register_callback("menu_open_up_count", on_menu_open_up_count, None)
-			mc_song_select.register_callback("board_expanding_out", on_board_expanding_out, mc_song_select.main_movie.board_move.open_board)
-			mc_song_select.register_callback("_SongMenu_CloseEnd", on_song_menu_close_end, mc_song_select.main_movie.board_move)
-			mc_song_select.register_callback("_SongMenu_SelectStart", on_song_menu_select_start, mc_song_select.main_movie.board_move)
-		
-			song_texture_set = CSongTexture(MAX_BOARD)
-			select_song_texture_set = CSongTexture(2)
 			
-			board_move = mc_song_select.main_movie.board_move
-			board_move.don_left_1.active = False
-			board_move.don_left_2.active = False
-			board_move.don_right_1.active = False
-			board_move.don_right_2.active = False
-			
-			for i in xrange(MAX_BOARD):
-				board = getattr(board_move, "song_board_%d" % i)
-				song_title = CSongTitleRenderer(song_texture_set, i)
-				board.title.add_drawable(song_title, 0)
-				mc_song_select.ctx.set_named_instance("song_title%d" % i, song_title)
-				
-			open_board = board_move.open_board
-			short_title = CSongTitleRenderer(select_song_texture_set, 0)
-			open_board.title.add_drawable(short_title, 0)
-			long_title = CSongTitleRenderer(select_song_texture_set, 1)
-			open_board.full_title.add_drawable(long_title, 0)
-			mc_song_select.ctx.set_named_instance("select_title", short_title)
-			mc_song_select.ctx.set_named_instance("out_title", short_title)
-			mc_song_select.ctx.set_named_instance("select_full_title", long_title)
+			init_song_select_movie()
 				
 			setup_viewport()
 			
@@ -408,6 +378,7 @@ def on_enter(this):
 		inited = True
 	
 	preview_player.resume()
+	
 	board_move = mc_song_select.main_movie.board_move
 	for i in xrange(MAX_BOARD):
 		update_board(getattr(board_move, "song_board_%d" % i), i)
@@ -415,6 +386,39 @@ def on_enter(this):
 	
 	# loop start scrolling
 	mc_song_select.main_movie.bg.gotoAndPlay("loop")
+	
+def init_song_select_movie():
+	global loader
+	global mc_song_select
+	global song_texture_set, select_song_texture_set
+	
+	contex = loader.get_contex("song_select/song_select/song_select.lm")
+
+	song_texture_set = CSongTexture(MAX_BOARD)
+	select_song_texture_set = CSongTexture(2)
+	for i in xrange(MAX_BOARD):
+		song_title = CSongTitleRenderer(song_texture_set, i)
+		contex.set_named_instance("song_title_%d" % i, song_title)
+	short_title = CSongTitleRenderer(select_song_texture_set, 0)
+	long_title = CSongTitleRenderer(select_song_texture_set, 1)
+	contex.set_named_instance("select_title", short_title)
+	contex.set_named_instance("out_title", short_title)
+	contex.set_named_instance("select_full_title", long_title)
+	
+	mc_song_select = contex.create_main_movie()
+	mc_song_select.register_callback("initial_animation_end", on_initial_animation_end, mc_song_select.main_movie.board_move)
+	mc_song_select.register_callback("menu_open_up_count", on_menu_open_up_count, None)
+	mc_song_select.register_callback("board_expanding_out", on_board_expanding_out, mc_song_select.main_movie.board_move.open_board)
+	mc_song_select.register_callback("_SongMenu_CloseEnd", on_song_menu_close_end, mc_song_select.main_movie.board_move)
+	mc_song_select.register_callback("_SongMenu_SelectStart", on_song_menu_select_start, mc_song_select.main_movie.board_move)
+
+	board_move = mc_song_select.main_movie.board_move
+	board_move.don_left_1.active = False
+	board_move.don_left_2.active = False
+	board_move.don_right_1.active = False
+	board_move.don_right_2.active = False
+	for i in xrange(MAX_BOARD):
+		getattr(board_move, "song_board_%d" % i).title.gotoAndStop("song_title_%d" % i)
 	
 def setup_viewport():
 	global left, right, top, bottom	

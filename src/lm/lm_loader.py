@@ -16,7 +16,14 @@ class CLoader(object):
 		self.platform = platform
 		self.lm_root = lm_root
 		self.renderer = renderer
+	
+	def get_contex(self, lm_relative_path):
+		lm_file_path = os.path.join(self.lm_root, lm_relative_path)
+		img_root = os.path.split(lm_file_path)[0]
+		return load(lm_file_path, img_root, self.platform, self.texture_bin, self.renderer)
 		
+	# WARNING: This method is out of data and deprecated
+	# This method used to be used in psp version.
 	def load_movie_cos(self, name, cos, cos_id, translate=(0, 0)):
 		filename = os.path.join(self.lm_root, name)
 		img_root = os.path.split(filename)[0]
@@ -38,38 +45,30 @@ class CLoader(object):
 		movieclip.ctx = ctx
 		return movieclip
 	
+	# A shortcut for loading a lm file and create main movie
 	def load_movie(self, name, translate=(0, 0)):
+		x, y = translate
+		mat_idx = self.renderer.reg_mat(x, y, 1.0, 1.0, 0.0, 0.0)
 		
-		filename = os.path.join(self.lm_root, name)
-		img_root = os.path.split(filename)[0]
+		ctx = self.get_contex(name)
 		
-		ctx = load(filename, img_root, self.platform, self.texture_bin, self.renderer)
-		char_id = ctx.stage_info.start_character_id
-		char_tag = ctx.get_character(char_id)
-		movieclip = char_tag.instantiate(0, 0, parent=None)
-		movieclip.init()
-		movieclip.set_matrix_index(
-			self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
-		movieclip.ctx = ctx
+		movieclip = ctx.create_main_movie()
+		movieclip.set_matrix_index(mat_idx)
+		
 		return movieclip
 		
 	# Load several movieclips sharing the same contex file.
-	def load_multi_movie(self, name, count, translate=(0, 0)):			
+	def load_multi_movie(self, name, count, translate=(0, 0)):
 		mcs = []
 		
-		filename = os.path.join(self.lm_root, name)
-		img_root = os.path.split(filename)[0]
-	
-		ctx = load(filename, img_root, self.platform, self.texture_bin, self.renderer)
-		char_id = ctx.stage_info.start_character_id
-		char_tag = ctx.get_character(char_id)
+		x, y = translate
+		mat_idx = self.renderer.reg_mat(x, y, 1.0, 1.0, 0.0, 0.0)
+		
+		ctx = self.get_contex(name)
 		
 		for i in xrange(count):
-			movieclip = char_tag.instantiate(0, 0, parent=None)
-			movieclip.init()
-			movieclip.set_matrix_index(
-				self.renderer.reg_mat(translate[0], translate[1], 1.0, 1.0, 0.0, 0.0))
-			movieclip.ctx = ctx
+			movieclip = ctx.create_main_movie()
+			movieclip.set_matrix_index(mat_idx)
 			mcs.append(movieclip)
 			
 		return mcs		
@@ -111,7 +110,17 @@ class CContex(object):
 		
 		self._global = {}
 		self._named_instance = {}
+
+	def create_main_movie(self):
+		char_id = self.stage_info.start_character_id
+		char_tag = self.get_character(char_id)
 		
+		movieclip = char_tag.instantiate(0, 0, parent=None)
+		movieclip.init()
+		movieclip.ctx = self
+		
+		return movieclip
+	
 	def set_img_root(self, root):
 		self.img_root = root
 		
