@@ -24,7 +24,6 @@ class CDiffInfo(object):
 	def __repr__(self):
 		return "course:%d\nstar: %d\n has_bunki: %d\n"  % (self.course, self.star, self.has_bunki)
 	
-	
 class CSongInfo(object):
 	def __init__(self, folder, genre, song_vol, se_vol, wave, preview_off, tja, diff_lst):
 		self.genre = genre
@@ -88,9 +87,15 @@ class CPreviewPlayer(object):
 		self.is_paused = True
 	
 	def pause(self):
+		if self.is_paused: return
 		self.is_paused = True
 		if self.player.playing:
 			self.player.pause()
+			
+	def resume(self):
+		if not self.is_paused: return
+		self.is_paused = False
+		self.accu_t = 0
 	
 	def set_audio(self, wave, preview_off):
 		if self.player.playing:
@@ -136,7 +141,7 @@ SONG_ROOT = r"../song"
 ALL_GENRE_NAME = ["j-pop", "animation", "variety", "classic", "namco", "game"]
 GENRE_NAME_2_ID = dict([(genre_name, genre_name_idx) for genre_name_idx, genre_name in enumerate(ALL_GENRE_NAME)])
 MAX_BOARD = 11
-BOARD_CENTER = 5
+BOARD_CENTER = 0
 
 # How large has the menu been opened up
 # Used to recover from open to close
@@ -157,7 +162,7 @@ mc_song_select = None
 mc_song_select_submenu = None
 
 song_lst = []
-cursor_pos = BOARD_CENTER + 1
+cursor_pos = 5
 
 def build_song_lst_by_genre(genre_name):
 	genre_folder = os.path.join(SONG_ROOT, genre_name)
@@ -236,7 +241,10 @@ def on_update(dt):
 	renderer.end()
 
 def get_cur_song_idx(board_id):
-	return (cursor_pos + board_id - BOARD_CENTER) % (len(song_lst) + 1)
+	if board_id <= 5:
+		return (cursor_pos + board_id) % ((len(song_lst) + 1))
+	else:
+		return (cursor_pos + board_id - 11) % (len(song_lst) + 1)
 	
 def update_board(mc, board_id):
 	song_idx = get_cur_song_idx(board_id)
@@ -353,7 +361,7 @@ def on_enter(this):
 		build_song_lst()
 		inited = True
 	
-	preview_player.is_paused = False
+	preview_player.resume()
 	board_move = mc_song_select.main_movie.board_move
 	for i in xrange(MAX_BOARD):
 		update_board(getattr(board_move, "song_board_%d" % i), i)
@@ -379,6 +387,8 @@ def on_exit():
 	mc_song_select.main_movie.board_move.open_board.gotoAndPlay("wait")
 
 def on_key_press(symbol, modifiers):
+	global cursor_pos
+	
 	if not enable_input: return
 	if symbol == pyglet.window.key.J:
 		song_idx = get_cur_song_idx(BOARD_CENTER)
@@ -386,10 +396,8 @@ def on_key_press(symbol, modifiers):
 			config.DATA["fumen_file"] = os.path.join(song_lst[song_idx].folder, song_lst[song_idx].tja)
 			game_state.set_game_state(game_state.GAME_STATE_ENSO)
 	elif symbol == pyglet.window.key.U:
-		global cursor_pos
 		cursor_pos = (cursor_pos + 1) % (len(song_lst))
 		game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)
 	elif symbol == pyglet.window.key.R:
-		global cursor_pos
 		cursor_pos = (cursor_pos - 1) % (len(song_lst))
 		game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)

@@ -10,7 +10,7 @@ DATA = {
 	"widescreen": True,
 	"wnd_width": 640,
 	"wnd_height": 480,
-	"wnd_scale": 1,
+	"wnd_scale": 1.5,
 	"widescreen_padding": 108,
 	
 	"onp_hit_x": 145,
