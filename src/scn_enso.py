@@ -9,6 +9,7 @@ from lm.extensions import lm_render_state
 from tja import tja_onp_mgr
 from layout import *
 from tja.tja_consts import *
+import game_state
 
 import config
 
@@ -1050,14 +1051,17 @@ def on_exit():
 
 def on_key_press(symbol, modifiers):
 	global fumen_mgr, enso_started
-	if symbol == pyglet.window.key.F:
-		fumen_mgr.add_key(HIT_LEFT_DON)
+	if enso_started:
+		if symbol == pyglet.window.key.F:
+			fumen_mgr.add_key(HIT_LEFT_DON)
+		elif symbol == pyglet.window.key.J:
+			fumen_mgr.add_key(HIT_RIGHT_DON)
+		elif symbol == pyglet.window.key.R:
+			fumen_mgr.add_key(HIT_LEFT_KATSU)
+		elif symbol == pyglet.window.key.U:
+			fumen_mgr.add_key(HIT_RIGHT_KATSU)
 	elif symbol == pyglet.window.key.J:
-		fumen_mgr.add_key(HIT_RIGHT_DON)
-	elif symbol == pyglet.window.key.R:
-		fumen_mgr.add_key(HIT_LEFT_KATSU)
-	elif symbol == pyglet.window.key.U:
-		fumen_mgr.add_key(HIT_RIGHT_KATSU)
-	elif not enso_started and symbol == pyglet.window.key.SPACE:
 		enso_started = True
 		add_dancer()
+	if symbol == pyglet.window.key.SPACE:
+		game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)

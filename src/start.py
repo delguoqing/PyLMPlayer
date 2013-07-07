@@ -5,26 +5,11 @@ import random
 from pyglet.gl import *
 
 import config
-import scn_song_select
-import scn_enso
-import scn_dummy
-
-GAME_STATE_NULL = 0
-GAME_STATE_SONG_SELECT = 1
-GAME_STATE_ENSO = 2
-GAME_STATE_RESULT = 3
-
-STATE_MODULES = {
-	GAME_STATE_NULL: scn_dummy,
-	GAME_STATE_SONG_SELECT: scn_song_select,
-	GAME_STATE_ENSO: scn_enso,
-	GAME_STATE_RESULT: scn_dummy,
-}
+import game_state
+from game_state import *
 
 window = None
 fps_display = None
-cur_state = None
-active_m = None
 
 def graphic_setup():
 	global window
@@ -66,7 +51,7 @@ def on_key_press(symbol, modifiers):
 		gen_screen_shot()
 
 	# pass to active module
-	active_m.on_key_press(symbol, modifiers)
+	game_state.active_m.on_key_press(symbol, modifiers)
 	
 # May be customize here!
 def on_resize(width, height):
@@ -85,7 +70,7 @@ def on_update(dt):
 
 	#window.clear()
 	# update working module
-	active_m.on_update(dt)
+	game_state.active_m.on_update(dt)
 
 	# Draw fps
 	#glScalef(1.0, -1.0, 1.0)
@@ -94,25 +79,7 @@ def on_update(dt):
 	
 ###################################
 # Setup code
-###################################
-def set_game_state(state):
-	global cur_state
-	global active_m
-	
-	if state == cur_state: return
-
-	m_old = None
-	if cur_state != None:	
-		m_old = STATE_MODULES[cur_state]
-	m_new = STATE_MODULES[state]
-	
-	if m_old is not None:
-		m_old.on_exit()	
-	m_new.on_enter(m_new)
-
-	cur_state = state
-	active_m = m_new
-	
+###################################	
 def logic_setup():
 	# Disable some global python setting
 	gc.disable()
@@ -126,10 +93,11 @@ def logic_setup():
 	pyglet.resource.path.append("../snd")
 	pyglet.resource.path.append("../song")
 	pyglet.resource.reindex()	
-
-	# set begin state
-	set_game_state(GAME_STATE_ENSO)
 	
+	# set begin state
+	game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)
+	
+
 def startup():
 	logic_setup()
 	pyglet.app.run()

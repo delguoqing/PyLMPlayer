@@ -355,7 +355,7 @@ def func98(this, _global):
 
 # sprite[364], names=open_board
 def func99(this, _global):
-	this._root.songStart()
+	this._root.fscommand("callback", "board_expanding_out")
 
 def func100(this, _global):
 	this.gotoAndPlay("to_course_select")
@@ -457,8 +457,9 @@ def func133(this, _global):
 	#this._root._SongMenu_start(this)
 	pass
 
+# expand open board
 def func134(this, _global):
-	this._root._SongMenu_initialAnimationEnd(this)
+	this._root.fscommand("callback", "initial_animation_end")
 
 def func135(this, _global):
 	this.gotoAndPlay("select_start")
@@ -482,20 +483,25 @@ def func140(this, _global):
 def func141(this, _global):
 	this.open_board.gotoAndPlay("open")
 
+# Count up open status
 def func142(this, _global):
-	this._root._SongMenu_openCountUp()
+	this._root.fscommand("callback", "open_up_count")
 
 def func143(this, _global):
-	this.open_board.gotoAndPlay("select")
-	this._root.dispCursor(this)
+	this._root.fscommand("callback", "open_up_count")
+	this.gotoAndPlay("select")
 
 def func144(this, _global):
-	this._root._SongMenu_closeEnd(this)
+	this.open_board.gotoAndPlay("open")
+	#this._root.dispCursor(this)
 
 def func145(this, _global):
-	this.open_board.gotoAndPlay("wide_open")
+	this._root._SongMenu_closeEnd(this)
 
 def func146(this, _global):
+	this.open_board.gotoAndPlay("wide_open")
+
+def func147(this, _global):
 	this.open_board.gotoAndPlay("select")
 	this.gotoAndPlay("start")
 
@@ -756,5 +762,12 @@ def placeholder(this, _global):
 DATA = [placeholder] * 177
 DATA[17] = func17
 DATA[18] = func18
+DATA[99] = func99
 DATA[132] = func132
 DATA[133] = func133
+DATA[134] = func134
+#DATA[135] = func135
+#DATA[141] = func141
+DATA[142] = func142
+DATA[143] = func143
+DATA[144] = func144
