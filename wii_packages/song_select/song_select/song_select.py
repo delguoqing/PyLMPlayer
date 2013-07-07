@@ -465,8 +465,9 @@ def func135(this, _global):
 	this.gotoAndPlay("select_start")
 
 def func136(this, _global):
-	this._root._SongMenu_SelectStart(this)
-	this._root.dispCursor(this)
+	this._root.fscommand("callback", "_SongMenu_SelectStart")
+	#this._root._SongMenu_SelectStart(this)
+	#this._root.dispCursor(this)
 
 def func137(this, _global):
 	this._root._SongMenu_randomSelectStart(this)
@@ -495,8 +496,15 @@ def func144(this, _global):
 	this.open_board.gotoAndPlay("open")
 	#this._root.dispCursor(this)
 
+# indicating the end of closing animation
+# should:
+#	1. stop board move
+#	2. stop open_board move
 def func145(this, _global):
-	this._root._SongMenu_closeEnd(this)
+	this.open_board.stop()
+	this.stop()
+	this._root.fscommand("callback", "_SongMenu_CloseEnd")
+	#this._root._SongMenu_CloseEnd(this)
 
 def func146(this, _global):
 	this.open_board.gotoAndPlay("wide_open")
@@ -766,8 +774,10 @@ DATA[99] = func99
 DATA[132] = func132
 DATA[133] = func133
 DATA[134] = func134
-#DATA[135] = func135
-#DATA[141] = func141
+DATA[135] = func135
+DATA[136] = func136
+DATA[141] = func141
 DATA[142] = func142
 DATA[143] = func143
 DATA[144] = func144
+DATA[145] = func145

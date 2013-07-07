@@ -107,10 +107,15 @@ class CTag(lm_tag_base.CTag):
 				inst = target.alloc_drawable(self._depth, self._inst_id)
 				if not inst:		
 					char_tag = self.ctx.get_character(self._char_id)
-					if not char_tag: return
-					inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
-					inst.char_id = self._char_id
-				inst.init()
+					if not char_tag:
+						inst = self.ctx.get_named_instance(self._name)
+						if inst is None: return
+					else:
+						inst = char_tag.instantiate(self._inst_id, self._depth, parent=target)
+						inst.char_id = self._char_id
+						inst.init()
+				else:
+					inst.init()
 				target.add_drawable(inst, self._depth, self._name)
 				
 				if self._on_enter_frame:

@@ -136,7 +136,7 @@ class CSongTitleRenderer(lm_drawable.CDrawable):
 			texture = self.texture_set.get_texture(self.texture_idx)
 			if texture is not None:
 				renderer.draw_image(texture.target, texture.id, self.texture_set.coords, self.texture_set.tex_coords)
-	
+
 SONG_ROOT = r"../song"
 ALL_GENRE_NAME = ["j-pop", "animation", "variety", "classic", "namco", "game"]
 GENRE_NAME_2_ID = dict([(genre_name, genre_name_idx) for genre_name_idx, genre_name in enumerate(ALL_GENRE_NAME)])
@@ -148,7 +148,7 @@ BOARD_CENTER = 0
 menu_open_up_count = 15
 cur_genre = 0
 enable_input = False
-
+menu_move_direction = ""
 
 #ALL_GENRE_NAME = ["debug"]
 
@@ -318,6 +318,43 @@ def on_board_expanding_out(root, data):
 		
 		update_course(mc.course, song_info)
 
+def close_open_board():
+	global enable_input
+	
+	enable_input = False
+	
+	board_move = mc_song_select.main_movie.board_move
+	label_close = "close%d" % menu_open_up_count
+	
+	open_board = board_move.open_board
+	open_board.gotoAndPlay(label_close)
+	
+	preview_player.set_audio(None, -1)
+	
+	board_move.gotoAndPlay(label_close)
+	
+def on_song_menu_close_end(root, data):
+	global menu_open_up_count
+	global cursor_pos
+	mc_board_move = data
+
+	menu_open_up_count = 0
+	if menu_move_direction == "R":
+		cursor_pos = (cursor_pos + 1) % (len(song_lst) + 1)
+		mc_board_move.gotoAndPlay("right_move")
+		#song_texture_set.shift_right()
+	elif menu_move_direction == "L":
+		cursor_pos = (cursor_pos - 1) % (len(song_lst) + 1)
+		mc_board_move.gotoAndPlay("left_move")
+		#song_texture_set.shift_left()
+	else:
+		pass
+
+def on_song_menu_select_start(root, data):
+	mc_board_move = data
+	if cursor_pos >= 0 and cursor_pos < len(song_lst):
+		mc_board_move.gotoAndPlay("open")
+		
 def on_enter(this):
 	global renderer, loader
 	global mc_song_select, mc_song_select_submenu
@@ -336,6 +373,8 @@ def on_enter(this):
 			mc_song_select.register_callback("initial_animation_end", on_initial_animation_end, mc_song_select.main_movie.board_move)
 			mc_song_select.register_callback("menu_open_up_count", on_menu_open_up_count, None)
 			mc_song_select.register_callback("board_expanding_out", on_board_expanding_out, mc_song_select.main_movie.board_move.open_board)
+			mc_song_select.register_callback("_SongMenu_CloseEnd", on_song_menu_close_end, mc_song_select.main_movie.board_move)
+			mc_song_select.register_callback("_SongMenu_SelectStart", on_song_menu_select_start, mc_song_select.main_movie.board_move)
 		
 			song_texture_set = CSongTexture(MAX_BOARD)
 			select_song_texture_set = CSongTexture(2)
@@ -348,11 +387,18 @@ def on_enter(this):
 			
 			for i in xrange(MAX_BOARD):
 				board = getattr(board_move, "song_board_%d" % i)
-				board.title.add_drawable(CSongTitleRenderer(song_texture_set, i), 0)
+				song_title = CSongTitleRenderer(song_texture_set, i)
+				board.title.add_drawable(song_title, 0)
+				mc_song_select.ctx.set_named_instance("song_title%d" % i, song_title)
 				
 			open_board = board_move.open_board
-			open_board.title.add_drawable(CSongTitleRenderer(select_song_texture_set, 0), 0)
-			open_board.full_title.add_drawable(CSongTitleRenderer(select_song_texture_set, 1), 0)
+			short_title = CSongTitleRenderer(select_song_texture_set, 0)
+			open_board.title.add_drawable(short_title, 0)
+			long_title = CSongTitleRenderer(select_song_texture_set, 1)
+			open_board.full_title.add_drawable(long_title, 0)
+			mc_song_select.ctx.set_named_instance("select_title", short_title)
+			mc_song_select.ctx.set_named_instance("out_title", short_title)
+			mc_song_select.ctx.set_named_instance("select_full_title", long_title)
 				
 			setup_viewport()
 			
@@ -388,6 +434,7 @@ def on_exit():
 
 def on_key_press(symbol, modifiers):
 	global cursor_pos
+	global menu_move_direction
 	
 	if not enable_input: return
 	if symbol == pyglet.window.key.J:
@@ -396,8 +443,8 @@ def on_key_press(symbol, modifiers):
 			config.DATA["fumen_file"] = os.path.join(song_lst[song_idx].folder, song_lst[song_idx].tja)
 			game_state.set_game_state(game_state.GAME_STATE_ENSO)
 	elif symbol == pyglet.window.key.U:
-		cursor_pos = (cursor_pos + 1) % (len(song_lst))
-		game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)
+		menu_move_direction = "R"
+		close_open_board()
 	elif symbol == pyglet.window.key.R:
-		cursor_pos = (cursor_pos - 1) % (len(song_lst))
-		game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)
+		menu_move_direction = "L"
+		close_open_board()

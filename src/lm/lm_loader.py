@@ -110,6 +110,7 @@ class CContex(object):
 		self._super_tag_stack = []
 		
 		self._global = {}
+		self._named_instance = {}
 		
 	def set_img_root(self, root):
 		self.img_root = root
@@ -172,6 +173,12 @@ class CContex(object):
 			if shape_tag.fill_idx == idx and shape_tag.origin_fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
 				shape_tag.set_texture(texture)
 				
+	def set_named_instance(self, name, instance):
+		self._named_instance[name] = instance
+		
+	def get_named_instance(self, name):
+		return self._named_instance.get(name)
+	
 def load(filename, root, platform, texture_bin, renderer):
 	# uniform resource root
 	res_root = root
