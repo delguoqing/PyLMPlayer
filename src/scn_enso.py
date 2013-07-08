@@ -831,13 +831,14 @@ def build_scene(cfg, loader):
 	LMC = loader.load_movie
 	LMCS = loader.load_multi_movie
 	LMP = loader.load_movie_pool
+	don_cos = config.DATA["don_cos"] % ""
 	
 	movieclips = [None] * NUM_MOVIECLIP
 	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG, cfg.DANCE_BG_POS)
 	movieclips[ENSO_UP_BG] = LMC(cfg.ENSO_UP_BG)
 	movieclips[BG_SAB_EFFECTI] = LMC(cfg.BG_SAB_EFFECTI, cfg.BG_SAB_EFFECTI_POS)
 	movieclips[COURSE] = LMC(cfg.COURSE, cfg.COURSE_POS)
-	movieclips[DON] = loader.load_movie_cos(cfg.DON, cfg.DON_COS, 4, cfg.DON_POS)
+	movieclips[DON] = loader.load_movie_cos(cfg.DON, don_cos, 4, cfg.DON_POS)
 	movieclips[DON].speed = 1.5
 	movieclips[DON].register_callback("on_trans_animation_end", on_trans_animation_end, None)
 	movieclips[GAUGE] = LMC(cfg.GAUGE, cfg.GAUGE_POS)
@@ -886,7 +887,7 @@ def build_scene(cfg, loader):
 	movieclips[SCORE_ADD] = LMP(_def)
 	INDEX_SCORE_ADD, = range(len(_def))
 	# DON_GEKI
-	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, cfg.DON_COS, 4, cfg.DON_GEKI_POS)
+	movieclips[DON_GEKI] = loader.load_movie_cos(cfg.DON_GEKI, don_cos, 4, cfg.DON_GEKI_POS)
 	movieclips[DON_GEKI].active = False
 	movieclips[DON_GEKI].register_callback("on_geki_end", on_balloon_end, None)
 	
@@ -896,7 +897,7 @@ def build_scene(cfg, loader):
 		
 	movieclips[FEVER] = LMC(cfg.FEVER, cfg.FEVER_POS)
 	movieclips[FEVER].speed = 2
-	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, cfg.DON_COS, 4, cfg.DON_IMO_POS)
+	movieclips[DON_IMO] = loader.load_movie_cos(cfg.DON_IMO, don_cos, 4, cfg.DON_IMO_POS)
 	movieclips[DON_IMO].active = False
 	movieclips[DON_IMO].register_callback("on_imo_end", on_imo_break_end, None)	
 	movieclips[IMO] = LMC(cfg.IMO, cfg.IMO_POS)

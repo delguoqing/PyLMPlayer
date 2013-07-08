@@ -2,8 +2,6 @@
 DON = r"don/don_1p/don_1p.lm"
 DON_POS = (-37, -69)
 
-DON_COS = r"don/cos/cos_032/cos_032_3p/cos_032_3p.lm"
-
 DON_GEKI = r"don/don_geki_1p/don_geki_1p.lm"
 DON_GEKI_POS = (36, 57)
 

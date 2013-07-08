@@ -26,6 +26,8 @@ DATA = {
 	
 	"def_song_name_label": "../font/sn_game.png",
 	"use_texture_as_song_name": False,
+	
+	"don_cos": "don/cos/cos_000/cos_000_%s_1p/cos_000_%s_1p.lm",
 }
 
 if len(sys.argv) > 1:
