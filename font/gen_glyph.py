@@ -89,12 +89,12 @@ def gen1(font_file, pointsize, ch, out_path):
 	width, rows, pitch = bitmap.width, bitmap.rows, bitmap.pitch
 	top, left = face.glyph.bitmap_top, face.glyph.bitmap_left
 	
-	dy = blyph.top - face.glyph.bitmap_top
-	dx = face.glyph.bitmap_left - blyph.left
+	dy = max(0, blyph.top - face.glyph.bitmap_top)
+	dx = max(0, face.glyph.bitmap_left - blyph.left)
 	if dx + rows >= blyph.bitmap.rows:
-		dx = blyph.bitmap.rows - rows
+		rows = blyph.bitmap.rows - dx
 	if dy + width >= blyph.bitmap.width:
-		dy = blyph.bitmap.width - width
+		width = blyph.bitmap.width - dy
 	data = []
 	for i in range(rows):
 		data.extend(bitmap.buffer[i*pitch:i*pitch+width])
