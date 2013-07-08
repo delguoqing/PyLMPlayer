@@ -86,7 +86,7 @@ def gen_glyphs_from_text(text, size):
 	ret = []
 	for token_idx, ch in enumerate(text):
 		if not ch.isspace():
-			left, top, w, h = gen_glyph.gen0(FONT, size, ch, "token%d.png" % token_idx)
+			left, top, w, h = gen_glyph.gen1(FONT, size, ch, "token%d.png" % token_idx)
 			ret.append((w, h))
 		else:
 			ret.append((0, 0))
@@ -96,7 +96,7 @@ def gen_glyphs_from_text_detailed(text, size):
 	ret = []
 	for token_idx, ch in enumerate(text):
 		if not ch.isspace():
-			left, top, w, h = gen_glyph.gen0(FONT, size, ch, "token%d.png" % token_idx)
+			left, top, w, h = gen_glyph.gen1(FONT, size, ch, "token%d.png" % token_idx)
 			ret.append((left, top, w, h))
 		else:
 			ret.append((0, 0, 0, 0))
@@ -123,7 +123,7 @@ def vconvert2(out_path, txt=u"Test", size=None, font=None, bgcolor=None, txt_col
 	gravity = align or "North"
 	os.system("%s -gravity %s -background #%08x -append %s \"%s\"" % (EXE_CONVERT, gravity, bgcolor, " ".join(["token%d.png" % i for i in xrange(len(txt))]), out_path))
 	#os.system("convert.exe -gravity %s -background #%08x -append %s %s" % (gravity, bgcolor, " ".join(["token%d.png" % i for i in xrange(len(txt))]), "test.png"))
-	#os.system("del token*.png")
+	os.system("del token*.png")
 	
 	# width and height
 	height = 0
