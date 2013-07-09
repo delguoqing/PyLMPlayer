@@ -486,14 +486,15 @@ def func141(this, _global):
 
 # Count up open status
 def func142(this, _global):
-	this._root.fscommand("callback", "open_up_count")
+	this._root.fscommand("callback", "menu_open_up_count")
 
 def func143(this, _global):
-	this._root.fscommand("callback", "open_up_count")
+	this._root.fscommand("callback", "menu_open_up_count")
 	this.gotoAndPlay("select")
 
 def func144(this, _global):
-	this.open_board.gotoAndPlay("open")
+	this.open_board.gotoAndPlay("select")
+	this.open_board.use_lyric.active = False
 	#this._root.dispCursor(this)
 
 # indicating the end of closing animation

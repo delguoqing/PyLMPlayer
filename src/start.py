@@ -1,7 +1,8 @@
 import sys
-import pyglet
 import gc
 import random
+
+import pyglet
 from pyglet.gl import *
 
 import config
@@ -82,8 +83,8 @@ def on_update(dt):
 ###################################	
 def logic_setup():
 	# Disable some global python setting
-	gc.disable()
-	sys.setcheckinterval(1000000)
+	#gc.disable()
+	#sys.setcheckinterval(1000000)
 	
 	# set up timer
 	pyglet.clock.schedule(on_update)
