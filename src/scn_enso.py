@@ -831,7 +831,7 @@ def build_scene(cfg, loader):
 	LMC = loader.load_movie
 	LMCS = loader.load_multi_movie
 	LMP = loader.load_movie_pool
-	don_cos = config.DATA["don_cos"] % ""
+	don_cos = config.DATA["don_cos"] % ("1p", "1p")
 	
 	movieclips = [None] * NUM_MOVIECLIP
 	movieclips[DANCE_BG] = LMC(cfg.DANCE_BG, cfg.DANCE_BG_POS)

@@ -135,12 +135,15 @@ class CSongTitleRenderer(lm_drawable.CDrawable):
 	
 	def update(self, renderer, operation=lm_consts.MASK_ALL):
 		if operation & lm_consts.MASK_DRAW:
+			
 			texture = self.texture_set.get_texture(self.texture_idx)
 			if texture is not None:
+				renderer.push_state(-1, -1, self.matrix_index, 0)
 				renderer.draw_image(texture.target, texture.id, self.texture_set.coords, self.texture_set.tex_coords)
+				renderer.pop_state()				
 
 SONG_ROOT = r"../song"
-ALL_GENRE_NAME = ["j-pop", "animation", "variety", "classic", "namco", "game"]
+ALL_GENRE_NAME = ["j-pop", "animation", "variety", "classic", "namco", "doyo", "game", "random"]
 GENRE_NAME_2_ID = dict([(genre_name, genre_name_idx) for genre_name_idx, genre_name in enumerate(ALL_GENRE_NAME)])
 MAX_BOARD = 11
 BOARD_CENTER = 0
@@ -214,6 +217,7 @@ def build_song_lst():
 def set_genre(genre, dir=""):
 	global cur_genre
 	
+	if cur_genre == genre: return
 	# set bg
 	bg = mc_song_select.main_movie.bg
 	bg.lower.gotoAndPlay("genre%d" % cur_genre)
@@ -222,14 +226,15 @@ def set_genre(genre, dir=""):
 	board_move = mc_song_select.main_movie.board_move
 	# set genre text
 	mc_genre = board_move.genre
-	mc_genre.gotoAndPlay(dir+ALL_GENRE_NAME[genre])
+	genre_name = ALL_GENRE_NAME[genre]
+	
+	mc_genre.gotoAndStop(genre_name)
 	# set menu title
-	board_move.menu_title.gotoAndPlay("genre%d" % genre)
+	board_move.menu_title.gotoAndStop("genre%d" % genre)
 	
 	# update cur_genre
 	cur_genre = genre
 	
-
 def on_update(dt):
 	if NO_RENDER_DEBUG: return
 	
@@ -264,9 +269,31 @@ def update_board(mc, board_id):
 		print "update board %d: song_board => %s" % (board_id, song_info.folder)
 		mc.gotoAndPlay("song_board")
 		mc.crown.active = False
-		#mc.board.gotoAndPlay("genre%d" % GENRE_NAME_2_ID[song_info.genre])
+		mc.board.gotoAndPlay("genre%d" % GENRE_NAME_2_ID[song_info.genre])
 		
-		song_texture_set.set_texture(BOARD_ID_2_TEX_ID[board_id], os.path.join(song_info.folder, "sn_non_select.png"))
+		non_select_texture.set_texture(BOARD_ID_2_TEX_ID[board_id], os.path.join(song_info.folder, "sn_non_select.png"))
+		
+		#if board_id == BOARD_CENTER:
+			#set_genre(GENRE_NAME_2_ID[song_info.genre])
+			#select_song_texture_set.set_texture(0, os.path.join(song_info.folder, "sn_select_short.png"))
+			#select_song_texture_set.set_texture(1, os.path.join(song_info.folder, "sn_select_full.png"))			
+
+def update_out_board(mc, board_id):
+	song_idx = get_cur_song_idx(board_id)
+	
+	if song_idx > len(song_lst):
+		print "update out board %d: back_board" % board_id
+		mc.gotoAndPlay("back_board")
+	elif song_idx == len(song_lst):
+		print "update out board %d: random_board" % board_id
+		mc.gotoAndPlay("random_board")
+	else:
+		song_info = song_lst[song_idx]
+		
+		print "update out board %d: song_board => %s" % (board_id, song_info.folder)
+		mc.gotoAndPlay("song_board")
+		#mc.board.gotoAndPlay("genre%d" % GENRE_NAME_2_ID[song_info.genre])
+		out_title.texture_idx = BOARD_ID_2_TEX_ID[board_id]		
 		
 		#if board_id == BOARD_CENTER:
 			#set_genre(GENRE_NAME_2_ID[song_info.genre])
@@ -286,8 +313,8 @@ def update_open_board(mc):
 		song_info = song_lst[song_idx]
 		print "update open board: song_board => %s" % song_info.folder
 		#set_genre(GENRE_NAME_2_ID[song_info.genre])
-		select_song_texture_set.set_texture(0, os.path.join(song_info.folder, "sn_select_short.png"))
-		select_song_texture_set.set_texture(1, os.path.join(song_info.folder, "sn_select_full.png"))			
+		select_short_texture.set_texture(0, os.path.join(song_info.folder, "sn_select_short.png"))
+		select_full_texture.set_texture(0, os.path.join(song_info.folder, "sn_select_full.png"))			
 
 def update_course(mc, song_info):
 	for diff_idx, diff_info in enumerate(song_info.diff_lst):
@@ -355,7 +382,6 @@ def move_board(d):
 		on_song_menu_close_end(mc_song_select, board_move)
 	else:
 		label_close = "close%d" % menu_open_up_count
-		print "%s" % label_close
 	
 		open_board = board_move.open_board
 		open_board.gotoAndPlay(label_close)
@@ -369,36 +395,44 @@ def on_song_menu_close_end(root, data):
 	global cursor_pos
 	global enable_input
 	
-	#return
 	mc_board_move = data
-	
 	menu_open_up_count = 0
+	dir_prefix = ""
 	if menu_move_direction == "R":
+		non_select_texture.shift_left()
 		cursor_pos = (cursor_pos + 1) % (len(song_lst) + 1)
+		for i in xrange(MAX_BOARD):
+			update_board(getattr(mc_board_move, "song_board_%d" % i), i)
+		update_out_board(mc_board_move.out_board, 10)
+		update_open_board(mc_board_move.open_board)
 		mc_board_move.gotoAndPlay("right_move")
-		update_open_board(mc_board_move.open_board)
+		dir_prefix = "L_"
 	elif menu_move_direction == "L":
+		non_select_texture.shift_right()
 		cursor_pos = (cursor_pos - 1) % (len(song_lst) + 1)
+		print "cursor_pos %d" % cursor_pos
+		for i in xrange(MAX_BOARD):
+			update_board(getattr(mc_board_move, "song_board_%d" % i), i)
+		update_out_board(mc_board_move.out_board, 1)
+		update_open_board(mc_board_move.open_board)		
 		mc_board_move.gotoAndPlay("left_move")
-		update_open_board(mc_board_move.open_board)
+		dir_prefix = "R_"
+		
+	# Update genre
+	song_idx = get_cur_song_idx(BOARD_CENTER)
+	
+	if song_idx >= 0 and song_idx < len(song_lst):
+		song_info = song_lst[song_idx]
+		set_genre(GENRE_NAME_2_ID[song_info.genre], dir_prefix)
 	else:
-		on_song_menu_select_start(root, mc_board_move)
+		set_genre(GENRE_NAME_2_ID["random"], dir_prefix)
+		
 
 def on_song_menu_select_start(root, data):
 	global menu_move_direction
 	global enable_input
 
 	mc_board_move = data
-	
-	if menu_move_direction == "R":
-		song_texture_set.shift_left()
-		for i in xrange(MAX_BOARD):
-			update_board(getattr(mc_board_move, "song_board_%d" % i), i)
-	elif menu_move_direction == "L":
-		song_texture_set.shift_right()
-		for i in xrange(MAX_BOARD):
-			update_board(getattr(mc_board_move, "song_board_%d" % i), i)
-			
 	if cursor_pos >= 0 and cursor_pos < len(song_lst):
 		mc_board_move.gotoAndPlay("open")
 	else:
@@ -439,18 +473,20 @@ def on_enter(this):
 	
 def init_song_select_movie():
 	global mc_song_select
-	global song_texture_set, select_song_texture_set
+	global non_select_texture, select_short_texture, select_full_texture
+	global out_title
 	
 	contex = loader.get_contex("song_select/song_select/song_select.lm")
 
-	song_texture_set = CSongTexture(MAX_BOARD)
-	select_song_texture_set = CSongTexture(2)
+	non_select_texture = CSongTexture(MAX_BOARD)
+	select_short_texture = CSongTexture(1)
+	select_full_texture = CSongTexture(1)
 	for i in xrange(MAX_BOARD):
-		song_title = CSongTitleRenderer(song_texture_set, BOARD_ID_2_TEX_ID[i])
+		song_title = CSongTitleRenderer(non_select_texture, BOARD_ID_2_TEX_ID[i])
 		contex.set_named_instance("song_title_%d" % i, song_title)
-	out_title = CSongTitleRenderer(song_texture_set, BOARD_ID_2_TEX_ID[BOARD_CENTER])
-	short_title = CSongTitleRenderer(select_song_texture_set, 0)
-	long_title = CSongTitleRenderer(select_song_texture_set, 1)
+	out_title = CSongTitleRenderer(non_select_texture, BOARD_ID_2_TEX_ID[BOARD_CENTER])
+	short_title = CSongTitleRenderer(select_short_texture, 0)
+	long_title = CSongTitleRenderer(select_full_texture, 0)
 	contex.set_named_instance("select_title", short_title)
 	contex.set_named_instance("out_title", out_title)
 	contex.set_named_instance("select_full_title", long_title)
@@ -471,13 +507,34 @@ def init_song_select_movie():
 		getattr(board_move, "song_board_%d" % i).title.gotoAndStop("song_title_%d" % i)
 	
 def init_song_boards():
+	global cur_genre
 	global mc_song_select
 	
+	song_idx = get_cur_song_idx(BOARD_CENTER)
 	mc_board_move = mc_song_select.main_movie.board_move
-	mc_board_move.open_board.gotoAndPlay("select")
-	mc_board_move.open_board.use_lyric.active = False
 	for i in xrange(MAX_BOARD):
 		update_board(getattr(mc_board_move, "song_board_%d" % i), i)
+	
+	if song_idx >= 0 and song_idx < len(song_lst):
+		song_info = song_lst[song_idx]
+		mc_board_move.open_board.gotoAndPlay("select")
+		on_board_expanding_out(mc_song_select, mc_board_move.open_board)
+		genre_name = song_info.genre
+	else:
+		mc_board_move.gotoAndPlay("close0")
+		genre_name = "random"
+		
+	genre_idx = GENRE_NAME_2_ID[genre_name]
+	bg = mc_song_select.main_movie.bg
+	bg.lower.gotoAndPlay("genre%d" % genre_idx)			
+	# set genre text
+	mc_genre = mc_board_move.genre
+	print "gotoAndPlay %s" % genre_name
+	mc_genre.gotoAndStop(genre_name)
+	# set menu title
+	mc_board_move.menu_title.gotoAndStop("genre%d" % genre_idx)
+	cur_genre = genre_idx
+	
 	update_open_board(mc_board_move.open_board)
 	
 def setup_viewport():
@@ -499,7 +556,7 @@ def on_exit():
 def on_key_press(symbol, modifiers):
 	global cursor_pos
 	global menu_move_direction
-	
+		
 	if not enable_input: return
 	if symbol == pyglet.window.key.J:
 		song_idx = get_cur_song_idx(BOARD_CENTER)
