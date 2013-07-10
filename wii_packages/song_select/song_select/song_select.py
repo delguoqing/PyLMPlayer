@@ -219,13 +219,14 @@ def func38(this, _global):
 
 # sprite[255], names=menu,
 def func39(this, _global):
-	if this._root.oniReleased:
-		if this._root.isExFumen():
-			this.gotoAndPlay("ex")
-		else:
-			this.gotoAndPlay("oni")
-	else:
-		this.gotoAndPlay("no_oni")
+	this.gotoAndPlay("oni")
+	#if this._root.oniReleased:
+	#	if this._root.isExFumen():
+	#		this.gotoAndPlay("ex")
+	#	else:
+	#		this.gotoAndPlay("oni")
+	#else:
+	#	this.gotoAndPlay("no_oni")
 
 # sprite[257], names=selected_board_1p~selected_board_4p,
 def func40(this, _global):
@@ -264,11 +265,14 @@ def func47(this, _global):
 
 # sprite[300], names=course_select
 def func64(this, _global):
-	this._root._CourseMenu_init(this)
-	this.gotoAndPlay("animation")
+	#this._root._CourseMenu_init(this)
+	#this.gotoAndPlay("animation")
+	this._parent.course_select = this
+	this._root.fscommand("callback", "_CourseMenu_init")
 
 def func65(this, _global):
-	this._root._CourseMenu_start(this)
+	#this._root._CourseMenu_start(this)
+	this._root.fscommand("callback", "_CourseMenu_start")
 
 def func66(this, _global):
 	this._root._CourseMenu_timerCountUp(this._parent)
@@ -370,7 +374,7 @@ def func103(this, _global):
 	if not this._root.isRandomBoardSelected():
 		this._visible = false
 
-# sprite[364], names=out_board
+# sprite[365], names=out_board
 
 # sprite[372], names=skip_genre
 def func104(this, _global):
@@ -432,7 +436,10 @@ def func126(this, _global):
 
 # sprite[420], names=hiscore
 def func127(this, _global):
-	this._root._Hiscore_init(this)
+	this.stop()
+	this.active = False
+	this.hiscore.active = False
+	#this._root._Hiscore_init(this)
 
 def func128(this, _global):
 	this._root._Hiscore_countUp(this)
@@ -771,7 +778,13 @@ def placeholder(this, _global):
 DATA = [placeholder] * 177
 DATA[17] = func17
 DATA[18] = func18
+DATA[39] = func39
+DATA[40] = func40
+DATA[64] = func64
+DATA[65] = func65
 DATA[99] = func99
+DATA[100] = func100
+DATA[127] = func127
 DATA[132] = func132
 DATA[133] = func133
 DATA[134] = func134
@@ -782,3 +795,4 @@ DATA[142] = func142
 DATA[143] = func143
 DATA[144] = func144
 DATA[145] = func145
+DATA[146] = func146

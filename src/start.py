@@ -96,7 +96,7 @@ def logic_setup():
 	pyglet.resource.reindex()	
 	
 	# set begin state
-	game_state.set_game_state(game_state.GAME_STATE_SONG_SELECT)
+	game_state.set_game_state(config.DATA["start_state"])
 	
 
 def startup():

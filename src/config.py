@@ -5,6 +5,7 @@ import optparse
 import enso_skin_def
 import enso_skin_idol
 from tja.tja_consts import OPTION_AUTO
+from game_state import GAME_STATE_ENSO, GAME_STATE_SONG_SELECT
 
 DATA = {
 	"widescreen": True,
@@ -28,6 +29,7 @@ DATA = {
 	"use_texture_as_song_name": False,
 	
 	"don_cos": "don/cos/cos_000/cos_000_%s/cos_000_%s.lm",
+	"start_state": GAME_STATE_SONG_SELECT,
 }
 
 if len(sys.argv) > 1:

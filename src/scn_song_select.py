@@ -109,9 +109,8 @@ class CPreviewPlayer(object):
 			self.player.queue(source)
 			if self.now_playing_wave:
 				self.player.next()
-			else:
-				self.player.play()
 			self.player.seek(self.preview_off)
+			self.player.play()
 			self.accu_t = 0
 			self.now_playing_wave = wave
 			self.is_paused = False
@@ -144,6 +143,7 @@ class CSongTitleRenderer(lm_drawable.CDrawable):
 
 SONG_ROOT = r"../song"
 ALL_GENRE_NAME = ["j-pop", "animation", "variety", "classic", "namco", "doyo", "game", "random"]
+ALL_DIFF_NAME = ["easy", "normal", "hard", "mania"]
 GENRE_NAME_2_ID = dict([(genre_name, genre_name_idx) for genre_name_idx, genre_name in enumerate(ALL_GENRE_NAME)])
 MAX_BOARD = 11
 BOARD_CENTER = 0
@@ -151,9 +151,11 @@ BOARD_ID_2_TEX_ID = [5, 6, 7, 8, 9, 10, 0, 1, 2, 3, 4]
 
 # How large has the menu been opened up
 # Used to recover from open to close
-menu_open_up_count = 15
+menu_open_up_count = 0
 cur_genre = 0
-enable_input = False
+enable_move = False
+enable_to_course_select = False
+enable_course_select = False
 menu_move_direction = ""
 
 #ALL_GENRE_NAME = ["debug"]
@@ -169,6 +171,7 @@ mc_song_select_submenu = None
 
 song_lst = []
 cursor_pos = 0
+course_cursor_pos = 0
 
 def build_song_lst_by_genre(genre_name):
 	genre_folder = os.path.join(SONG_ROOT, genre_name)
@@ -327,9 +330,12 @@ def update_course(mc, song_info):
 			mc_star.gotoAndPlay("star%d" % diff_info.star)
 			
 def on_initial_animation_end(root, data):
-	global enable_input
+	global enable_move, enable_to_course_select
+	global menu_open_up_count
 	
-	enable_input = True
+	menu_open_up_count = 15
+	enable_move = True
+	enable_to_course_select = True
 	
 	song_idx = get_cur_song_idx(BOARD_CENTER)
 	
@@ -345,14 +351,16 @@ def on_initial_animation_end(root, data):
 		song_info = song_lst[song_idx]
 		mc.gotoAndPlay("select")
 		mc.hiscore.active = False
-		preview_player.set_audio(os.path.join(song_info.folder, song_info.wave), song_info.preview_off)		
 
 def on_menu_open_up_count(root, data):
 	global menu_open_up_count
+	global enable_to_course_select
 	menu_open_up_count += 1
+	if menu_open_up_count >= 15:
+		enable_to_course_select = True
 
 def on_board_expanding_out(root, data):
-	global enable_input
+	global enable_move
 	
 	mc = data
 	
@@ -364,16 +372,17 @@ def on_board_expanding_out(root, data):
 		preview_player.set_audio(os.path.join(song_info.folder, song_info.wave), song_info.preview_off)
 		mc.use_lyric.active = False
 		mc.course.gotoAndPlay("oni")
-		enable_input = True
+		enable_move = True
 		
 		update_course(mc.course, song_info)
 
 def move_board(d):
-	global enable_input
+	global enable_move, enable_to_course_select
 	global menu_move_direction
 	
 	menu_move_direction = d
-	enable_input = False
+	enable_move = False
+	enable_to_course_select = False
 
 	board_move = mc_song_select.main_movie.board_move
 	song_idx = get_cur_song_idx(cursor_pos)
@@ -391,12 +400,10 @@ def move_board(d):
 		board_move.gotoAndPlay(label_close)
 	
 def on_song_menu_close_end(root, data):
-	global menu_open_up_count
 	global cursor_pos
-	global enable_input
+	global menu_open_up_count
 	
 	mc_board_move = data
-	menu_open_up_count = 0
 	dir_prefix = ""
 	if menu_move_direction == "R":
 		non_select_texture.shift_left()
@@ -417,7 +424,9 @@ def on_song_menu_close_end(root, data):
 		update_open_board(mc_board_move.open_board)		
 		mc_board_move.gotoAndPlay("left_move")
 		dir_prefix = "R_"
-		
+	
+	menu_open_up_count = 0
+	
 	# Update genre
 	song_idx = get_cur_song_idx(BOARD_CENTER)
 	
@@ -426,18 +435,46 @@ def on_song_menu_close_end(root, data):
 		set_genre(GENRE_NAME_2_ID[song_info.genre], dir_prefix)
 	else:
 		set_genre(GENRE_NAME_2_ID["random"], dir_prefix)
-		
+	
+# init select pos
+def on_course_menu_start(root, data):
+	global enable_course_select
+	enable_course_select = True
+	mc_course_menu = mc_song_select.main_movie.board_move.open_board.course_select
+	mc_course_cursor = mc_course_menu.cursor1p
+	mc_course_cursor.gotoAndStop("pos%doni" % (1+course_cursor_pos))
+	mc_course_cursor.move_cursor.cursor.gotoAndStop("cur_1000")
+	
+def on_course_menu_init(root, data):
+	global course_cursor_pos
+	mc_course_menu = mc_song_select.main_movie.board_move.open_board.course_select
+	mc_boards = mc_course_menu.menu
+	song_idx = get_cur_song_idx(BOARD_CENTER)
+	song_info = song_lst[song_idx]
+	
+	course_cursor_pos = None
+	for diff_idx, diff_info in enumerate(song_info.diff_lst):
+		course_board = getattr(mc_boards, "board_%s" % ALL_DIFF_NAME[diff_idx])
+		if diff_info is not None:
+			course_cursor_pos = diff_idx
+			course_board._visible = True
+		else:
+			course_board._visible = False
 
 def on_song_menu_select_start(root, data):
 	global menu_move_direction
-	global enable_input
+	global enable_move
 
+	enable_move = True
 	mc_board_move = data
 	if cursor_pos >= 0 and cursor_pos < len(song_lst):
 		mc_board_move.gotoAndPlay("open")
-	else:
-		enable_input = True
 		
+def on_course_menu_to_song_select(root, data):
+	mc_board_move = root.main_movie.board_move
+	
+	mc_board_move.gotoAndPlay("to_song_select")
+
 def on_enter(this):
 	global renderer, loader
 	global mc_song_select, mc_song_select_submenu
@@ -497,6 +534,8 @@ def init_song_select_movie():
 	mc_song_select.register_callback("board_expanding_out", on_board_expanding_out, mc_song_select.main_movie.board_move.open_board)
 	mc_song_select.register_callback("_SongMenu_CloseEnd", on_song_menu_close_end, mc_song_select.main_movie.board_move)
 	mc_song_select.register_callback("_SongMenu_SelectStart", on_song_menu_select_start, mc_song_select.main_movie.board_move)
+	mc_song_select.register_callback("_CourseMenu_init", on_course_menu_init, None)
+	mc_song_select.register_callback("_CourseMenu_start", on_course_menu_start, None)
 
 	board_move = mc_song_select.main_movie.board_move
 	board_move.don_left_1.active = False
@@ -556,14 +595,28 @@ def on_exit():
 def on_key_press(symbol, modifiers):
 	global cursor_pos
 	global menu_move_direction
+	global enable_to_course_select, enable_move
 		
-	if not enable_input: return
 	if symbol == pyglet.window.key.J:
-		song_idx = get_cur_song_idx(BOARD_CENTER)
-		if song_idx >= 0 and song_idx < len(song_lst):
-			config.DATA["fumen_file"] = os.path.join(song_lst[song_idx].folder, song_lst[song_idx].tja)
-			game_state.set_game_state(game_state.GAME_STATE_ENSO)
+		if enable_to_course_select:
+			enable_to_course_select = False
+			enable_move = False
+			mc_song_select.main_movie.board_move.gotoAndPlay("fadeout")
+		elif enable_course_select:	
+			song_idx = get_cur_song_idx(BOARD_CENTER)
+			if song_idx >= 0 and song_idx < len(song_lst):
+				config.DATA["fumen_file"] = os.path.join(song_lst[song_idx].folder, song_lst[song_idx].tja)
+				game_state.set_game_state(game_state.GAME_STATE_ENSO)
 	elif symbol == pyglet.window.key.U:
-		move_board("R")
-	elif symbol == pyglet.window.key.R:
-		move_board("L")
+		if enable_move:
+			move_board("R")
+		elif enable_course_select:
+			move_course_cursor("R")
+	elif enable_move and symbol == pyglet.window.key.R:
+		if enable_move:
+			move_board("L")
+		elif enable_course_select:
+			move_course_cursor("L")
+	elif symbol == pyglet.window.key.SPACE:
+		if enable_course_select:
+			on_course_menu_to_song_select(mc_song_select, None)
