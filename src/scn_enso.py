@@ -1049,9 +1049,11 @@ def on_enter(this):
 
 def on_exit():
 	global music_started
+	global music_player
 	
 	if music_started:
 		music_started = False
+		music_player.next()
 		music_player = None
 		
 	movieclips[FULLCOMBO].gotoAndStop("initial")

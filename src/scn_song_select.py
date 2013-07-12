@@ -103,20 +103,18 @@ class CPreviewPlayer(object):
 			return
 			
 		if self.player.playing:
-			self.player.pause()
+			self.player.next()
 				
-		print "preview off = %f" % preview_off
 		if wave:
 			self.preview_off = preview_off
 			source = pyglet.media.load(wave)
 			self.player.queue(source)
-			if self.now_playing_wave:
-				self.player.next()
 			self.player.seek(self.preview_off)
 			self.player.play()
 			self.accu_t = 0
-			self.now_playing_wave = wave
 			self.is_paused = False
+			
+		self.now_playing_wave = wave
 			
 	def update(self, dt):
 		if self.is_paused: return
@@ -368,7 +366,6 @@ def on_menu_open_up_count(root, data):
 def on_board_expanding_out(root, data):
 	
 	mc = data
-	
 	song_idx = get_cur_song_idx(BOARD_CENTER)
 	if song_idx >= 0 and song_idx < len(song_lst):
 		song_info = song_lst[song_idx]
@@ -540,12 +537,11 @@ def on_enter(this):
 		
 		build_song_lst()
 		
-		init_song_boards()
-		
 		inited = True
 	
 	preview_player.resume()
 	
+	init_song_boards()
 	board_move = mc_song_select.main_movie.board_move
 	board_move.gotoAndPlay("start")
 	
