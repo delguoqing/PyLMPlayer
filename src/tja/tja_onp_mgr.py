@@ -261,14 +261,19 @@ class CMgr(object):
 			self._state.is_hitaway
 			self._state.hitaway_off = off
 			
-	def reset(self, scn, _fumen_file, option):
+	def reset(self, scn, _fumen_file, course_idx, option):
 		self._scn = scn
 		
 		reader = tja_reader.CReader()
 		reader.set_file(_fumen_file)
 		fumen = tja_fumen.CFumen(self._scn.DIST_CFG)
+		
+		for _ in xrange(course_idx):
+			fumen.read_header(reader)
+			fumen.skip_fumen(reader)
 		fumen.read_header(reader)
-		fumen.read_fumen(reader)	
+		fumen.read_fumen(reader)
+			
 		self._state = tja_enso_state.CEnsoState(fumen.header, self._scn.DIST_CFG)
 		self._fumen = fumen
 		

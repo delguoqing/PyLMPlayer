@@ -21,6 +21,14 @@ class CFumen(object):
 		self.header.read(reader)
 		self.header.refresh()
 		
+	def skip_fumen(self, reader):
+		self.read_fumen(reader)
+		
+		self.sections = []
+		self._actvie_sections = []
+		self.tot_combo = 0
+		self.has_branch = False
+	
 	def read_fumen(self, reader):
 		curr_state = tja_enso_state.CEnsoState(self.header, self.dist_cfg)
 		next_state = None
@@ -71,6 +79,7 @@ class CFumen(object):
 						
 				#print "=====> NO BUNKI END"
 				
+		reader.skip_line()
 		self.tot_combo = curr_state.tot_combo
 		#print "tot_combo = %d" % curr_state.tot_combo
 			

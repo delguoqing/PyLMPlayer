@@ -22,7 +22,10 @@ DATA = {
 	
 	"enso_skin": enso_skin_idol,
 	"lm_root": "../wii_packages",
-	"fumen_file": "D:/fumen/tomato/tomato.tja",
+	
+	"fumen_file": r"C:\Users\GQ\Documents\GitHub\PyLMPlayer\song\animation\endless_story\Endless Story.tja",
+	"course_idx": 1,
+	
 	"enso_option": OPTION_AUTO,
 	
 	"def_song_name_label": "../font/sn_game.png",

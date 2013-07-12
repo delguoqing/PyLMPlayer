@@ -1024,7 +1024,7 @@ def on_enter(this):
 	pyglet.resource.path.append(os.path.split(config.DATA["fumen_file"])[0])	
 	pyglet.resource.reindex()
 
-	fumen_mgr.reset(this, config.DATA["fumen_file"], config.DATA["enso_option"])
+	fumen_mgr.reset(this, config.DATA["fumen_file"], config.DATA["course_idx"], config.DATA["enso_option"])
 	song_name = fumen_mgr.get_song_name()
 	
 	if config.DATA["use_texture_as_song_name"]:
@@ -1048,7 +1048,18 @@ def on_enter(this):
 	enso_started = False
 
 def on_exit():
-	pass
+	global music_started
+	
+	if music_started:
+		music_started = False
+		music_player = None
+		
+	movieclips[FULLCOMBO].gotoAndStop("initial")
+	set_combo(0)
+	set_score(0)
+	for dancer in xrange(DANCER5, DANCER1+1):
+		movieclips[dancer].active = False
+	set_tamashii(0, 1)
 
 def on_key_press(symbol, modifiers):
 	global fumen_mgr, enso_started
