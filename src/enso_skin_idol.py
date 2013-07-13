@@ -40,7 +40,7 @@ RENDA_EFFECT_FUNC = RENDA_EFFECT_FUNC3
 
 DANCER4 = r"enso_dance/dance_idol_miki/dance_idol_miki.lm"
 DANCER5 = r"enso_dance/dance_idol_mami/dance_idol_mami.lm"
-DANCER3 = r"enso_dance/dance_idol_chihaya/dance_idol_chihaya.lm"
+DANCER3 = r"enso_dance/dance_idol_takane/dance_idol_takane.lm"
 DANCER2 = r"enso_dance/dance_idol_hibiki/dance_idol_hibiki.lm"
 DANCER1 = r"enso_dance/dance_idol_haruka/dance_idol_haruka.lm"
 DANCER5_POS = (580, 436)
