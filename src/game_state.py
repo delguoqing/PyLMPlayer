@@ -1,3 +1,4 @@
+import gc
 import scn_song_select
 import scn_enso
 import scn_dummy
@@ -25,6 +26,7 @@ def set_game_state(state):
 	m_old = None
 	if cur_state != None:	
 		m_old = STATE_MODULES[cur_state]
+	gc.collect()
 	m_new = STATE_MODULES[state]
 	
 	if m_old is not None:

@@ -30,8 +30,8 @@ def graphic_setup():
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
 	# Turn off texture filter
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 graphic_setup()
@@ -83,8 +83,8 @@ def on_update(dt):
 ###################################	
 def logic_setup():
 	# Disable some global python setting
-	#gc.disable()
-	#sys.setcheckinterval(1000000)
+	gc.disable()
+	sys.setcheckinterval(1000000)
 	
 	# set up timer
 	pyglet.clock.schedule(on_update)
