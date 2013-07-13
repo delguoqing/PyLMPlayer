@@ -25,7 +25,7 @@ FONT = "DFKTLB.TTC"
 EXE_CONVERT = "convert.exe"
 EXE_COMPOSITE = "composite.exe"
 
-ROTATE_CHARACTER = set(u"「」～（）ー-~－∞—()《》{}<>『』[]")
+ROTATE_CHARACTER = set(u"「」～（）ー-~－∞—()《》{}<>『』[]…")
 
 def gen_song_name_non_select(title, subtitle, out_folder):
 	vconvert2(os.path.join(out_folder, "sn_non_select.png"), txt=title,
