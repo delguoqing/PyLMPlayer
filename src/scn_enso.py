@@ -30,23 +30,10 @@ ONP_DIST = 30
 DIST_CFG = (ONP_DIST, ONP_IN_X, ONP_HIT_X, ONP_OUT_X, ONP_Y)
 
 # enso display data
-cur_combo = 0
-cur_renda = 0
-cur_score = 0
-max_balloon = -1
-cur_balloon = 0
-max_imo = -1
-cur_imo = 0
-cur_miss = 0
-cur_level = None
-cur_dancer = -1
-cur_tamashii = 0
-max_tamashii = 1
-cur_tamashii_grid = 0
-max_tamashii_grid = 50
-cur_ggt = False
-donchan_free = True
 def init_enso_data():
+	global cur_combo, cur_renda, cur_score, max_balloon, cur_balloon
+	global max_imo, cur_imo, cur_miss, cur_level, cur_tamashii, max_tamashii
+	global cur_tamashii_grid, max_tamashii_grid, cur_ggt, donchan_free, cur_dancer
 	cur_combo = 0
 	cur_renda = 0
 	cur_score = 0
@@ -62,6 +49,7 @@ def init_enso_data():
 	cur_tamashii_grid = 0
 	max_tamashii_grid = 50
 	cur_ggt = False	
+	donchan_free = True
 
 # movieclips
 movieclips = None
@@ -247,36 +235,23 @@ def add_score(score):
 
 def set_score(score):
 	global cur_score
-	_s = score
-	num_10000000 = _s // 10000000
-	_s -= num_10000000 * 10000000
-	num_1000000 = _s // 1000000
-	_s -= num_1000000 * 1000000
-	num_100000 = _s // 100000
-	_s -= num_100000 * 100000
-	num_10000 = _s // 10000
-	_s -= num_10000 * 10000	
-	num_1000 = _s // 1000
-	_s -= num_1000 * 1000
-	num_100 = _s // 100
-	_s -= num_100 * 100	
-	num_10 = _s // 10
-	_s -= num_10 * 10	
-	num_1 = _s // 1
-	_s -= num_1 * 1	
+	
 	mc = movieclips[SCORE_MAIN]
 	
-	score >= 0 and mc.num_1.gotoAndPlay("number_%d" % num_1)
-	score >= 10 and mc.num_10.gotoAndPlay("number_%d" % num_10)
-	score >= 100 and mc.num_100.gotoAndPlay("number_%d" % num_100)
-	score >= 1000 and mc.num_1000.gotoAndPlay("number_%d" % num_1000)
-	score >= 10000 and mc.num_10000.gotoAndPlay("number_%d" % num_10000)
-	score >= 100000 and mc.num_100000.gotoAndPlay("number_%d" % num_100000)
-	score >= 1000000 and mc.num_1000000.gotoAndPlay("number_%d" % num_1000000)
-	score >= 10000000 and mc.num_10000000.gotoAndPlay("number_%d" % num_10000000)
-	
+	_s = score
+	div = 1000000
+	for _ in xrange(7):
+		digit = _s // div
+		mc_digit = getattr(mc, "num_%d" % div)
+		if score >= div or div == 1:
+			mc_digit.gotoAndPlay("number_%d" % digit)
+		else:
+			mc_digit.gotoAndPlay("start_number")
+		_s -= digit * div
+		div /= 10
+		
 	cur_score = score
-
+	
 def add_dancer():
 	global cur_dancer, movieclips
 	if cur_dancer == -1:
@@ -520,6 +495,7 @@ def set_tamashii(tamashii, _max_tamashii):
 	elif old_gauge_num >= 40 and now_gauge_num < 40:
 		movieclips[DANCE_BG].gotoAndPlay("fever_normal")
 		movieclips[DON].gotoAndStop("norm_down")
+		print "norm down: %d/%d" % (old_gauge_num, now_gauge_num)
 	elif old_gauge_num < 50 and now_gauge_num >= 50:
 		movieclips[FEVER].fever.gotoAndPlay(fever_start_label)
 		movieclips[DON].gotoAndStop("full_gage")
@@ -776,7 +752,10 @@ class COnpRenderer(object):
 		self._barline_on = False
 		self.hit_onp_off = 0
 		self.hit_onp_hits = 0
-	
+
+	def clear(self):
+		self._onps = []
+
 	def set_onps(self, onps, state):
 		self._onps = onps
 		self.offset = state.offset
@@ -930,15 +909,18 @@ def on_update(dt):
 		if not music_started:
 			if fumen_off < 0:
 				fumen_started = True
+				fumen_mgr.active = True
 			if fumen_off >= 0:
 				music_player.seek(0)
 				music_player.play()
 				music_started = True
 				fumen_mgr._state.offset = 0
 				fumen_started = True
+				fumen_mgr.active = True
 				print "way1"
 		elif not fumen_started and music_player.time * 1000.0 >= fumen_off:
 			fumen_started = True
+			fumen_mgr.active = True
 			fumen_mgr._state.offset = music_player.time * 1000.0
 			print "way2"
 	
@@ -1039,6 +1021,7 @@ def on_enter(this):
 	# Load WAVE
 	audio_file = fumen_mgr.get_audio_file()
 	music = pyglet.resource.media(audio_file, streaming=False)
+	print music
 	music_player = music.play()
 	music_player.pause()
 	music_player.volume = fumen_mgr._fumen.header["SONGVOL"] / 100.0
@@ -1050,19 +1033,53 @@ def on_enter(this):
 def on_exit():
 	global music_started
 	global music_player
+	global cur_dancer
 	
-	if music_started:
-		music_started = False
+	# stop music
+	if music_player.playing:
 		music_player.next()
 		music_player = None
 		
+	# reset fullcombo animation	
 	movieclips[FULLCOMBO].gotoAndStop("initial")
-	set_combo(0)
-	set_score(0)
+	
+	# reset dancer
+	cur_dancer = -1
 	for dancer in xrange(DANCER5, DANCER1+1):
 		movieclips[dancer].active = False
-	set_tamashii(0, 1)
+	
+	# reset bg
+	movieclips[DANCE_BG].gotoAndPlay("normal")
+	movieclips[ENSO_UP_BG].gotoAndPlay("normal")
+	movieclips[BG_SAB_EFFECTI].gotoAndStop(0)
+	movieclips[FEVER].fever.gotoAndStop(0)
+	movieclips[LANE].bunki_moji.gotoAndPlay("no_bunki")
+	movieclips[LANE].effect.gotoAndStop(0)
+	movieclips[MATO].gotoAndPlay("normal")
+	movieclips[MATO].hit.gotoAndStop(0)
+	movieclips[COURSE].gotoAndStop(0)
+	movieclips[COMBO].gotoAndStop(0)
+	movieclips[HITJUDGE].hit.gotoAndStop(0)
+	movieclips[IMO].gotoAndStop(0)
+	movieclips[FUKIDASHI].gotoAndStop(0)
+	movieclips[RENDA_NUM].gotoAndStop(0)
+	movieclips[SPLASH].gotoAndStop(0)
+	movieclips[GAUGE].gotoAndStop(0)
+	movieclips[GAUGE].fever.gotoAndStop(0)
+	movieclips[GAUGE].fever_gage.gotoAndStop(0)
+	movieclips[DON].gotoAndPlay("normal")
 
+	# clear chibis
+	movieclips[CHIBI].clear()
+	# clear renda effect
+	movieclips[RENDA_EFFECT].clear()
+	movieclips[ONPS].clear()
+	movieclips[ONP_FLY].clear()
+	movieclips[SCORE_ADD].clear()
+	
+	# reset score
+	set_score(0)
+	
 def on_key_press(symbol, modifiers):
 	global fumen_mgr, enso_started
 	if enso_started:

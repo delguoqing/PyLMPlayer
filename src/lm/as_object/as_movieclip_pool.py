@@ -14,6 +14,13 @@ class CDrawable(lm_drawable.CDrawable):
 		self.speed = 1
 		self._frames = 0
 		self._to_recycle = set()
+
+	def clear(self):
+		self._to_recycle.clear()
+		for mc in self._active_mc:
+			self._pools[mc.__pool_id].append(mc)
+		self._active_mc.clear()
+		self._frames = 0
 		
 	def on_movieclip_end(self, mc, data):
 		obj_id = id(mc)
@@ -21,7 +28,7 @@ class CDrawable(lm_drawable.CDrawable):
 		self._to_recycle.add(obj_id)
 		
 #		self.log("self._to_recycle id %d" % id(mc))
-		
+
 	def log(self, str):
 		if True or len(self._pools) > 3:
 			print str
@@ -44,7 +51,7 @@ class CDrawable(lm_drawable.CDrawable):
 		ret = _pool.pop()
 		self._active_mc.append(ret)
 		return ret
-		
+	
 	def update(self, render_state, operation=lm_consts.MASK_ALL):
 		if self.speed != 1:
 			self._frames += self.speed

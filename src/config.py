@@ -8,10 +8,10 @@ from tja.tja_consts import OPTION_AUTO
 from game_state import GAME_STATE_ENSO, GAME_STATE_SONG_SELECT
 
 DATA = {
-	"widescreen": True,
+	"widescreen": False,
 	"wnd_width": 640,
 	"wnd_height": 480,
-	"wnd_scale": 1.2,
+	"wnd_scale": 1,
 	"widescreen_padding": 108,
 	
 	"onp_hit_x": 145,
