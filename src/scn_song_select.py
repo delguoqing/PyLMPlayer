@@ -182,7 +182,7 @@ mc_song_select = None
 mc_song_select_submenu = None
 
 song_lst = []
-cursor_pos = 6
+cursor_pos = 0
 course_cursor_pos = 0
 
 def build_song_lst_by_genre(genre_name):
@@ -626,6 +626,9 @@ def setup_viewport():
 	bottom = height
 	if cfg["widescreen"]:
 		right += cfg["widescreen_padding"] * 2
+	else:
+		left += cfg["widescreen_padding"]
+		right += cfg["widescreen_padding"]
 	
 def on_exit():
 	preview_player.pause()
