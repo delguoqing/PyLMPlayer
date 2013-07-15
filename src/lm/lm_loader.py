@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import weakref
 import pyglet
 import lm_consts
 
@@ -101,7 +102,10 @@ class CContex(object):
 		self.img_list = None
 		self.rect_list = None
 		self.char_dict = {}
+		
 		self.texture_bin = None
+		self._textures = set()
+		
 		self.renderer = None
 	
 		self.shape_tags = []
@@ -111,6 +115,13 @@ class CContex(object):
 		self._global = {}
 		self._named_instance = {}
 
+	def load_texture(self, file_name):
+		full_path = os.path.join(self.img_root, file_name)
+		image_data = pyglet.image.load(full_path)
+		texture = self.texture_bin.add(image_data)
+		self._textures.add((texture.target, texture.id))
+		return texture
+	
 	def create_main_movie(self):
 		char_id = self.stage_info.start_character_id
 		char_tag = self.get_character(char_id)
@@ -175,12 +186,6 @@ class CContex(object):
 		
 	def set_global(self, name, val):
 		self._global[name] = val
-		
-	def replace_texture(self, idx, filename):
-		texture = self.img_list.replace_texture(idx, filename, self.texture_bin)
-		for shape_tag in self.shape_tags:
-			if shape_tag.fill_idx == idx and shape_tag.origin_fill_style == lm_consts.FILL_STYLE_CLIPPED_IMAGE:
-				shape_tag.set_texture(texture)
 				
 	def set_named_instance(self, name, instance):
 		self._named_instance[name] = instance
@@ -245,7 +250,7 @@ def load(filename, root, platform, texture_bin, renderer):
 				_t.patch_py_actionscript(patch_module.DATA)
 			ctx.set_as_list(_t)
 		elif tag_type == lm_consts.TAG_IMG_LIST:
-			_t.load_textures(texture_bin)
+			_t.load_textures()
 			ctx.set_img_list(_t)
 		elif tag_type == lm_consts.TAG_RECT_LIST:
 			ctx.set_rect_list(_t)

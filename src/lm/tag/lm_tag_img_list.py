@@ -1,7 +1,5 @@
 from lm import lm_consts
-
-import os.path
-import pyglet
+import os
 import lm_tag_base
 
 class CTag(lm_tag_base.CTag):
@@ -18,7 +16,7 @@ class CTag(lm_tag_base.CTag):
 	def get_id(self):
 		return lm_consts.TAG_IMG_LIST
 		
-	def load_textures(self, bin):
+	def load_textures(self):
 		self._data = []
 		d = self._parsed_data
 		self._parsed_data = None
@@ -32,19 +30,10 @@ class CTag(lm_tag_base.CTag):
 			elif not filename.endswith(".png"):
 				filename = os.path.splitext(filename)[0] + ".png"
 				
-			fullpath = os.path.join(self.ctx.img_root, filename)
-
-			image_data = None
+			contex = self.ctx
 			try:
-				image_data = pyglet.image.load(fullpath)
+				texture = contex.load_texture(filename)
 			except IOError:
-				fullpath = os.path.join(self.ctx.img_root, def_filename)
-				image_data = pyglet.image.load(fullpath)
-			texture = bin.add(image_data)
+				texture = contex.load_texture(def_filename)
+
 			self._data.append(texture)
-			
-	# memory leak!!!!
-	def replace_texture(self, idx, filename, bin):
-		image_data = pyglet.image.load(filename)
-		self._data[idx] = bin.add(image_data)
-		return self._data[idx]
