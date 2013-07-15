@@ -18,12 +18,25 @@ def graphic_setup():
 
 	cfg = config.DATA
 
-	width = cfg["wnd_width"]
-	height = cfg["wnd_height"]
-	if cfg["widescreen"]:
-		width += cfg["widescreen_padding"] * 2
-	window = pyglet.window.Window(int(cfg["wnd_scale"]*width), int(cfg["wnd_scale"]*height))
-	window.set_location(0, 20)
+	if cfg["fullscreen"]:
+		window = pyglet.window.Window(fullscreen=True)
+		cfg["real_wnd_width"], cfg["real_wnd_height"] = window.get_size()
+		
+		# auto detect widescreen
+		ratio = 1.0 * cfg["real_wnd_width"] / cfg["real_wnd_height"]
+		_width = ratio * cfg["wnd_height"]
+		if _width > cfg["wnd_width"] + 2 * cfg["widescreen_padding"]:
+			cfg["widescreen"] = False
+	else:
+		width = cfg["wnd_width"]
+		height = cfg["wnd_height"]
+		if cfg["widescreen"]:
+			width += cfg["widescreen_padding"] * 2
+		
+		window = pyglet.window.Window(int(cfg["wnd_scale"]*width), int(cfg["wnd_scale"]*height))
+		window.set_location(0, 20)
+		cfg["real_wnd_width"], cfg["real_wnd_height"] = int(cfg["wnd_scale"]*width), int(cfg["wnd_scale"]*height)
+		
 	fps_display = pyglet.clock.ClockDisplay(color=(0.5, 0.0, 1.0, 1.0))
 	
 	# Texture env
@@ -69,6 +82,7 @@ def on_update(dt):
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
 
+	#glClearColor(0, 0, 0, 0)
 	#window.clear()
 	# update working module
 	game_state.active_m.on_update(dt)

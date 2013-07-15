@@ -8,10 +8,11 @@ from tja.tja_consts import OPTION_AUTO
 from game_state import GAME_STATE_ENSO, GAME_STATE_SONG_SELECT
 
 DATA = {
+	"fullscreen": True,
 	"widescreen": False,
 	"wnd_width": 640,
 	"wnd_height": 480,
-	"wnd_scale": 1,
+	"wnd_scale": 1.5,
 	"widescreen_padding": 108,
 	
 	"onp_hit_x": 145,
@@ -20,7 +21,7 @@ DATA = {
 	"onp_out_x": 110,
 	"onp_dist": 30,
 	
-	"enso_skin": enso_skin_idol,
+	"enso_skin": enso_skin_def,
 	"lm_root": "../wii_packages",
 	
 	"fumen_file": r"C:\Users\GQ\Documents\GitHub\PyLMPlayer\song\animation\endless_story\Endless Story.tja",

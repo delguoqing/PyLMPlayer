@@ -616,7 +616,7 @@ def init_song_boards():
 	update_open_board(mc_board_move.open_board)
 	
 def setup_viewport():
-	global left, right, top, bottom	
+	global left, right, top, bottom
 	cfg = config.DATA
 	
 	width = cfg["wnd_width"]
@@ -626,10 +626,17 @@ def setup_viewport():
 	bottom = height
 	if cfg["widescreen"]:
 		right += cfg["widescreen_padding"] * 2
+		width += cfg["widescreen_padding"] * 2
 	else:
 		left += cfg["widescreen_padding"]
 		right += cfg["widescreen_padding"]
-	
+		
+	if cfg["fullscreen"]:
+		ratio = 1.0 * cfg["real_wnd_width"] / cfg["real_wnd_height"]
+		_width = ratio * height
+		left -= (_width - width) * 0.5
+		right += (_width - width) * 0.5
+		
 def on_exit():
 	preview_player.pause()
 	preview_player.set_audio(None, -1)

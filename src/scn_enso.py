@@ -898,11 +898,20 @@ def build_scene(cfg, loader):
 	return movieclips
 	
 def on_update(dt):
+	global wait_frame
 	global enso_started
 	global movieclips, fumen_mgr
 	global music_player
 	global fumen_started, music_started
 	
+	if wait_frame > 0:
+		glDisable(GL_SCISSOR_TEST)
+		glClear(GL_COLOR_BUFFER_BIT)
+		wait_frame -= 1
+		if wait_frame <= 0:
+			glEnable(GL_SCISSOR_TEST)
+		return
+		
 	# Enso logic
 	if enso_started:
 		fumen_off = fumen_mgr._state.offset
@@ -957,7 +966,7 @@ def on_update(dt):
 		song_name_label.draw()
 
 def setup_viewport():
-	global left, right, top, bottom	
+	global left, right, top, bottom, mask
 	cfg = config.DATA
 	
 	width = cfg["wnd_width"]
@@ -968,7 +977,17 @@ def setup_viewport():
 	if cfg["widescreen"]:
 		left -= cfg["widescreen_padding"]
 		right += cfg["widescreen_padding"]
-
+	
+	if cfg["fullscreen"]:
+		ratio = 1.0 * cfg["real_wnd_width"] / cfg["real_wnd_height"]
+		_width = ratio * height
+		left -= (_width - width) * 0.5
+		right += (_width - width) * 0.5
+		x = (cfg["real_wnd_width"] - 1.0 * width * cfg["real_wnd_height"] / height) * 0.5
+		mask = (int(x), 0, int(cfg["real_wnd_width"] - 2*x), int(cfg["real_wnd_height"]))
+	else:
+		mask = (0, 0, int(cfg["real_wnd_width"]), int(cfg["real_wnd_height"]))
+			
 def on_enter(this):
 	# Update config
 	on_config_update()
@@ -985,6 +1004,7 @@ def on_enter(this):
 	global dong, ka
 	global music_player
 	global music_started, fumen_started, enso_started
+	global wait_frame
 	
 	if movieclips is None:
 		renderer = lm_render_state.CRenderer()
@@ -1001,8 +1021,7 @@ def on_enter(this):
 		ka = pyglet.resource.media("ka2.mp3", streaming=False)
 		
 		setup_viewport()
-
-		
+	
 	pyglet.resource.path.append(os.path.split(config.DATA["fumen_file"])[0])	
 	pyglet.resource.reindex()
 
@@ -1021,7 +1040,6 @@ def on_enter(this):
 	# Load WAVE
 	audio_file = fumen_mgr.get_audio_file()
 	music = pyglet.resource.media(audio_file, streaming=False)
-	print music
 	music_player = music.play()
 	music_player.pause()
 	music_player.volume = fumen_mgr._fumen.header["SONGVOL"] / 100.0
@@ -1029,6 +1047,10 @@ def on_enter(this):
 	music_started = False
 	fumen_started = False
 	enso_started = False
+	
+	glEnable(GL_SCISSOR_TEST)	
+	glScissor(mask[0], mask[1], mask[2], mask[3])
+	wait_frame = 3
 
 def on_exit():
 	global music_started
@@ -1079,6 +1101,7 @@ def on_exit():
 	
 	# reset score
 	set_score(0)
+	glDisable(GL_SCISSOR_TEST)
 	
 def on_key_press(symbol, modifiers):
 	global fumen_mgr, enso_started
