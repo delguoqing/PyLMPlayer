@@ -499,7 +499,7 @@ def move_course_cursor(dir):
 	
 	if not enable_course_select:
 		return
-	delta = ("L", "R").index(dir) * 2 - 1
+	delta = (dir == "L" and -1 or 1)
 	next_pos = course_cursor_pos
 	while True:
 		next_pos = (next_pos + delta) % len(COURSE_SELECT_CURSOR_POS_2_NAME)
