@@ -2,7 +2,10 @@ import os
 import sys
 import random
 import weakref
+
 import pyglet
+from pyglet.gl import glBindTexture
+
 import lm_consts
 
 from lm.util import lm_tag_reader
@@ -13,7 +16,7 @@ from lm.type import lm_type_mat
 class CLoader(object):
 	
 	def __init__(self, platform, lm_root, renderer):
-		self.texture_bin = pyglet.image.atlas.TextureBin(4096, 4096)
+		self.texture_bin = pyglet.image.atlas.TextureBin(1024, 1024)
 		self.platform = platform
 		self.lm_root = lm_root
 		self.renderer = renderer
@@ -104,7 +107,7 @@ class CContex(object):
 		self.char_dict = {}
 		
 		self.texture_bin = None
-		self._textures = set()
+		self._textures = weakref.WeakValueDictionary()
 		
 		self.renderer = None
 	
@@ -119,9 +122,9 @@ class CContex(object):
 		full_path = os.path.join(self.img_root, file_name)
 		image_data = pyglet.image.load(full_path)
 		texture = self.texture_bin.add(image_data)
-		self._textures.add((texture.target, texture.id))
+		self._textures[texture.id] = texture
 		return texture
-	
+		
 	def create_main_movie(self):
 		char_id = self.stage_info.start_character_id
 		char_tag = self.get_character(char_id)
