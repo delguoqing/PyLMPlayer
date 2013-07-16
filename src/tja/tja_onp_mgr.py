@@ -117,11 +117,11 @@ class CMgr(object):
 		if ONP_SHORT[0] <= onp <= ONP_SHORT[1] and off - self._state.offset > self._judge_ryo / 3.0:
 			return 0
 		if onp == ONP_RENDA1 or onp == ONP_RENDA_DAI1:
-			self._auto_last_hit = (self._auto_last_hit + 1) % 5
+			self._auto_last_hit = (self._auto_last_hit + 1) % 4
 			valid_keys &= HIT_DON
 			if self._auto_last_hit != 0: return 0
 		elif onp == ONP_GEKI or onp == ONP_IMO:
-			self._auto_last_hit = (self._auto_last_hit + 1) % 2
+			self._auto_last_hit = (self._auto_last_hit + 1) % 4
 			if self._auto_last_hit != 0: return 0			
 		else:
 			self._auto_last_hit = -1
