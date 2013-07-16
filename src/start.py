@@ -25,7 +25,7 @@ def graphic_setup():
 		# auto detect widescreen
 		ratio = 1.0 * cfg["real_wnd_width"] / cfg["real_wnd_height"]
 		_width = ratio * cfg["wnd_height"]
-		if _width > cfg["wnd_width"] + 2 * cfg["widescreen_padding"]:
+		if _width < cfg["wnd_width"] + 2 * cfg["widescreen_padding"]:
 			cfg["widescreen"] = False
 	else:
 		width = cfg["wnd_width"]
