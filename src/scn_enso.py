@@ -755,7 +755,9 @@ class COnpRenderer(object):
 
 	def clear(self):
 		self._onps = []
-
+		for onp_lumen in self._onp_lumens:
+			onp_lumen.gotoAndStop(0)
+		
 	def set_onps(self, onps, state):
 		self._onps = onps
 		self.offset = state.offset
