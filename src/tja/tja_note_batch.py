@@ -97,7 +97,7 @@ class CNoteBatch(object):
 
 			# handle commands
 			if cmd_name == "#DELAY":
-				state.offset += float(args[0])
+				state.offset += float(args[0]) * 1000
 				if len(self.notes) == 0:
 					self.offset = state.offset
 			elif cmd_name == "#BPMCHANGE":
@@ -217,7 +217,6 @@ class CNoteBatch(object):
 	def active(self, state):
 		return (self.offset - state.offset) <= self.in_off
 		
-	# TODO: also check for commands
 	def empty(self):
-		return len(self.notes) == 0 and  len(self._active_notes) == 0 and len(self._missed_notes) == 0
-	
+		return (not self.notes) and (not self.commands) \
+			and (not self._active_notes) and (not self._missed_notes)
