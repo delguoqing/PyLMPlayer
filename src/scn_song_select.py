@@ -490,7 +490,9 @@ def on_course_select_decide():
 		song_idx = get_cur_song_idx(BOARD_CENTER)
 		if song_idx >= 0 and song_idx < len(song_lst):
 			song_info = song_lst[song_idx]
-			config.DATA["fumen_file"] = os.path.join(song_info.folder, song_lst[song_idx].tja)
+			fumen_file = os.path.join(song_info.folder, song_lst[song_idx].tja)
+			fumen_file = fumen_file.replace("\\", "/")	# pyglet do not like backslash(\)!
+			config.DATA["fumen_file"] = fumen_file
 			config.DATA["course_idx"] = song_info.diff_lst[7 - course_cursor_pos].idx
 			game_state.set_game_state(game_state.GAME_STATE_ENSO)
 			
