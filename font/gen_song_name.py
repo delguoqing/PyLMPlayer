@@ -209,17 +209,4 @@ def hconvert2(out_path, txt=u"Test", size=None, font=None, bgcolor=None, txt_col
 		os.system("%s \"%s\" -gravity %s -background #FFFFFF00 -extent %dx%d \"%s\"" % (EXE_CONVERT, out_path, align, size[0], size[1], out_path))
 		
 if __name__ == '__main__':
-	#gen_song_name_texture(u"カロン", u"ＴＶＣＭ「ＬＩＳＭＯ！」より", ".")
-	#gen_song_name_texture(u"ガツガツ！！", u"「トリコ」より", ".")
-	#gen_song_name_texture(u"季曲", u"～Ｓｅａｓｏｎｓ　Ｏｆ　Ａｓｉａ～", ".")
-	#gen_song_name_texture(u"蓄勢", u"～Ｇｅａｒ Ｕｐ～", ".")
-	#gen_song_name_texture(u"蓄勢（裏）", u"～Ｇｅａｒ Ｕｐ～", ".")
-	#gen_song_name_texture(u"蛻變", u"～Ｔｒａｎｓｆｏｒｍａｔｉｏｎ～", ".")
-	gen_song_name_texture(u"Ｒｏｔｔｅｒ　Ｔａｒｍｉｎａｔｉｏｎ", u"　", ".")
-	#gen_song_name_texture(u"きがつけば　あなた", u"ＫＩＲＩＮ「午後の紅茶」ＣＭソング", ".")
-	#gen_song_name_texture(u"練習曲ＯＰ．１０－４", u"　", ".")    
-	#vconvert2("test.png", txt=u"ＴＶＣＭ「ＬＩＳＭＯ！」より",
-			#size=(80, SN_TITLE_HEIGHT), font=FONT,
-			#bgcolor=0x00000000, txt_color=TXT_COLOR, vspacing=-5, align="North",
-			#font_size=SN_TITLE_SIZE)
-	#gen_glyphs_from_text(u"恋は混沌の隷也")#Seasons of Asia～～")
+	pass
